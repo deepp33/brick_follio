@@ -12,7 +12,10 @@ export default function DeveloperProfilePage() {
     navigate('/');
   };
 
-  if (!developer) {
+  // Use the ID from URL params, fallback to developer from state
+  const developerId = id || developer?._id;
+
+  if (!developerId) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -33,7 +36,7 @@ export default function DeveloperProfilePage() {
 
   return (
     <Layout>
-      <DeveloperProfileComponent developer={developer} onClose={closeDeveloperProfile} />
+      <DeveloperProfileComponent developerId={developerId} onClose={closeDeveloperProfile} />
     </Layout>
   );
 }

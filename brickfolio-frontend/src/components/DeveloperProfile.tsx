@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { getDeveloperProfile } from '../features/users/usersSlice';
 import { 
   X, 
   Star, 
@@ -77,7 +79,7 @@ interface DeveloperData {
 }
 
 interface DeveloperProfileProps {
-  developer: DeveloperData;
+  developerId: string; // Changed to accept developer ID instead of full developer data
   onClose: () => void;
 }
 
@@ -318,30 +320,103 @@ const mockDeveloperData: Record<number, DeveloperData> = {
   }
 };
 
-export function DeveloperProfile({ developer: initialDeveloper, onClose }: DeveloperProfileProps) {
+export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps) {
+  const dispatch = useAppDispatch();
+  const { selectedDeveloper, loading, error } = useAppSelector((state) => state.users);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
-  
-  // Get detailed developer data (in real app, this would come from API)
-  const developer = mockDeveloperData[initialDeveloper.id] || {
-    ...initialDeveloper,
-    established: 2000,
-    totalDelivered: initialDeveloper.projects || 0,
-    marketCap: "N/A",
-    description: `${initialDeveloper.name} is a leading real estate developer in Dubai with a strong track record of delivering quality projects.`,
+
+  useEffect(() => {
+    if (developerId) {
+      dispatch(getDeveloperProfile(developerId));
+    }
+  }, [dispatch, developerId]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading developer profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error || !selectedDeveloper) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-lg font-semibold mb-2">Error Loading Profile</div>
+          <p className="text-gray-600 mb-4">{error || 'Developer not found'}</p>
+          <Button onClick={onClose} variant="outline">
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Helper function to get developer background color
+  const getDeveloperBgColor = (name: string) => {
+    const colors = [
+      "bg-blue-600", "bg-green-600", "bg-purple-600", "bg-orange-600", 
+      "bg-red-600", "bg-indigo-600", "bg-pink-600", "bg-teal-600"
+    ];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
+
+  // Transform API data to match component expectations
+  const developer = {
+    id: selectedDeveloper._id,
+    name: selectedDeveloper.name,
+    logo: selectedDeveloper.name.charAt(0).toUpperCase(),
+    bgColor: getDeveloperBgColor(selectedDeveloper.name),
+    rating: selectedDeveloper.developerProfile?.rating || 4.5,
+    projects: selectedDeveloper.developerProfile?.totalProjects || 0,
+    deliveryRate: selectedDeveloper.developerProfile?.deliveryTrackRecord?.onTime || 90,
+    credentials: selectedDeveloper.developerProfile?.certifications || [],
+    recentProject: "Latest Project", // Would come from projects API
+    established: 2000, // Would come from developer profile
+    totalDelivered: selectedDeveloper.developerProfile?.projectsCompletedCount || 0,
+    marketCap: "N/A", // Would come from financial data
+    description: selectedDeveloper.developerProfile?.description || `${selectedDeveloper.name} is a leading real estate developer in Dubai with a strong track record of delivering quality projects.`,
     contactInfo: {
-      phone: "+971 4 XXX XXXX",
-      email: "info@example.com",
-      website: "www.example.com",
-      address: "Dubai, UAE"
+      phone: selectedDeveloper.phone || "+971 4 XXX XXXX",
+      email: selectedDeveloper.email || "info@example.com",
+      website: "www.example.com", // Would come from developer profile
+      address: selectedDeveloper.developerProfile?.location || "Dubai, UAE"
     },
     legalStatus: {
-      reraLicense: "RERA-DEV-XXX",
-      disputes: 0,
-      lastAudit: "Recent",
-      complianceScore: initialDeveloper.deliveryRate || 90
+      reraLicense: selectedDeveloper.developerProfile?.compliance?.reraLicense || "RERA-DEV-XXX",
+      disputes: 0, // Would come from legal data
+      lastAudit: selectedDeveloper.developerProfile?.compliance?.lastAudit || "Recent",
+      complianceScore: selectedDeveloper.developerProfile?.compliance?.complianceScore || 90
     },
-    projects: [],
-    reviews: []
+    projects: selectedDeveloper.developerProfile?.projects?.map((project: any, index: number) => ({
+      id: project._id || index,
+      name: project.projectName,
+      location: project.location,
+      status: project.constructionProgress >= 100 ? "Completed" : 
+              project.constructionProgress >= 80 ? "Near Completion" :
+              project.constructionProgress >= 50 ? "Construction" :
+              project.constructionProgress >= 20 ? "Pre-Launch" : "Launch Phase",
+      completion: `${project.completion?.quarter} ${project.completion?.year}`,
+      units: parseInt(project.unitsAvailable?.split('/')[1]) || 0,
+      startPrice: project.price?.formatted || "AED 1M",
+      roi: `${project.roi}%`,
+      deliveryDate: new Date(project.handoverDate).toLocaleDateString(),
+      progress: project.constructionProgress || 0,
+      image: project.images?.[0] || "https://via.placeholder.com/400x300?text=Project+Image",
+      category: project.category || [],
+      amenities: project.amenities || [],
+      rating: project.rating || 4.5,
+      rentalYield: project.rentalYield || 6.0,
+      paymentPlan: project.paymentPlan || []
+    })) || [],
+    reviews: [] // Would come from reviews API
   };
 
   const renderStars = (rating: number) => {
@@ -363,6 +438,10 @@ export function DeveloperProfile({ developer: initialDeveloper, onClose }: Devel
         return "bg-blue-100 text-blue-800";
       case "Construction":
         return "bg-orange-100 text-orange-800";
+      case "Near Completion":
+        return "bg-yellow-100 text-yellow-800";
+      case "Completed":
+        return "bg-green-100 text-green-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -557,58 +636,143 @@ export function DeveloperProfile({ developer: initialDeveloper, onClose }: Devel
           {/* Projects Tab */}
           <TabsContent value="projects">
             {developer.projects && developer.projects.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {developer.projects.map((project) => (
-                  <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className="relative">
-                      <ImageWithFallback
-                        src={project.image}
-                        alt={project.name}
-                        className="w-full h-48 object-cover"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <Badge className={getStatusColor(project.status)}>
-                          {project.status}
-                        </Badge>
+              <div className="space-y-6">
+                {/* Projects Summary */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Building className="h-5 w-5 mr-2" />
+                      Projects Overview
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center p-3 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">{developer.projects.length}</div>
+                        <div className="text-sm text-gray-600">Total Projects</div>
+                      </div>
+                      <div className="text-center p-3 bg-green-50 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600">
+                          {developer.projects.filter(p => p.status === "Completed").length}
+                        </div>
+                        <div className="text-sm text-gray-600">Completed</div>
+                      </div>
+                      <div className="text-center p-3 bg-orange-50 rounded-lg">
+                        <div className="text-2xl font-bold text-orange-600">
+                          {developer.projects.filter(p => p.status === "Construction").length}
+                        </div>
+                        <div className="text-sm text-gray-600">Under Construction</div>
+                      </div>
+                      <div className="text-center p-3 bg-purple-50 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600">
+                          {developer.projects.filter(p => p.status === "Launch Phase" || p.status === "Pre-Launch").length}
+                        </div>
+                        <div className="text-sm text-gray-600">New Launches</div>
                       </div>
                     </div>
-                    <CardContent className="p-6">
-                      <h3 className="font-semibold text-lg mb-2">{project.name}</h3>
-                      <div className="space-y-2 mb-4">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          {project.location}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          {project.deliveryDate}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <TrendingUp className="h-4 w-4 mr-2" />
-                          ROI: {project.roi}
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2 mb-4">
-                        <div className="flex justify-between text-sm">
-                          <span>Progress</span>
-                          <span>{project.progress}%</span>
-                        </div>
-                        <Progress value={project.progress} />
-                      </div>
+                  </CardContent>
+                </Card>
 
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-blue-600">
-                          {project.startPrice}
-                        </span>
-                        <Button size="sm" variant="outline">
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Details
-                        </Button>
+                {/* Projects Grid */}
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {developer.projects.map((project) => (
+                    <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                      <div className="relative">
+                        <ImageWithFallback
+                          src={project.image}
+                          alt={project.name}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="absolute top-4 left-4">
+                          <Badge className={getStatusColor(project.status)}>
+                            {project.status}
+                          </Badge>
+                        </div>
+                        <div className="absolute top-4 right-4">
+                          <div className="flex items-center bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">
+                            <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
+                            <span className="text-xs font-medium">{project.rating}</span>
+                          </div>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <CardContent className="p-6">
+                        <h3 className="font-semibold text-lg mb-2">{project.name}</h3>
+                        
+                        {/* Project Categories */}
+                        {project.category && project.category.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {project.category.slice(0, 2).map((cat: string, idx: number) => (
+                              <Badge key={idx} variant="secondary" className="text-xs">
+                                {cat}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center text-sm text-gray-600">
+                            <MapPin className="h-4 w-4 mr-2" />
+                            {project.location}
+                          </div>
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Calendar className="h-4 w-4 mr-2" />
+                            {project.deliveryDate}
+                          </div>
+                          <div className="flex items-center text-sm text-gray-600">
+                            <TrendingUp className="h-4 w-4 mr-2" />
+                            ROI: {project.roi}
+                          </div>
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Users className="h-4 w-4 mr-2" />
+                            {project.units} units
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2 mb-4">
+                          <div className="flex justify-between text-sm">
+                            <span>Construction Progress</span>
+                            <span>{project.progress}%</span>
+                          </div>
+                          <Progress value={project.progress} />
+                        </div>
+
+                        {/* Key Amenities */}
+                        {project.amenities && project.amenities.length > 0 && (
+                          <div className="mb-4">
+                            <div className="text-sm font-medium text-gray-700 mb-2">Key Amenities:</div>
+                            <div className="flex flex-wrap gap-1">
+                              {project.amenities.slice(0, 3).map((amenity: string, idx: number) => (
+                                <Badge key={idx} variant="outline" className="text-xs">
+                                  {amenity}
+                                </Badge>
+                              ))}
+                              {project.amenities.length > 3 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{project.amenities.length - 3} more
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <span className="text-lg font-semibold text-blue-600">
+                              {project.startPrice}
+                            </span>
+                            <div className="text-xs text-gray-500">
+                              Rental Yield: {project.rentalYield}%
+                            </div>
+                          </div>
+                          <Button size="sm" variant="outline">
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
             ) : (
               <Card className="p-12 text-center">

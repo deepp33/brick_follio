@@ -5,7 +5,6 @@ Got it! I'll skip the "Real Estate Open Data Free" section from the Dubai Land D
 ## Table of Contents
 1. [Users](#1-users)
 2. [Projects](#2-projects)
-3. [Market & Analytics](#3-market--analytics)
 4. [News](#4-news)
 5. [Wishlist](#5-wishlist)
 6. [Market](#6-market)
@@ -290,19 +289,6 @@ Endpoints for managing real estate projects.
   }'
   ```
 
-## 3. Market & Analytics
-
-Endpoint for retrieving market data.
-
-### Get Market Data
-- **Method**: GET
-- **URL**: `{{BRICK_FOLIO_URL}}/market`
-- **Parameters**: None.
-- **Description**: Retrieves general market data (details depend on implementation).
-- **Example Request**:
-  ```bash
-  curl -X GET "{{BRICK_FOLIO_URL}}/market"
-  ```
 
 ## 4. News
 

@@ -1,72 +1,47 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { Layout } from '../components/Layout';
 import { HeroSection } from '../components/HeroSection';
 import { FeaturedProjects } from '../components/FeaturedProjects';
-import { TopDevelopers } from '../components/TopDevelopers';
-import { InteractiveMap } from '../components/InteractiveMap';
-import { MarketInsights } from '../components/MarketInsights';
-import { CalculatorTools } from '../components/CalculatorTools';
 import { NewsSection } from '../components/NewsSection';
+import { MarketInsights } from '../components/MarketInsights';
+import { TopDevelopers } from '../components/TopDevelopers';
 import { ReviewsSection } from '../components/ReviewsSection';
+import { CalculatorTools } from '../components/CalculatorTools';
+import { Footer } from '../components/Footer';
 
 export default function Home() {
-  const navigate = useNavigate();
-  const [userPreferences, setUserPreferences] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const startOnboarding = () => {
-    navigate('/onboarding');
+  const handleViewAllProjects = () => {
+    // Navigate to projects page
+    window.location.href = '/projects';
   };
 
-  const openMapView = () => {
-    navigate('/map');
+  const handleGetStarted = () => {
+    // Navigate to onboarding
+    window.location.href = '/onboarding';
   };
 
-  const openDeveloperProfile = (developer: any) => {
-    navigate(`/developer/${developer.id}`, { state: { developer } });
+  const handleViewAllDevelopers = () => {
+    // Navigate to developers page
+    window.location.href = '/developers';
   };
 
-  const openPropertyListing = () => {
-    navigate('/properties');
-  };
-
-  const openDeveloperListing = () => {
-    navigate('/developers');
-  };
-
-  const openMarketAnalytics = () => {
-    navigate('/market-analytics');
+  const handleDeveloperClick = (developer: any) => {
+    // Navigate to developer profile
+    window.location.href = `/developer/${developer._id}`;
   };
 
   return (
-    <Layout isAuthenticated={isAuthenticated}>
-      {/* Hero Section */}
-      <section className="cursor-pointer">
-        <HeroSection onGetStartedClick={startOnboarding} />
-      </section>
-
-      {/* Featured Content */}
-      <FeaturedProjects onViewAllClick={openPropertyListing} />
-      <TopDevelopers
-        onDeveloperClick={openDeveloperProfile} 
-        onViewAllClick={openDeveloperListing}
-      />
-      
-      {/* Interactive Map - Core Feature */}
-      <InteractiveMap userPreferences={userPreferences} />
-      
-      {/* Market Insights */}
-      <MarketInsights onViewAnalytics={openMarketAnalytics} />
-
-      {/* Calculator Tools */}
-      <CalculatorTools />
-
-      {/* News Section */}
+    <Layout>
+      <HeroSection onGetStartedClick={handleGetStarted} />
+      <FeaturedProjects onViewAllClick={handleViewAllProjects} />
+      <MarketInsights />
       <NewsSection />
-
-      {/* Reviews and Testimonials */}
+      <TopDevelopers onViewAllClick={handleViewAllDevelopers} onDeveloperClick={handleDeveloperClick} />
+      <CalculatorTools />
       <ReviewsSection />
+      <Footer />
     </Layout>
   );
 }

@@ -1,4 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { getDevelopers } from '../features/users/usersSlice';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -31,226 +33,36 @@ import {
   Eye
 } from 'lucide-react';
 
-interface Developer {
-  id: number;
-  name: string;
-  logo: string;
-  bgColor: string;
-  rating: number;
-  totalProjects: number;
-  completedProjects: number;
-  ongoingProjects: number;
-  totalUnitsDelivered: number;
-  onTimeDeliveryRate: number;
-  location: string;
-  establishedYear: number;
-  specialization: string[];
-  projectTypes: string[];
-  performanceScore: number;
-  credentials: string[];
-  description: string;
-  recentProjects: string[];
-  contactInfo: {
-    phone: string;
-    email: string;
-    website: string;
-  };
-  legalStatus: {
-    reraLicense: string;
-    disputes: number;
-    complianceScore: number;
-  };
-}
+// Helper function to get background color based on developer name
+const getDeveloperBgColor = (name: string) => {
+  const colors = [
+    'bg-blue-600', 'bg-green-600', 'bg-purple-600', 'bg-orange-600',
+    'bg-red-600', 'bg-indigo-600', 'bg-pink-600', 'bg-teal-600'
+  ];
+  const index = name.charCodeAt(0) % colors.length;
+  return colors[index];
+};
+
+// Helper function to get logo from name
+const getDeveloperLogo = (name: string) => {
+  return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+};
 
 interface DeveloperListingProps {
   onClose: () => void;
-  onDeveloperClick: (developer: Developer) => void;
+  onDeveloperClick: (developer: any) => void;
 }
 
-const mockDevelopers: Developer[] = [
-  {
-    id: 1,
-    name: "Emaar Properties",
-    logo: "E",
-    bgColor: "bg-blue-600",
-    rating: 4.9,
-    totalProjects: 45,
-    completedProjects: 42,
-    ongoingProjects: 3,
-    totalUnitsDelivered: 12500,
-    onTimeDeliveryRate: 98,
-    location: "Dubai, UAE",
-    establishedYear: 1997,
-    specialization: ["Luxury Residential", "Mixed-use", "Retail"],
-    projectTypes: ["Residential", "Commercial", "Mixed-use"],
-    performanceScore: 95,
-    credentials: ["RERA Verified", "Award Winner", "ISO Certified"],
-    description: "Leading real estate developer in the UAE, known for iconic projects like Burj Khalifa and Dubai Mall.",
-    recentProjects: ["Dubai Hills Estate", "Creek Harbour", "Downtown Dubai"],
-    contactInfo: {
-      phone: "+971 4 367 3333",
-      email: "info@emaar.ae",
-      website: "www.emaar.com"
-    },
-    legalStatus: {
-      reraLicense: "RERA-DEV-001",
-      disputes: 0,
-      complianceScore: 98
-    }
-  },
-  {
-    id: 2,
-    name: "DAMAC Properties",
-    logo: "D",
-    bgColor: "bg-green-600",
-    rating: 4.7,
-    totalProjects: 38,
-    completedProjects: 35,
-    ongoingProjects: 3,
-    totalUnitsDelivered: 8900,
-    onTimeDeliveryRate: 95,
-    location: "Dubai, UAE",
-    establishedYear: 2002,
-    specialization: ["Luxury Apartments", "Villas", "Hotels"],
-    projectTypes: ["Residential", "Commercial"],
-    performanceScore: 88,
-    credentials: ["RERA Verified", "ISO Certified", "Green Building"],
-    description: "Luxury real estate developer known for premium residential, commercial and leisure properties.",
-    recentProjects: ["Marina Heights", "Akoya Oxygen", "DAMAC Hills"],
-    contactInfo: {
-      phone: "+971 4 420 0000",
-      email: "info@damacproperties.com",
-      website: "www.damacproperties.com"
-    },
-    legalStatus: {
-      reraLicense: "RERA-DEV-002",
-      disputes: 0,
-      complianceScore: 94
-    }
-  },
-  {
-    id: 3,
-    name: "Sobha Realty",
-    logo: "S",
-    bgColor: "bg-purple-600",
-    rating: 4.8,
-    totalProjects: 28,
-    completedProjects: 25,
-    ongoingProjects: 3,
-    totalUnitsDelivered: 6200,
-    onTimeDeliveryRate: 97,
-    location: "Dubai, UAE",
-    establishedYear: 2003,
-    specialization: ["Premium Residential", "Villas", "Apartments"],
-    projectTypes: ["Residential"],
-    performanceScore: 92,
-    credentials: ["RERA Verified", "Quality Excellence", "Green Certified"],
-    description: "Known for crafting premium residential properties with exceptional attention to detail and quality.",
-    recentProjects: ["Sobha Hartland", "One JBR", "Sobha Creek Vistas"],
-    contactInfo: {
-      phone: "+971 4 440 1111",
-      email: "info@sobharealty.com",
-      website: "www.sobharealty.com"
-    },
-    legalStatus: {
-      reraLicense: "RERA-DEV-003",
-      disputes: 0,
-      complianceScore: 96
-    }
-  },
-  {
-    id: 4,
-    name: "Nakheel",
-    logo: "N",
-    bgColor: "bg-orange-600",
-    rating: 4.6,
-    totalProjects: 32,
-    completedProjects: 28,
-    ongoingProjects: 4,
-    totalUnitsDelivered: 15800,
-    onTimeDeliveryRate: 93,
-    location: "Dubai, UAE",
-    establishedYear: 2000,
-    specialization: ["Master Development", "Islands", "Mega Projects"],
-    projectTypes: ["Residential", "Commercial", "Mixed-use"],
-    performanceScore: 85,
-    credentials: ["RERA Verified", "Innovation Award"],
-    description: "World-leading master developer known for iconic developments like Palm Jumeirah and The World Islands.",
-    recentProjects: ["Palm Jumeirah", "The World Islands", "Dragon City"],
-    contactInfo: {
-      phone: "+971 4 390 3333",
-      email: "info@nakheel.com",
-      website: "www.nakheel.com"
-    },
-    legalStatus: {
-      reraLicense: "RERA-DEV-004",
-      disputes: 1,
-      complianceScore: 91
-    }
-  },
-  {
-    id: 5,
-    name: "Dubai Properties",
-    logo: "DP",
-    bgColor: "bg-indigo-600",
-    rating: 4.5,
-    totalProjects: 25,
-    completedProjects: 22,
-    ongoingProjects: 3,
-    totalUnitsDelivered: 5400,
-    onTimeDeliveryRate: 91,
-    location: "Dubai, UAE",
-    establishedYear: 2004,
-    specialization: ["Residential Communities", "Commercial", "Retail"],
-    projectTypes: ["Residential", "Commercial"],
-    performanceScore: 82,
-    credentials: ["RERA Verified", "Sustainability Award"],
-    description: "Dedicated to creating integrated communities and commercial developments across Dubai.",
-    recentProjects: ["Jumeirah Beach Residence", "Business Bay", "Culture Village"],
-    contactInfo: {
-      phone: "+971 4 365 6666",
-      email: "info@dubaiproperties.ae",
-      website: "www.dubaiproperties.ae"
-    },
-    legalStatus: {
-      reraLicense: "RERA-DEV-005",
-      disputes: 0,
-      complianceScore: 89
-    }
-  },
-  {
-    id: 6,
-    name: "Meraas Holding",
-    logo: "M",
-    bgColor: "bg-teal-600",
-    rating: 4.4,
-    totalProjects: 20,
-    completedProjects: 17,
-    ongoingProjects: 3,
-    totalUnitsDelivered: 3200,
-    onTimeDeliveryRate: 89,
-    location: "Dubai, UAE",
-    establishedYear: 2007,
-    specialization: ["Mixed-use", "Entertainment", "Lifestyle"],
-    projectTypes: ["Mixed-use", "Commercial"],
-    performanceScore: 78,
-    credentials: ["RERA Verified", "Design Excellence"],
-    description: "Creating innovative lifestyle destinations and mixed-use developments in Dubai.",
-    recentProjects: ["City Walk", "La Mer", "Bluewaters Island"],
-    contactInfo: {
-      phone: "+971 4 375 8888",
-      email: "info@meraas.ae",
-      website: "www.meraas.ae"
-    },
-    legalStatus: {
-      reraLicense: "RERA-DEV-006",
-      disputes: 0,
-      complianceScore: 87
-    }
-  }
-];
+
 
 export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListingProps) {
+  const dispatch = useAppDispatch();
+  const { developers, loading, error } = useAppSelector((state) => state.users);
+
+  useEffect(() => {
+    dispatch(getDevelopers());
+  }, [dispatch]);
+
   // State management
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(true);
@@ -270,40 +82,61 @@ export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListing
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // Filter options
-  const locations = ['Dubai, UAE', 'Abu Dhabi, UAE', 'Sharjah, UAE'];
-  const projectTypes = ['Residential', 'Commercial', 'Mixed-use'];
-  const specializations = ['Luxury Residential', 'Mixed-use', 'Retail', 'Luxury Apartments', 'Villas', 'Hotels', 'Premium Residential', 'Master Development', 'Islands', 'Mega Projects', 'Residential Communities', 'Entertainment', 'Lifestyle'];
+  // Filter options - dynamically generated from developers data
+  const locations = useMemo(() => {
+    const uniqueLocations = new Set<string>();
+    developers.forEach(developer => {
+      const location = developer.developerProfile?.location || developer.city;
+      if (location) uniqueLocations.add(location);
+    });
+    return Array.from(uniqueLocations);
+  }, [developers]);
+
+  const projectTypes = useMemo(() => {
+    const uniqueTypes = new Set<string>();
+    developers.forEach(developer => {
+      developer.developerProfile?.specializations?.forEach(spec => uniqueTypes.add(spec));
+    });
+    return Array.from(uniqueTypes);
+  }, [developers]);
+
+  const specializations = useMemo(() => {
+    const uniqueSpecs = new Set<string>();
+    developers.forEach(developer => {
+      developer.developerProfile?.specializations?.forEach(spec => uniqueSpecs.add(spec));
+    });
+    return Array.from(uniqueSpecs);
+  }, [developers]);
 
   // Filter and search logic
   const filteredDevelopers = useMemo(() => {
-    let filtered = mockDevelopers.filter(developer => {
+    let filtered = developers.filter(developer => {
       // Search filter
       const matchesSearch = searchQuery === '' || 
         developer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        developer.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        developer.specialization.some(spec => spec.toLowerCase().includes(searchQuery.toLowerCase()));
+        (developer.developerProfile?.location || developer.city || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        developer.developerProfile?.specializations?.some(spec => spec.toLowerCase().includes(searchQuery.toLowerCase())) || false;
 
       // Rating filter
-      const matchesRating = developer.rating >= ratingRange[0] && developer.rating <= ratingRange[1];
+      const matchesRating = (developer.developerProfile?.rating || 0) >= ratingRange[0] && (developer.developerProfile?.rating || 0) <= ratingRange[1];
 
       // Projects filter
-      const matchesProjects = developer.totalProjects >= projectsRange[0] && developer.totalProjects <= projectsRange[1];
+      const matchesProjects = (developer.developerProfile?.totalProjects || 0) >= projectsRange[0] && (developer.developerProfile?.totalProjects || 0) <= projectsRange[1];
 
       // Delivery rate filter
-      const matchesDeliveryRate = developer.onTimeDeliveryRate >= deliveryRateRange[0] && developer.onTimeDeliveryRate <= deliveryRateRange[1];
+      const matchesDeliveryRate = (developer.developerProfile?.deliveryTrackRecord?.onTime || 0) >= deliveryRateRange[0] && (developer.developerProfile?.deliveryTrackRecord?.onTime || 0) <= deliveryRateRange[1];
 
       // Performance score filter
-      const matchesPerformanceScore = developer.performanceScore >= performanceScoreRange[0] && developer.performanceScore <= performanceScoreRange[1];
+      const matchesPerformanceScore = (developer.developerProfile?.successRate || 0) >= performanceScoreRange[0] && (developer.developerProfile?.successRate || 0) <= performanceScoreRange[1];
 
       // Location filter
-      const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(developer.location);
+      const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(developer.developerProfile?.location || developer.city || '');
 
-      // Project type filter
-      const matchesProjectType = selectedProjectTypes.length === 0 || selectedProjectTypes.some(type => developer.projectTypes.includes(type));
+      // Project type filter - using specializations as project types
+      const matchesProjectType = selectedProjectTypes.length === 0 || selectedProjectTypes.some(type => developer.developerProfile?.specializations?.includes(type) || false);
 
       // Specialization filter
-      const matchesSpecialization = selectedSpecializations.length === 0 || selectedSpecializations.some(spec => developer.specialization.includes(spec));
+      const matchesSpecialization = selectedSpecializations.length === 0 || selectedSpecializations.some(spec => developer.developerProfile?.specializations?.includes(spec) || false);
 
       return matchesSearch && matchesRating && matchesProjects && matchesDeliveryRate && 
              matchesPerformanceScore && matchesLocation && matchesProjectType && matchesSpecialization;
@@ -312,22 +145,22 @@ export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListing
     // Sorting
     switch (sortBy) {
       case 'rating-high':
-        filtered.sort((a, b) => b.rating - a.rating);
+        filtered.sort((a, b) => (b.developerProfile?.rating || 0) - (a.developerProfile?.rating || 0));
         break;
       case 'rating-low':
-        filtered.sort((a, b) => a.rating - b.rating);
+        filtered.sort((a, b) => (a.developerProfile?.rating || 0) - (b.developerProfile?.rating || 0));
         break;
       case 'projects-high':
-        filtered.sort((a, b) => b.totalProjects - a.totalProjects);
+        filtered.sort((a, b) => (b.developerProfile?.totalProjects || 0) - (a.developerProfile?.totalProjects || 0));
         break;
       case 'projects-low':
-        filtered.sort((a, b) => a.totalProjects - b.totalProjects);
+        filtered.sort((a, b) => (a.developerProfile?.totalProjects || 0) - (b.developerProfile?.totalProjects || 0));
         break;
       case 'delivery-rate':
-        filtered.sort((a, b) => b.onTimeDeliveryRate - a.onTimeDeliveryRate);
+        filtered.sort((a, b) => (b.developerProfile?.deliveryTrackRecord?.onTime || 0) - (a.developerProfile?.deliveryTrackRecord?.onTime || 0));
         break;
       case 'performance-score':
-        filtered.sort((a, b) => b.performanceScore - a.performanceScore);
+        filtered.sort((a, b) => (b.developerProfile?.successRate || 0) - (a.developerProfile?.successRate || 0));
         break;
       case 'name-az':
         filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -340,7 +173,7 @@ export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListing
     }
 
     return filtered;
-  }, [searchQuery, ratingRange, projectsRange, deliveryRateRange, performanceScoreRange, selectedLocations, selectedProjectTypes, selectedSpecializations, sortBy]);
+  }, [developers, searchQuery, ratingRange, projectsRange, deliveryRateRange, performanceScoreRange, selectedLocations, selectedProjectTypes, selectedSpecializations, sortBy]);
 
   // Pagination logic
   const totalPages = Math.ceil(filteredDevelopers.length / itemsPerPage);
@@ -383,6 +216,61 @@ export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListing
     if (score >= 70) return 'Good';
     return 'Average';
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" onClick={onClose} className="p-2">
+                <X className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Developer Directory</h1>
+                <p className="text-sm text-gray-500">Loading developers...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <Building className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Developers</h3>
+            <p className="text-gray-600">Please wait while we fetch the latest developer information...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" onClick={onClose} className="p-2">
+                <X className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Developer Directory</h1>
+                <p className="text-sm text-red-500">Error loading developers</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <Building className="h-16 w-16 text-red-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Developers</h3>
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={() => dispatch(getDevelopers())}>Try Again</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -647,24 +535,24 @@ export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListing
                   : 'grid-cols-1'
                 }`}>
                   {paginatedDevelopers.map((developer) => (
-                    <Card key={developer.id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    <Card key={developer._id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div className="flex items-center space-x-3">
-                            <div className={`w-12 h-12 ${developer.bgColor} rounded-full flex items-center justify-center`}>
-                              <span className="text-white font-bold">{developer.logo}</span>
+                            <div className={`w-12 h-12 ${getDeveloperBgColor(developer.name)} rounded-full flex items-center justify-center`}>
+                              <span className="text-white font-bold">{getDeveloperLogo(developer.name)}</span>
                             </div>
                             <div>
                               <CardTitle className="text-lg">{developer.name}</CardTitle>
                               <div className="flex items-center space-x-1 mt-1">
                                 <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                <span className="text-sm font-medium">{developer.rating}</span>
-                                <span className="text-sm text-gray-500">({developer.totalProjects} projects)</span>
+                                <span className="text-sm font-medium">{developer.developerProfile?.rating || 0}</span>
+                                <span className="text-sm text-gray-500">({developer.developerProfile?.totalProjects || 0} projects)</span>
                               </div>
                             </div>
                           </div>
-                          <Badge className={getPerformanceColor(developer.performanceScore)}>
-                            {getPerformanceLabel(developer.performanceScore)}
+                          <Badge className={getPerformanceColor(developer.developerProfile?.successRate || 0)}>
+                            {getPerformanceLabel(developer.developerProfile?.successRate || 0)}
                           </Badge>
                         </div>
                       </CardHeader>
@@ -672,40 +560,40 @@ export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListing
                       <CardContent className="space-y-4">
                         <div className="flex items-center text-sm text-gray-600">
                           <MapPin className="h-4 w-4 mr-2" />
-                          {developer.location}
-                          <span className="ml-2 text-xs">Est. {developer.establishedYear}</span>
+                          {developer.developerProfile?.location || developer.city || 'Dubai'}
+                          <span className="ml-2 text-xs">Est. {new Date(developer.createdAt).getFullYear()}</span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div className="text-center p-2 bg-gray-50 rounded">
-                            <div className="font-semibold text-blue-600">{developer.completedProjects}</div>
+                            <div className="font-semibold text-blue-600">{developer.developerProfile?.projectsCompletedCount || 0}</div>
                             <div className="text-gray-600">Completed</div>
                           </div>
                           <div className="text-center p-2 bg-gray-50 rounded">
-                            <div className="font-semibold text-green-600">{developer.totalUnitsDelivered.toLocaleString()}</div>
-                            <div className="text-gray-600">Units</div>
+                            <div className="font-semibold text-green-600">{developer.developerProfile?.activeProjects || 0}</div>
+                            <div className="text-gray-600">Active</div>
                           </div>
                         </div>
 
                         <div>
                           <div className="flex justify-between text-sm mb-1">
                             <span>On-Time Delivery</span>
-                            <span className="font-medium">{developer.onTimeDeliveryRate}%</span>
+                            <span className="font-medium">{developer.developerProfile?.deliveryTrackRecord?.onTime || 0}%</span>
                           </div>
-                          <Progress value={developer.onTimeDeliveryRate} className="h-2" />
+                          <Progress value={developer.developerProfile?.deliveryTrackRecord?.onTime || 0} className="h-2" />
                         </div>
 
                         <div className="space-y-1">
                           <div className="text-sm font-medium text-gray-700">Specializations:</div>
                           <div className="flex flex-wrap gap-1">
-                            {developer.specialization.slice(0, 2).map((spec, index) => (
+                            {developer.developerProfile?.specializations?.slice(0, 2).map((spec, index) => (
                               <Badge key={index} variant="secondary" className="text-xs">
                                 {spec}
                               </Badge>
-                            ))}
-                            {developer.specialization.length > 2 && (
+                            )) || []}
+                            {developer.developerProfile?.specializations && developer.developerProfile.specializations.length > 2 && (
                               <Badge variant="secondary" className="text-xs">
-                                +{developer.specialization.length - 2} more
+                                +{developer.developerProfile.specializations.length - 2} more
                               </Badge>
                             )}
                           </div>
@@ -714,18 +602,22 @@ export function DeveloperListing({ onClose, onDeveloperClick }: DeveloperListing
                         <div className="space-y-1">
                           <div className="text-sm font-medium text-gray-700">Credentials:</div>
                           <div className="flex flex-wrap gap-1">
-                            {developer.credentials.slice(0, 2).map((credential, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {credential === "RERA Verified" && <Shield className="h-3 w-3 mr-1" />}
-                                {credential === "Award Winner" && <Award className="h-3 w-3 mr-1" />}
-                                {credential}
+                            {developer.developerProfile?.reraCertified && (
+                              <Badge variant="outline" className="text-xs">
+                                <Shield className="h-3 w-3 mr-1" />
+                                RERA Verified
                               </Badge>
-                            ))}
+                            )}
+                            {developer.developerProfile?.certifications?.map((cert, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {cert}
+                              </Badge>
+                            )) || []}
                           </div>
                         </div>
 
                         <div className="text-xs text-gray-500">
-                          Recent: {developer.recentProjects.slice(0, 2).join(', ')}
+                          Avg ROI: {developer.developerProfile?.avgROI || 0}%
                         </div>
                       </CardContent>
 
