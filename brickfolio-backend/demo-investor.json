@@ -1,0 +1,22 @@
+{
+  "name": "Ravi Kumar",
+  "email": "ravi@example.com",
+  "password": "secure123",
+  "role": "Investor",
+  "phone": "+97150000000",
+  "country": "India",
+  "city": "Mumbai",
+  "onboarding": {
+    "step1_residence": "International Investor",
+    "step2_priorInvestment": "No",
+    "step3_investmentGoal": "Long-term capital growth",
+    "step4_budget": { "min": 500000, "max": 2000000, "currency": "AED" },
+    "step5_offPlan": "Yes",
+    "step6_preferredLocation": ["Dubai Marina", "Downtown Dubai"],
+    "step7_propertyTypes": ["1-Bedroom", "2-Bedroom", "Villas", "Penthouses"],
+    "step8_roiTarget": 8,
+    "step9_rentalYieldTarget": 6,
+    "step10_riskAppetite": "moderate",
+    "step11_investmentHorizon": "long-term"
+  }
+}

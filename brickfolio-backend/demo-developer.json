@@ -1,0 +1,1122 @@
+[
+  {
+    "name": "Nakheel Properties",
+    "email": "info@nakheel.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143903333",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Nakheel Properties",
+      "rating": 4.6,
+      "certifications": ["RERA", "ISO 9001", "Green Building"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Waterfront Developments", "Master-planned Communities", "Luxury Villas"],
+      "projectsCompletedCount": 100,
+      "description": "Nakheel is renowned for waterfront projects like Palm Jumeirah, extending Dubai's coastline significantly.",
+      "location": "Palm Jumeirah, Dubai Islands, Jumeirah Beach Residence",
+      "successRate": 94,
+      "deliveryTrackRecord": {
+        "onTime": 92,
+        "qualityScore": 95,
+        "customerSatisfaction": 4.6
+      },
+      "activeProjects": 20,
+      "avgROI": 8.0,
+      "employeeCount": 1500,
+      "totalProjects": 150,
+      "compliance": {
+        "reraLicense": "RERA-54321",
+        "complianceScore": 95,
+        "lastAudit": "2025-03-10T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Meraas",
+    "email": "info@meraas.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143882000",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Meraas",
+      "rating": 4.8,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Mixed-use Developments", "Lifestyle Destinations", "Hospitality"],
+      "projectsCompletedCount": 50,
+      "description": "Meraas creates integrated lifestyle destinations like City Walk and Bluewaters Island.",
+      "location": "City Walk, Bluewaters Island, Jumeira Bay",
+      "successRate": 96,
+      "deliveryTrackRecord": {
+        "onTime": 94,
+        "qualityScore": 97,
+        "customerSatisfaction": 4.8
+      },
+      "activeProjects": 15,
+      "avgROI": 8.2,
+      "employeeCount": 1000,
+      "totalProjects": 70,
+      "compliance": {
+        "reraLicense": "RERA-98765",
+        "complianceScore": 97,
+        "lastAudit": "2025-04-05T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Dubai Properties",
+    "email": "info@dubaipropertiesgroup.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144363600",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Dubai Properties",
+      "rating": 4.5,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Urban Living Spaces", "Family-friendly Developments"],
+      "projectsCompletedCount": 50,
+      "description": "Dubai Properties offers a wide range of living options in areas like JBR and Business Bay.",
+      "location": "Jumeirah Beach Residence, Business Bay",
+      "successRate": 93,
+      "deliveryTrackRecord": {
+        "onTime": 90,
+        "qualityScore": 94,
+        "customerSatisfaction": 4.5
+      },
+      "activeProjects": 10,
+      "avgROI": 7.5,
+      "employeeCount": 800,
+      "totalProjects": 70,
+      "compliance": {
+        "reraLicense": "RERA-24680",
+        "complianceScore": 94,
+        "lastAudit": "2025-01-25T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Azizi Developments",
+    "email": "info@azizidevelopments.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144512222",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Azizi Developments",
+      "rating": 4.4,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Affordable Luxury Residences", "Commercial Properties"],
+      "projectsCompletedCount": 50,
+      "description": "Azizi Developments focuses on creating innovative and affordable luxury properties.",
+      "location": "Al Furjan, Dubai Healthcare City",
+      "successRate": 92,
+      "deliveryTrackRecord": {
+        "onTime": 88,
+        "qualityScore": 93,
+        "customerSatisfaction": 4.4
+      },
+      "activeProjects": 20,
+      "avgROI": 7.2,
+      "employeeCount": 500,
+      "totalProjects": 70,
+      "compliance": {
+        "reraLicense": "RERA-13579",
+        "complianceScore": 93,
+        "lastAudit": "2025-05-12T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Binghatti Developers",
+    "email": "info@binghatti.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97180024642884",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Binghatti Developers",
+      "rating": 4.5,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Bold Architectural Designs", "Iconic Projects"],
+      "projectsCompletedCount": 50,
+      "description": "Binghatti is known for bold designs and rapid expansion in the UAE real estate market.",
+      "location": "Business Bay, Dubai Silicon Oasis",
+      "successRate": 93,
+      "deliveryTrackRecord": {
+        "onTime": 90,
+        "qualityScore": 94,
+        "customerSatisfaction": 4.5
+      },
+      "activeProjects": 20,
+      "avgROI": 7.6,
+      "employeeCount": 600,
+      "totalProjects": 70,
+      "compliance": {
+        "reraLicense": "RERA-45678",
+        "complianceScore": 94,
+        "lastAudit": "2025-07-18T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Sobha Realty",
+    "email": "info@sobharealty.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144467777",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Sobha Realty",
+      "rating": 4.8,
+      "certifications": ["RERA", "ISO 9001", "Green Mark Platinum"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Luxury Residential", "Sustainable Design"],
+      "projectsCompletedCount": 130,
+      "description": "Sobha Realty is known for uncompromising quality and self-reliant construction.",
+      "location": "Sobha Hartland, Mohammed Bin Rashid City",
+      "successRate": 97,
+      "deliveryTrackRecord": {
+        "onTime": 95,
+        "qualityScore": 98,
+        "customerSatisfaction": 4.8
+      },
+      "activeProjects": 15,
+      "avgROI": 8.0,
+      "employeeCount": 1000,
+      "totalProjects": 150,
+      "compliance": {
+        "reraLicense": "RERA-11223",
+        "complianceScore": 98,
+        "lastAudit": "2025-01-15T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Omniyat",
+    "email": "info@omniyat.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144409666",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Omniyat",
+      "rating": 4.7,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Luxury Developments", "Mixed-use Projects"],
+      "projectsCompletedCount": 20,
+      "description": "Omniyat creates unique, high-end properties with innovative design.",
+      "location": "Business Bay, Downtown Dubai",
+      "successRate": 95,
+      "deliveryTrackRecord": {
+        "onTime": 92,
+        "qualityScore": 96,
+        "customerSatisfaction": 4.7
+      },
+      "activeProjects": 10,
+      "avgROI": 8.1,
+      "employeeCount": 400,
+      "totalProjects": 30,
+      "compliance": {
+        "reraLicense": "RERA-33445",
+        "complianceScore": 96,
+        "lastAudit": "2025-03-22T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Majid Al Futtaim",
+    "email": "info@maf.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97142084000",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Majid Al Futtaim",
+      "rating": 4.6,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Shopping Malls", "Residential Communities", "Hospitality"],
+      "projectsCompletedCount": 100,
+      "description": "Majid Al Futtaim develops integrated lifestyle destinations including malls and communities.",
+      "location": "Mall of the Emirates, Tilal Al Ghaf",
+      "successRate": 94,
+      "deliveryTrackRecord": {
+        "onTime": 91,
+        "qualityScore": 95,
+        "customerSatisfaction": 4.6
+      },
+      "activeProjects": 20,
+      "avgROI": 7.9,
+      "employeeCount": 45000,
+      "totalProjects": 150,
+      "compliance": {
+        "reraLicense": "RERA-77890",
+        "complianceScore": 95,
+        "lastAudit": "2025-02-28T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Danube Properties",
+    "email": "info@danubeproperties.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97148712222",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Danube Properties",
+      "rating": 4.5,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Affordable Luxury Homes", "Residential Towers"],
+      "projectsCompletedCount": 42,
+      "description": "Danube Properties offers affordable luxury with timely deliveries and high-quality finishes.",
+      "location": "Dubai Hills, Dubai Marina",
+      "successRate": 93,
+      "deliveryTrackRecord": {
+        "onTime": 90,
+        "qualityScore": 94,
+        "customerSatisfaction": 4.5
+      },
+      "activeProjects": 28,
+      "avgROI": 7.5,
+      "employeeCount": 500,
+      "totalProjects": 70,
+      "compliance": {
+        "reraLicense": "RERA-22334",
+        "complianceScore": 94,
+        "lastAudit": "2025-06-30T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Ellington Properties",
+    "email": "info@ellingtonproperties.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143473311",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Ellington Properties",
+      "rating": 4.7,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Design-led Residences", "Boutique Developments"],
+      "projectsCompletedCount": 20,
+      "description": "Ellington creates art-inspired homes with focus on quality and sophistication.",
+      "location": "Downtown Dubai, Palm Jumeirah",
+      "successRate": 95,
+      "deliveryTrackRecord": {
+        "onTime": 92,
+        "qualityScore": 96,
+        "customerSatisfaction": 4.7
+      },
+      "activeProjects": 10,
+      "avgROI": 8.0,
+      "employeeCount": 200,
+      "totalProjects": 30,
+      "compliance": {
+        "reraLicense": "RERA-44556",
+        "complianceScore": 96,
+        "lastAudit": "2025-04-10T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Select Group",
+    "email": "info@selectgroup.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143683355",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Select Group",
+      "rating": 4.6,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Luxury Waterfront Residences", "Commercial Developments"],
+      "projectsCompletedCount": 20,
+      "description": "Select Group delivers premium properties with a focus on quality and innovation.",
+      "location": "Dubai Marina, Business Bay",
+      "successRate": 94,
+      "deliveryTrackRecord": {
+        "onTime": 91,
+        "qualityScore": 95,
+        "customerSatisfaction": 4.6
+      },
+      "activeProjects": 10,
+      "avgROI": 7.8,
+      "employeeCount": 300,
+      "totalProjects": 30,
+      "compliance": {
+        "reraLicense": "RERA-66778",
+        "complianceScore": 95,
+        "lastAudit": "2025-05-15T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Aldar Properties",
+    "email": "info@aldar.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97128047600",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Aldar Properties",
+      "rating": 4.7,
+      "certifications": ["RERA", "ISO 9001", "Green Building"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Master-planned Communities", "Luxury Residences"],
+      "projectsCompletedCount": 50,
+      "description": "Aldar is a leading developer in Abu Dhabi with presence in Dubai, known for sustainable communities.",
+      "location": "Yas Island, Saadiyat Island",
+      "successRate": 95,
+      "deliveryTrackRecord": {
+        "onTime": 92,
+        "qualityScore": 96,
+        "customerSatisfaction": 4.7
+      },
+      "activeProjects": 15,
+      "avgROI": 8.0,
+      "employeeCount": 1000,
+      "totalProjects": 70,
+      "compliance": {
+        "reraLicense": "RERA-88990",
+        "complianceScore": 96,
+        "lastAudit": "2025-03-30T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Deyaar",
+    "email": "info@deyaar.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144441111",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Deyaar",
+      "rating": 4.4,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Residential Towers", "Commercial Properties"],
+      "projectsCompletedCount": 30,
+      "description": "Deyaar is a leading developer with a focus on quality and innovation in Dubai.",
+      "location": "Business Bay, Dubai Marina",
+      "successRate": 92,
+      "deliveryTrackRecord": {
+        "onTime": 89,
+        "qualityScore": 93,
+        "customerSatisfaction": 4.4
+      },
+      "activeProjects": 10,
+      "avgROI": 7.3,
+      "employeeCount": 400,
+      "totalProjects": 40,
+      "compliance": {
+        "reraLicense": "RERA-00112",
+        "complianceScore": 93,
+        "lastAudit": "2025-02-15T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Iman Developers",
+    "email": "info@imandevelopers.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144555555",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Iman Developers",
+      "rating": 4.3,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Residential Developments", "Community Projects"],
+      "projectsCompletedCount": 10,
+      "description": "Iman Developers creates ambitious residential projects with timely deliveries.",
+      "location": "Jumeirah Village Circle, Arjan",
+      "successRate": 90,
+      "deliveryTrackRecord": {
+        "onTime": 85,
+        "qualityScore": 92,
+        "customerSatisfaction": 4.3
+      },
+      "activeProjects": 6,
+      "avgROI": 7.0,
+      "employeeCount": 200,
+      "totalProjects": 16,
+      "compliance": {
+        "reraLicense": "RERA-33456",
+        "complianceScore": 92,
+        "lastAudit": "2025-04-20T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "MAG",
+    "email": "info@mag.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144100000",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "MAG",
+      "rating": 4.5,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Affordable Housing", "Luxury Developments", "Wellness-focused Projects"],
+      "projectsCompletedCount": 40,
+      "description": "MAG develops innovative projects focusing on wellness and affordability.",
+      "location": "Meydan, Business Bay",
+      "successRate": 93,
+      "deliveryTrackRecord": {
+        "onTime": 90,
+        "qualityScore": 94,
+        "customerSatisfaction": 4.5
+      },
+      "activeProjects": 15,
+      "avgROI": 7.4,
+      "employeeCount": 500,
+      "totalProjects": 55,
+      "compliance": {
+        "reraLicense": "RERA-55678",
+        "complianceScore": 94,
+        "lastAudit": "2025-05-25T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Reportage Properties",
+    "email": "info@reportageuae.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97126730100",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Reportage Properties",
+      "rating": 4.4,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Affordable Modern Homes", "Residential Units"],
+      "projectsCompletedCount": 11,
+      "description": "Reportage offers affordable, modern design homes with timely deliveries.",
+      "location": "Masdar City, Al Raha Beach",
+      "successRate": 92,
+      "deliveryTrackRecord": {
+        "onTime": 88,
+        "qualityScore": 93,
+        "customerSatisfaction": 4.4
+      },
+      "activeProjects": 10,
+      "avgROI": 7.2,
+      "employeeCount": 300,
+      "totalProjects": 21,
+      "compliance": {
+        "reraLicense": "RERA-77899",
+        "complianceScore": 93,
+        "lastAudit": "2025-06-10T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Union Properties",
+    "email": "info@up.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143333000",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Union Properties",
+      "rating": 4.3,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Residential and Commercial Developments"],
+      "projectsCompletedCount": 200,
+      "description": "Union Properties has a long history of developing diverse projects in Dubai.",
+      "location": "Dubai Motor City, Dubai Silicon Oasis",
+      "successRate": 90,
+      "deliveryTrackRecord": {
+        "onTime": 85,
+        "qualityScore": 92,
+        "customerSatisfaction": 4.3
+      },
+      "activeProjects": 10,
+      "avgROI": 7.0,
+      "employeeCount": 500,
+      "totalProjects": 210,
+      "compliance": {
+        "reraLicense": "RERA-99001",
+        "complianceScore": 92,
+        "lastAudit": "2025-01-30T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Tiger Group",
+    "email": "info@tigergroup.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143961111",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Tiger Group",
+      "rating": 4.2,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Diverse Real Estate Projects", "Hospitality"],
+      "projectsCompletedCount": 270,
+      "description": "Tiger Group has a vast portfolio including residential, commercial, and hospitality projects.",
+      "location": "Sharjah, Dubai",
+      "successRate": 89,
+      "deliveryTrackRecord": {
+        "onTime": 84,
+        "qualityScore": 91,
+        "customerSatisfaction": 4.2
+      },
+      "activeProjects": 20,
+      "avgROI": 6.8,
+      "employeeCount": 8000,
+      "totalProjects": 290,
+      "compliance": {
+        "reraLicense": "RERA-11234",
+        "complianceScore": 91,
+        "lastAudit": "2025-07-05T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "The First Group",
+    "email": "info@thefirstgroup.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143683333",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "The First Group",
+      "rating": 4.4,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Hospitality Properties", "Investment Opportunities"],
+      "projectsCompletedCount": 10,
+      "description": "The First Group focuses on hospitality real estate with investment opportunities.",
+      "location": "Dubai Marina, Business Bay",
+      "successRate": 92,
+      "deliveryTrackRecord": {
+        "onTime": 88,
+        "qualityScore": 93,
+        "customerSatisfaction": 4.4
+      },
+      "activeProjects": 7,
+      "avgROI": 7.2,
+      "employeeCount": 500,
+      "totalProjects": 17,
+      "compliance": {
+        "reraLicense": "RERA-33456",
+        "complianceScore": 93,
+        "lastAudit": "2025-03-15T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Al Barari",
+    "email": "info@albarari.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143682222",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Al Barari",
+      "rating": 4.6,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Eco-friendly Communities", "Luxury Villas"],
+      "projectsCompletedCount": 20,
+      "description": "Al Barari creates sustainable, nature-inspired luxury communities.",
+      "location": "Al Barari, Dubai",
+      "successRate": 94,
+      "deliveryTrackRecord": {
+        "onTime": 91,
+        "qualityScore": 95,
+        "customerSatisfaction": 4.6
+      },
+      "activeProjects": 5,
+      "avgROI": 7.7,
+      "employeeCount": 300,
+      "totalProjects": 25,
+      "compliance": {
+        "reraLicense": "RERA-55678",
+        "complianceScore": 95,
+        "lastAudit": "2025-04-25T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Meydan",
+    "email": "info@meydan.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143270000",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Meydan",
+      "rating": 4.5,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Master-planned Communities", "Hospitality"],
+      "projectsCompletedCount": 20,
+      "description": "Meydan develops integrated destinations including racecourses and residential areas.",
+      "location": "Meydan, Dubai",
+      "successRate": 93,
+      "deliveryTrackRecord": {
+        "onTime": 90,
+        "qualityScore": 94,
+        "customerSatisfaction": 4.5
+      },
+      "activeProjects": 10,
+      "avgROI": 7.5,
+      "employeeCount": 500,
+      "totalProjects": 30,
+      "compliance": {
+        "reraLicense": "RERA-77890",
+        "complianceScore": 94,
+        "lastAudit": "2025-05-20T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Tebyan",
+    "email": "info@tebyan.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144455555",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Tebyan",
+      "rating": 4.3,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Residential and Commercial Projects"],
+      "projectsCompletedCount": 10,
+      "description": "Tebyan develops unique projects in hospitality and residential sectors.",
+      "location": "Dubai Maritime City",
+      "successRate": 90,
+      "deliveryTrackRecord": {
+        "onTime": 85,
+        "qualityScore": 92,
+        "customerSatisfaction": 4.3
+      },
+      "activeProjects": 5,
+      "avgROI": 7.0,
+      "employeeCount": 200,
+      "totalProjects": 15,
+      "compliance": {
+        "reraLicense": "RERA-99001",
+        "complianceScore": 92,
+        "lastAudit": "2025-06-15T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Seven Tides",
+    "email": "info@seventides.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144440700",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Seven Tides",
+      "rating": 4.4,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Luxury Properties", "Hospitality Developments"],
+      "projectsCompletedCount": 10,
+      "description": "Seven Tides develops luxury properties in coveted locations.",
+      "location": "Palm Jumeirah, Dubai Marina",
+      "successRate": 92,
+      "deliveryTrackRecord": {
+        "onTime": 88,
+        "qualityScore": 93,
+        "customerSatisfaction": 4.4
+      },
+      "activeProjects": 5,
+      "avgROI": 7.2,
+      "employeeCount": 200,
+      "totalProjects": 15,
+      "compliance": {
+        "reraLicense": "RERA-11223",
+        "complianceScore": 93,
+        "lastAudit": "2025-02-10T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Palma Holding",
+    "email": "info@palmaholding.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97143958888",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Palma Holding",
+      "rating": 4.5,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Boutique Properties", "Premium Developments"],
+      "projectsCompletedCount": 20,
+      "description": "Palma Holding develops boutique properties in premium districts.",
+      "location": "Dubai Marina, Infinity Tower",
+      "successRate": 93,
+      "deliveryTrackRecord": {
+        "onTime": 90,
+        "qualityScore": 94,
+        "customerSatisfaction": 4.5
+      },
+      "activeProjects": 5,
+      "avgROI": 7.5,
+      "employeeCount": 100,
+      "totalProjects": 25,
+      "compliance": {
+        "reraLicense": "RERA-33445",
+        "complianceScore": 94,
+        "lastAudit": "2025-03-05T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "LIV Developers",
+    "email": "info@livdevelopers.com",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144444444",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "LIV Developers",
+      "rating": 4.6,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Luxury Waterfront Properties"],
+      "projectsCompletedCount": 5,
+      "description": "LIV Developers focuses on luxury waterfront living experiences.",
+      "location": "Dubai Marina, Palm Jumeirah",
+      "successRate": 94,
+      "deliveryTrackRecord": {
+        "onTime": 91,
+        "qualityScore": 95,
+        "customerSatisfaction": 4.6
+      },
+      "activeProjects": 5,
+      "avgROI": 7.8,
+      "employeeCount": 200,
+      "totalProjects": 10,
+      "compliance": {
+        "reraLicense": "RERA-55678",
+        "complianceScore": 95,
+        "lastAudit": "2025-04-15T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "H&H Development",
+    "email": "info@h-h.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144448888",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "H&H Development",
+      "rating": 4.7,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Hospitality", "Residential Projects"],
+      "projectsCompletedCount": 10,
+      "description": "H&H Development offers integrated real estate services including development and management.",
+      "location": "Jumeirah, Downtown Dubai",
+      "successRate": 95,
+      "deliveryTrackRecord": {
+        "onTime": 92,
+        "qualityScore": 96,
+        "customerSatisfaction": 4.7
+      },
+      "activeProjects": 5,
+      "avgROI": 8.0,
+      "employeeCount": 300,
+      "totalProjects": 15,
+      "compliance": {
+        "reraLicense": "RERA-77890",
+        "complianceScore": 96,
+        "lastAudit": "2025-05-10T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Imtiaz Developments",
+    "email": "info@imtiaz.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97144446666",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Imtiaz Developments",
+      "rating": 4.5,
+      "certifications": ["RERA"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Residential and Commercial Developments"],
+      "projectsCompletedCount": 40,
+      "description": "Imtiaz Developments crafts premium properties with focus on innovation and quality.",
+      "location": "Jumeirah Village Circle, Dubai Islands",
+      "successRate": 93,
+      "deliveryTrackRecord": {
+        "onTime": 90,
+        "qualityScore": 94,
+        "customerSatisfaction": 4.5
+      },
+      "activeProjects": 41,
+      "avgROI": 7.5,
+      "employeeCount": 200,
+      "totalProjects": 81,
+      "compliance": {
+        "reraLicense": "RERA-99001",
+        "complianceScore": 94,
+        "lastAudit": "2025-03-25T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  },
+  {
+    "name": "Wasl Asset Management Group",
+    "email": "info@wasl.ae",
+    "password": "securePass123",
+    "role": "Developer",
+    "phone": "+97148007777",
+    "country": "UAE",
+    "city": "Dubai",
+    "developerProfile": {
+      "companyName": "Wasl Asset Management Group",
+      "rating": 4.6,
+      "certifications": ["RERA", "ISO 9001"],
+      "reraCertified": true,
+      "projects": [],
+      "specializations": ["Residential", "Commercial", "Hospitality Properties"],
+      "projectsCompletedCount": 50,
+      "description": "Wasl manages a vast portfolio of properties and develops new communities.",
+      "location": "Jumeirah, Deira",
+      "successRate": 94,
+      "deliveryTrackRecord": {
+        "onTime": 91,
+        "qualityScore": 95,
+        "customerSatisfaction": 4.6
+      },
+      "activeProjects": 20,
+      "avgROI": 7.7,
+      "employeeCount": 1000,
+      "totalProjects": 70,
+      "compliance": {
+        "reraLicense": "RERA-11223",
+        "complianceScore": 95,
+        "lastAudit": "2025-04-30T00:00:00.000Z"
+      },
+      "legalStanding": {
+        "clientLegal": "Clear",
+        "escrow": "Active",
+        "insurance": "Valid"
+      }
+    }
+  }
+]
