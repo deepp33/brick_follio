@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
 import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
@@ -14,18 +13,23 @@ import { CalculatorTools } from '../components/CalculatorTools';
 import { Footer } from '../components/Footer';
 import { QuestionnaireModal } from '../components/QuestionnaireModal';
 import { QuestionnaireCountdown } from '../components/QuestionnaireCountdown';
+import { AuthRedirectBanner } from '../components';
 
 export default function Home() {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
-  const [hasShownQuestionnaire, setHasShownQuestionnaire] = useState(false);
+  const [showOnboardingRedirect, setShowOnboardingRedirect] = useState(false);
+  const [onboardingCountdown, setOnboardingCountdown] = useState(30);
+
+  // Check if user has auth token (logged in user)
+  const authToken = localStorage.getItem('authToken');
+  const isAuthenticated = !!authToken;
 
   // Check if user has already seen the questionnaire in this session
   useEffect(() => {
     const hasSeenQuestionnaire = sessionStorage.getItem('hasSeenQuestionnaire');
-    if (!hasSeenQuestionnaire) {
+    if (!hasSeenQuestionnaire && !isAuthenticated) {
       // Show countdown immediately
       setShowCountdown(true);
       
@@ -33,13 +37,41 @@ export default function Home() {
       const timer = setTimeout(() => {
         setShowQuestionnaire(true);
         setShowCountdown(false);
-        setHasShownQuestionnaire(true);
         sessionStorage.setItem('hasSeenQuestionnaire', 'true');
       }, 30000); // 30 seconds
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isAuthenticated]);
+
+  // Check for new users without auth token and redirect to onboarding (ONLY on home page)
+  useEffect(() => {
+    // Only show countdown on Home page and for unauthenticated users
+    if (!isAuthenticated && window.location.pathname === '/') {
+      // Check if user has already been redirected in this session
+      const hasBeenRedirected = sessionStorage.getItem('hasBeenRedirectedToOnboarding');
+      
+      if (!hasBeenRedirected) {
+        // Show onboarding redirect countdown
+        setShowOnboardingRedirect(true);
+        
+        // Start countdown for onboarding redirect
+        const countdownInterval = setInterval(() => {
+          setOnboardingCountdown((prev) => {
+            if (prev <= 1) {
+              // Redirect to onboarding after 30 seconds
+              sessionStorage.setItem('hasBeenRedirectedToOnboarding', 'true');
+              navigate('/onboarding');
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+
+        return () => clearInterval(countdownInterval);
+      }
+    }
+  }, [isAuthenticated, navigate]);
 
   // Use page-specific auth redirect with configuration
   const homeConfig = getPageConfig('HOME');
@@ -105,6 +137,17 @@ export default function Home() {
     sessionStorage.setItem('hasSeenQuestionnaire', 'true');
   };
 
+  const handleOnboardingRedirectSkip = () => {
+    setShowOnboardingRedirect(false);
+    sessionStorage.setItem('hasBeenRedirectedToOnboarding', 'true');
+  };
+
+  const handleOnboardingRedirectNow = () => {
+    setShowOnboardingRedirect(false);
+    sessionStorage.setItem('hasBeenRedirectedToOnboarding', 'true');
+    navigate('/onboarding');
+  };
+
   return (
     <Layout>
       <HeroSection onGetStartedClick={handleGetStarted} />
@@ -115,6 +158,42 @@ export default function Home() {
       <CalculatorTools />
       <ReviewsSection />
       <Footer />
+      <AuthRedirectBanner
+        redirectDelay={30000}
+        redirectPath="/onboarding"
+        enabled={true}
+        showCountdown={true}
+      />
+      {/* Onboarding Redirect Countdown */}
+      {showOnboardingRedirect && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4 text-center">
+            <div className="text-2xl font-bold text-blue-600 mb-4">
+              Welcome to DubaiInvest Pro!
+            </div>
+            <div className="text-gray-600 mb-4">
+              We noticed you're new here. Let's get you started with a personalized experience.
+            </div>
+            <div className="text-lg font-semibold text-gray-800 mb-6">
+              Redirecting to setup in {onboardingCountdown} seconds...
+            </div>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleOnboardingRedirectSkip}
+                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Skip for now
+              </button>
+              <button
+                onClick={handleOnboardingRedirectNow}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Start Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Questionnaire Countdown */}
       {showCountdown && (

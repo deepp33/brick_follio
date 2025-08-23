@@ -5,6 +5,8 @@ import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
 import { DeveloperProfile as DeveloperProfileComponent } from '../components/DeveloperProfile';
 import { PageLoader } from '../components/ui/loader';
+import { getDevelopers } from '../features/users/usersSlice';
+import { useEffect } from 'react';
 
 export default function DeveloperProfile() {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +19,13 @@ export default function DeveloperProfile() {
     pageName: 'Developer Profile Page'
   });
 
-  const { developers, loading, error } = useAppSelector((state) => state.developers);
+  const { developers, loading, error } = useAppSelector((state) => state.users);
+
+  // Fetch developers when component mounts
+  useEffect(() => {
+    dispatch(getDevelopers());
+  }, []);
+
   const developer = developers.find(dev => dev._id === id);
 
   if (loading) {
@@ -68,7 +76,10 @@ export default function DeveloperProfile() {
 
   return (
     <Layout>
-      <DeveloperProfileComponent developer={developer} />
+      <DeveloperProfileComponent 
+        developerId={id!} 
+        onClose={() => window.history.back()} 
+      />
     </Layout>
   );
 }

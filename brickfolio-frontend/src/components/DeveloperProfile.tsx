@@ -322,14 +322,18 @@ const mockDeveloperData: Record<number, DeveloperData> = {
 
 export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps) {
   const dispatch = useAppDispatch();
-  const { selectedDeveloper, loading, error } = useAppSelector((state) => state.users);
+  const { selectedDeveloper, loading, error, developers } = useAppSelector((state) => state.users);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
+  // Check if developer is already in the developers list
+  const existingDeveloper = developers.find(dev => dev._id === developerId);
+
   useEffect(() => {
-    if (developerId) {
+    if (developerId && !existingDeveloper) {
+      // Only make API call if developer is not already in the store
       dispatch(getDeveloperProfile(developerId));
     }
-  }, [dispatch, developerId]);
+  }, [developerId, dispatch, existingDeveloper]);
 
   // Show loading state
   if (loading) {
@@ -343,8 +347,11 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
     );
   }
 
+  // Use existing developer data if available, otherwise use selectedDeveloper
+  const developerData = existingDeveloper || selectedDeveloper;
+
   // Show error state
-  if (error || !selectedDeveloper) {
+  if (error || !developerData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -370,32 +377,32 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
 
   // Transform API data to match component expectations
   const developer = {
-    id: selectedDeveloper._id,
-    name: selectedDeveloper.name,
-    logo: selectedDeveloper.name.charAt(0).toUpperCase(),
-    bgColor: getDeveloperBgColor(selectedDeveloper.name),
-    rating: selectedDeveloper.developerProfile?.rating || 4.5,
-    projects: selectedDeveloper.developerProfile?.totalProjects || 0,
-    deliveryRate: selectedDeveloper.developerProfile?.deliveryTrackRecord?.onTime || 90,
-    credentials: selectedDeveloper.developerProfile?.certifications || [],
+    id: developerData._id,
+    name: developerData.name,
+    logo: developerData.name.charAt(0).toUpperCase(),
+    bgColor: getDeveloperBgColor(developerData.name),
+    rating: developerData.developerProfile?.rating || 4.5,
+    projects: developerData.developerProfile?.totalProjects || 0,
+    deliveryRate: developerData.developerProfile?.deliveryTrackRecord?.onTime || 90,
+    credentials: developerData.developerProfile?.certifications || [],
     recentProject: "Latest Project", // Would come from projects API
     established: 2000, // Would come from developer profile
-    totalDelivered: selectedDeveloper.developerProfile?.projectsCompletedCount || 0,
+    totalDelivered: developerData.developerProfile?.projectsCompletedCount || 0,
     marketCap: "N/A", // Would come from financial data
-    description: selectedDeveloper.developerProfile?.description || `${selectedDeveloper.name} is a leading real estate developer in Dubai with a strong track record of delivering quality projects.`,
+    description: developerData.developerProfile?.description || `${developerData.name} is a leading real estate developer in Dubai with a strong track record of delivering quality projects.`,
     contactInfo: {
-      phone: selectedDeveloper.phone || "+971 4 XXX XXXX",
-      email: selectedDeveloper.email || "info@example.com",
+      phone: developerData.phone || "+971 4 XXX XXXX",
+      email: developerData.email || "info@example.com",
       website: "www.example.com", // Would come from developer profile
-      address: selectedDeveloper.developerProfile?.location || "Dubai, UAE"
+      address: developerData.developerProfile?.location || "Dubai, UAE"
     },
     legalStatus: {
-      reraLicense: selectedDeveloper.developerProfile?.compliance?.reraLicense || "RERA-DEV-XXX",
+      reraLicense: developerData.developerProfile?.compliance?.reraLicense || "RERA-DEV-XXX",
       disputes: 0, // Would come from legal data
-      lastAudit: selectedDeveloper.developerProfile?.compliance?.lastAudit || "Recent",
-      complianceScore: selectedDeveloper.developerProfile?.compliance?.complianceScore || 90
+      lastAudit: developerData.developerProfile?.compliance?.lastAudit || "Recent",
+      complianceScore: developerData.developerProfile?.compliance?.complianceScore || 90
     },
-    projects: selectedDeveloper.developerProfile?.projects?.map((project: any, index: number) => ({
+    projects: developerData.developerProfile?.projects?.map((project: any, index: number) => ({
       id: project._id || index,
       name: project.projectName,
       location: project.location,

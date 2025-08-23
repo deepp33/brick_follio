@@ -2,8 +2,10 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
 import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
-import { DevelopersList } from '../components/DevelopersList';
+import { DeveloperListing } from '../components/DeveloperListing';
 import { PageLoader } from '../components/ui/loader';
+import { getDevelopers } from '../features/users/usersSlice';
+import { useEffect } from 'react';
 
 export default function Developers() {
   const dispatch = useAppDispatch();
@@ -15,7 +17,14 @@ export default function Developers() {
     pageName: 'Developers Page'
   });
 
-  const { developers, loading, error } = useAppSelector((state) => state.developers);
+  const { developers, loading, error } = useAppSelector((state) => state.users);
+
+  // Fetch developers when component mounts
+  useEffect(() => {
+    if (developers.length === 0) {
+      dispatch(getDevelopers());
+    }
+  }, [dispatch, developers.length]);
 
   if (loading) {
     return (
@@ -46,7 +55,13 @@ export default function Developers() {
 
   return (
     <Layout>
-      <DevelopersList developers={developers} />
+      <DeveloperListing 
+        onClose={() => window.history.back()} 
+        onDeveloperClick={(developer) => {
+          // Navigate to developer profile
+          window.location.href = `/developer/${developer._id}`;
+        }} 
+      />
     </Layout>
   );
 }
