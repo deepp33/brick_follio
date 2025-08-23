@@ -1,10 +1,12 @@
 import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
 import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
 import { DeveloperProfile as DeveloperProfileComponent } from '../components/DeveloperProfile';
 import { PageLoader } from '../components/ui/loader';
+import { getDeveloperProfile } from '../features/users/usersSlice';
 
 export default function DeveloperProfile() {
   const { id } = useParams<{ id: string }>();
@@ -17,8 +19,18 @@ export default function DeveloperProfile() {
     pageName: 'Developer Profile Page'
   });
 
-  const { developers, loading, error } = useAppSelector((state) => state.developers);
-  const developer = developers.find(dev => dev._id === id);
+  // Access developers from the users slice
+  const { developers, selectedDeveloper, loading, error } = useAppSelector((state) => state.users);
+  
+  // Try to find developer in the developers array first, then use selectedDeveloper
+  const developer = developers.find(dev => dev._id === id) || selectedDeveloper;
+
+  // Fetch developer profile if not found in current state
+  useEffect(() => {
+    if (id && !developer) {
+      dispatch(getDeveloperProfile(id));
+    }
+  }, [id, developer, dispatch]);
 
   if (loading) {
     return (

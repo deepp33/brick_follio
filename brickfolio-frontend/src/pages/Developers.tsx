@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
 import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
-import { DevelopersList } from '../components/DevelopersList';
+import { DeveloperListing } from '../components/DeveloperListing';
 import { PageLoader } from '../components/ui/loader';
+import { getDevelopers } from '../features/users/usersSlice';
 
 export default function Developers() {
   const dispatch = useAppDispatch();
@@ -15,7 +17,15 @@ export default function Developers() {
     pageName: 'Developers Page'
   });
 
-  const { developers, loading, error } = useAppSelector((state) => state.developers);
+  // Access developers from the users slice
+  const { developers, loading, error } = useAppSelector((state) => state.users);
+
+  // Fetch developers if not already loaded
+  useEffect(() => {
+    if (developers.length === 0) {
+      dispatch(getDevelopers());
+    }
+  }, [developers.length, dispatch]);
 
   if (loading) {
     return (
@@ -46,7 +56,7 @@ export default function Developers() {
 
   return (
     <Layout>
-      <DevelopersList developers={developers} />
+      <DeveloperListing developers={developers} />
     </Layout>
   );
 }
