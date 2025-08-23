@@ -31,3 +31,4 @@ node_modules/
 .gemini/
 .taskmaster/
 .claude/
+./brickfolio-frontend/node_modules
