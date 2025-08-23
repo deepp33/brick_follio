@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
+import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
 import { HeroSection } from '../components/HeroSection';
 import { FeaturedProjects } from '../components/FeaturedProjects';
@@ -38,6 +40,13 @@ export default function Home() {
       return () => clearTimeout(timer);
     }
   }, []);
+
+  // Use page-specific auth redirect with configuration
+  const homeConfig = getPageConfig('HOME');
+  usePageAuthRedirect({
+    ...homeConfig,
+    pageName: 'Home Page'
+  });
 
   const handleViewAllProjects = () => {
     // Navigate to projects page
@@ -99,10 +108,10 @@ export default function Home() {
   return (
     <Layout>
       <HeroSection onGetStartedClick={handleGetStarted} />
+      <TopDevelopers onViewAllClick={handleViewAllDevelopers} onDeveloperClick={handleDeveloperClick} />
       <FeaturedProjects onViewAllClick={handleViewAllProjects} />
       <MarketInsights />
       <NewsSection />
-      <TopDevelopers onViewAllClick={handleViewAllDevelopers} onDeveloperClick={handleDeveloperClick} />
       <CalculatorTools />
       <ReviewsSection />
       <Footer />

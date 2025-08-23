@@ -1,14 +1,96 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 
-// Types
-export interface MarketData {
-  _id: string;
-  // Add specific market data fields based on your backend response
-  [key: string]: any;
+// Market Data Interfaces
+export interface MarketMetrics {
+  averageROI: string;
+  yearlyROIChange: string;
+  priceGrowth: string;
+  priceYoYChange: string;
+  rentalYield: string;
+  rentalYieldChange: string;
+  marketVolume: string;
+  totalTransactionVolumeChange: string;
 }
 
-export interface MarketTrendsFilters {
+export interface TopPerformingArea {
+  area: string;
+  growth: string;
+}
+
+export interface InvestmentTrend {
+  type: string;
+  percentage: string;
+}
+
+export interface MarketData {
+  metrics: MarketMetrics;
+  topPerformingAreas: TopPerformingArea[];
+  investmentTrends: InvestmentTrend[];
+  reportLink: string;
+}
+
+// Market Filters Interfaces
+export interface MarketFilters {
+  timeHorizon: {
+    options: string[];
+  };
+  regions: string[];
+  propertyTypes: string[];
+  roiRange: {
+    min: number;
+    max: number;
+    selectedMin: number;
+    selectedMax: number;
+  };
+  rentalYieldRange: {
+    min: number;
+    max: number;
+    selectedMin: number;
+    selectedMax: number;
+  };
+  priceGrowthRange: {
+    min: number;
+    max: number;
+    selectedMin: number;
+    selectedMax: number;
+  };
+}
+
+// Market Trends Interfaces
+export interface RoiTrendOption {
+  location: string;
+  roi: string[];
+}
+
+export interface RoiTrendsByArea {
+  options: RoiTrendOption[];
+  months: string[];
+}
+
+export interface RentalYieldByArea {
+  location: string;
+  rentalYield: string;
+  properties: number;
+}
+
+export interface TransactionVolumes {
+  options: string[];
+  Month: {
+    [key: string]: {
+      [key: string]: number;
+    };
+  };
+}
+
+export interface MarketTrends {
+  roiTrendsByArea: RoiTrendsByArea;
+  rentalYieldByArea: RentalYieldByArea[];
+  transactionVolumes: TransactionVolumes;
+}
+
+// Filter Payload Interface
+export interface MarketTrendsFilterPayload {
   timeHorizon: string;
   regions: string[];
   propertyTypes: string[];
@@ -26,53 +108,31 @@ export interface MarketTrendsFilters {
   };
 }
 
-export interface MarketFilters {
-  regions: string[];
-  propertyTypes: string[];
-  priceRanges: string[];
-  roiRanges: string[];
-  rentalYieldRanges: string[];
-}
-
+// State Interface
 interface MarketState {
   marketData: MarketData | null;
-  marketTrends: any[];
   marketFilters: MarketFilters | null;
-  marketOverview: any | null;
+  marketTrends: MarketTrends | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: MarketState = {
   marketData: null,
-  marketTrends: [],
   marketFilters: null,
-  marketOverview: null,
+  marketTrends: null,
   loading: false,
   error: null,
 };
 
-// Async thunks
+// Async Thunks
 export const getMarketData = createAsyncThunk(
   'market/getMarketData',
   async () => {
     const response = await api.get('/market');
-    return response.data;
-  }
-);
-
-export const getMarketOverview = createAsyncThunk(
-  'market/getMarketOverview',
-  async () => {
-    const response = await api.get('/market-overview');
-    return response.data;
-  }
-);
-
-export const getMarketTrends = createAsyncThunk(
-  'market/getMarketTrends',
-  async (filters: MarketTrendsFilters) => {
-    const response = await api.post('/market/trends', filters);
+    if (response.data && response.data.success && response.data.data) {
+      return response.data.data;
+    }
     return response.data;
   }
 );
@@ -81,6 +141,20 @@ export const getMarketFilters = createAsyncThunk(
   'market/getMarketFilters',
   async () => {
     const response = await api.get('/market/filters');
+    if (response.data && response.data.success && response.data.filters) {
+      return response.data.filters;
+    }
+    return response.data;
+  }
+);
+
+export const getMarketTrends = createAsyncThunk(
+  'market/getMarketTrends',
+  async (filterPayload: MarketTrendsFilterPayload) => {
+    const response = await api.post('/market/trends', filterPayload);
+    if (response.data && response.data.success && response.data.trends) {
+      return response.data.trends;
+    }
     return response.data;
   }
 );
@@ -89,26 +163,16 @@ const marketSlice = createSlice({
   name: 'market',
   initialState,
   reducers: {
-    clearError: (state) => {
-      state.error = null;
-    },
     clearMarketData: (state) => {
       state.marketData = null;
-    },
-    clearMarketTrends: (state) => {
-      state.marketTrends = [];
-    },
-    setMarketFilters: (state, action) => {
-      state.marketFilters = action.payload;
-    },
-    updateMarketTrendsFilters: (state, action) => {
-      // This can be used to update filters without making an API call
-      // The actual API call should be made in the component
+      state.marketFilters = null;
+      state.marketTrends = null;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
+    // getMarketData
     builder
-      // Get Market Data
       .addCase(getMarketData.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -120,34 +184,10 @@ const marketSlice = createSlice({
       .addCase(getMarketData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch market data';
-      })
-      // Get Market Overview
-      .addCase(getMarketOverview.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getMarketOverview.fulfilled, (state, action) => {
-        state.loading = false;
-        state.marketOverview = action.payload;
-      })
-      .addCase(getMarketOverview.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'Failed to fetch market overview';
-      })
-      // Get Market Trends
-      .addCase(getMarketTrends.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getMarketTrends.fulfilled, (state, action) => {
-        state.loading = false;
-        state.marketTrends = action.payload;
-      })
-      .addCase(getMarketTrends.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'Failed to fetch market trends';
-      })
-      // Get Market Filters
+      });
+
+    // getMarketFilters
+    builder
       .addCase(getMarketFilters.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -160,16 +200,24 @@ const marketSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch market filters';
       });
+
+    // getMarketTrends
+    builder
+      .addCase(getMarketTrends.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMarketTrends.fulfilled, (state, action) => {
+        state.loading = false;
+        state.marketTrends = action.payload;
+      })
+      .addCase(getMarketTrends.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch market trends';
+      });
   },
 });
 
-export const {
-  clearError,
-  clearMarketData,
-  clearMarketTrends,
-  setMarketFilters,
-  updateMarketTrendsFilters,
-} = marketSlice.actions;
-
+export const { clearMarketData } = marketSlice.actions;
 export default marketSlice.reducer;
 
