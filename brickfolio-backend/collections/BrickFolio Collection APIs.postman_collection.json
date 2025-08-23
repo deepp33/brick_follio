@@ -528,28 +528,6 @@
 			]
 		},
 		{
-			"name": "MARKET & ANALYTICS",
-			"item": [
-				{
-					"name": "CREATE",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{BRICK_FOLIO_URL}}/market",
-							"host": [
-								"{{BRICK_FOLIO_URL}}"
-							],
-							"path": [
-								"market"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "NEWS",
 			"item": [
 				{
@@ -665,7 +643,7 @@
 			]
 		},
 		{
-			"name": "MARKET",
+			"name": "MARKET & ANALYTICS",
 			"item": [
 				{
 					"name": "GET MARKET DETAILS",
@@ -742,6 +720,38 @@
 							"path": [
 								"market",
 								"filters"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "USER LOGIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"ravi@example.com\",\r\n  \"password\": \"secure123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BRICK_FOLIO_URL}}/auth/login",
+							"host": [
+								"{{BRICK_FOLIO_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
 							]
 						}
 					},
