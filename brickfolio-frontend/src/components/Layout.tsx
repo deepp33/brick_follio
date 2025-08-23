@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 
@@ -19,6 +19,8 @@ export function Layout({
   onMapViewClick
 }: LayoutProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMapPage = location.pathname === '/map';
 
   const defaultOnSignUpClick = () => {
     navigate('/onboarding');
@@ -33,7 +35,7 @@ export function Layout({
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className={`min-h-screen bg-background flex flex-col ${isMapPage ? 'h-screen' : ''}`}>
       {/* Fixed Header */}
       <Header 
         onSignUpClick={onSignUpClick || defaultOnSignUpClick}
@@ -43,12 +45,12 @@ export function Layout({
       />
       
       {/* Main Content - Takes remaining space */}
-      <main className="flex-1">
+      <main className={`flex-1 ${isMapPage ? 'h-full overflow-hidden' : ''}`}>
         {children}
       </main>
 
       {/* Fixed Footer */}
-      <Footer />
+      {!isMapPage && <Footer />}
     </div>
   );
 }

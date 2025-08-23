@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -10,11 +10,7 @@ import { Progress } from './ui/progress';
 import { Separator } from './ui/separator';
 import { Badge } from './ui/badge';
 import { 
-  User, 
-  Mail, 
-  Lock, 
-  ArrowRight, 
-  ArrowLeft,
+  X,
   Target,
   DollarSign,
   TrendingUp,
@@ -22,12 +18,16 @@ import {
   Home,
   Clock,
   Shield,
+  User,
+  Mail,
+  Lock,
   Eye,
-  EyeOff
+  EyeOff,
+  ArrowRight,
+  ArrowLeft
 } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
-interface OnboardingData {
+interface QuestionnaireData {
   // Registration data
   email: string;
   password: string;
@@ -48,11 +48,13 @@ interface OnboardingData {
   maxCommute: number[];
 }
 
-interface OnboardingFlowProps {
-  onComplete: (data: OnboardingData) => void;
+interface QuestionnaireModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onComplete: (data: QuestionnaireData) => void;
 }
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 6; // Changed from 8 to 6 (removed registration step)
 
 const investmentGoals = [
   { id: 'rental', label: 'Steady Rental Income', description: 'Focus on properties with high rental yields', icon: DollarSign },
@@ -90,11 +92,9 @@ const investmentHorizons = [
   { id: 'long', label: 'Long-term (7+ years)', description: 'Long-term wealth building' }
 ];
 
-export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
+export function QuestionnaireModal({ isOpen, onClose, onComplete }: QuestionnaireModalProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [formData, setFormData] = useState<OnboardingData>({
+  const [formData, setFormData] = useState<QuestionnaireData>({
     email: '',
     password: '',
     fullName: '',
@@ -144,148 +144,28 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     }));
   };
 
-  const handleSocialLogin = (provider: string) => {
-    // In real implementation, this would integrate with actual OAuth
-    console.log(`Logging in with ${provider}`);
-    setCurrentStep(1); // Skip to questionnaire
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0:
+        return formData.investmentGoal;
+      case 1:
+        return formData.budget[0] > 0;
+      case 2:
+        return formData.riskAppetite;
+      case 3:
+        return formData.locationPreferences.length > 0;
+      case 4:
+        return formData.propertyTypes.length > 0;
+      case 5:
+        return formData.investmentHorizon;
+      default:
+        return false;
+    }
   };
 
   const renderStep = () => {
     switch (currentStep) {
-      case 0: // Registration/Login
-        return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {isLogin ? 'Welcome Back' : 'Join DubaiInvest Pro'}
-              </h1>
-              <p className="mt-2 text-gray-600">
-                {isLogin ? 'Sign in to access your personalized investment dashboard' : 'Start your real estate investment journey in Dubai'}
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {/* Social Login Buttons */}
-              <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => handleSocialLogin('google')}
-                  className="w-full"
-                >
-                  <ImageWithFallback 
-                    src="https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb29nbGUlMjBsb2dvfGVufDF8fHx8MTc1NTk0MjE4Nnww&ixlib=rb-4.1.0&q=80&w=1080"
-                    alt="Google"
-                    className="w-5 h-5 mr-2"
-                  />
-                  Google
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => handleSocialLogin('linkedin')}
-                  className="w-full"
-                >
-                  <ImageWithFallback 
-                    src="https://images.unsplash.com/photo-1611944212129-29977ae1398c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaW5rZWRpbiUyMGxvZ298ZW58MXx8fHwxNzU1OTQyMTg2fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                    alt="LinkedIn"
-                    className="w-5 h-5 mr-2"
-                  />
-                  LinkedIn
-                </Button>
-              </div>
-
-              <div className="relative">
-                <Separator />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="bg-white px-2 text-sm text-gray-500">or continue with email</span>
-                </div>
-              </div>
-
-              {/* Email Form */}
-              <div className="space-y-4">
-                {!isLogin && (
-                  <div>
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <div className="relative mt-1">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="fullName"
-                        type="text"
-                        placeholder="Enter your full name"
-                        className="pl-10"
-                        value={formData.fullName}
-                        onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <div className="relative mt-1">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      className="pl-10"
-                      value={formData.email}
-                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative mt-1">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      className="pl-10 pr-10"
-                      value={formData.password}
-                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-
-                {isLogin && (
-                  <div className="flex justify-end">
-                    <Button variant="link" className="px-0 text-sm">
-                      Forgot Password?
-                    </Button>
-                  </div>
-                )}
-
-                <Button onClick={handleNext} className="w-full">
-                  {isLogin ? 'Sign In' : 'Create Account'}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-
-                <div className="text-center">
-                  <Button 
-                    variant="link" 
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-sm"
-                  >
-                    {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 1: // Investment Goals
+      case 0: // Investment Goals
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -318,7 +198,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 2: // Investment Budget
+      case 1: // Investment Budget
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -367,7 +247,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 3: // Risk Appetite
+      case 2: // Risk Appetite
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -399,7 +279,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 4: // Location Preferences
+      case 3: // Location Preferences
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -436,7 +316,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 5: // Property Types
+      case 4: // Property Types
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -473,7 +353,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 6: // Investment Horizon
+      case 5: // Investment Horizon
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -502,123 +382,32 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 7: // Final Preferences
-        return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <TrendingUp className="h-12 w-12 mx-auto text-green-600 mb-4" />
-              <h2 className="text-2xl font-bold">Final preferences</h2>
-              <p className="text-gray-600 mt-2">Fine-tune your investment criteria</p>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <Label className="text-base font-medium">Expected ROI Target</Label>
-                <div className="mt-2 text-center">
-                  <span className="text-2xl font-bold text-green-600">{formData.roiTarget[0]}%</span>
-                  <p className="text-sm text-gray-500">Annual Return on Investment</p>
-                </div>
-                <Slider
-                  value={formData.roiTarget}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, roiTarget: value }))}
-                  max={15}
-                  min={3}
-                  step={0.5}
-                  className="mt-4"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-1">
-                  <span>3%</span>
-                  <span>15%</span>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">Minimum Rental Yield</Label>
-                <div className="mt-2 text-center">
-                  <span className="text-2xl font-bold text-blue-600">{formData.rentalYield[0]}%</span>
-                  <p className="text-sm text-gray-500">Annual Rental Yield</p>
-                </div>
-                <Slider
-                  value={formData.rentalYield}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, rentalYield: value }))}
-                  max={12}
-                  min={2}
-                  step={0.5}
-                  className="mt-4"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-1">
-                  <span>2%</span>
-                  <span>12%</span>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">Maximum Commute Time (if applicable)</Label>
-                <div className="mt-2 text-center">
-                  <span className="text-2xl font-bold text-purple-600">{formData.maxCommute[0]} min</span>
-                  <p className="text-sm text-gray-500">To key business districts</p>
-                </div>
-                <Slider
-                  value={formData.maxCommute}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, maxCommute: value }))}
-                  max={60}
-                  min={10}
-                  step={5}
-                  className="mt-4"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-1">
-                  <span>10 min</span>
-                  <span>60 min</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
       default:
         return null;
     }
   };
 
-  const canProceed = () => {
-    switch (currentStep) {
-      case 0:
-        return formData.email && formData.password && (isLogin || formData.fullName);
-      case 1:
-        return formData.investmentGoal;
-      case 2:
-        return formData.budget[0] > 0;
-      case 3:
-        return formData.riskAppetite;
-      case 4:
-        return formData.locationPreferences.length > 0;
-      case 5:
-        return formData.propertyTypes.length > 0;
-      case 6:
-        return formData.investmentHorizon;
-      case 7:
-        return true;
-      default:
-        return false;
-    }
-  };
+  if (!isOpen) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center">
-          {currentStep > 0 && (
-            <div className="mb-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <div className="flex-1">
+            <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-500">Step {currentStep} of {TOTAL_STEPS - 1}</span>
+                <span className="text-sm text-gray-500">Step {currentStep + 1} of {TOTAL_STEPS}</span>
                 <span className="text-sm text-gray-500">{Math.round(progress)}% Complete</span>
               </div>
               <Progress value={progress} className="h-2" />
             </div>
-          )}
+          </div>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
         </CardHeader>
 
-        <CardContent className="px-6 pb-6">
+        <CardContent className="px-6 pb-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {renderStep()}
 
           <div className="flex justify-between mt-8">

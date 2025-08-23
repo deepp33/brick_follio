@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FullScreenLayout } from '../components/FullScreenLayout';
+import { Layout } from '../components/Layout';
 import { MapView as MapViewComponent } from '../components/MapView';
 
 export default function MapViewPage() {
@@ -11,9 +11,27 @@ export default function MapViewPage() {
     navigate('/');
   };
 
+  const handleMapViewClick = () => {
+    // Already on map view, do nothing or refresh
+    window.location.reload();
+  };
+
+  const handleDevelopersClick = () => {
+    navigate('/developers');
+  };
+
+  const handleSignUpClick = () => {
+    navigate('/onboarding');
+  };
+
   return (
-    <FullScreenLayout>
+    <Layout 
+      isAuthenticated={true}
+      onSignUpClick={handleSignUpClick}
+      onDevelopersClick={handleDevelopersClick}
+      onMapViewClick={handleMapViewClick}
+    >
       <MapViewComponent userPreferences={userPreferences} onClose={closeMapView} />
-    </FullScreenLayout>
+    </Layout>
   );
 }
