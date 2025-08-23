@@ -56,6 +56,26 @@ import {
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
+/**
+ * Investment vs Lifestyle Toggle Implementation
+ * 
+ * This component provides two distinct viewing modes for the Dubai property map:
+ * 
+ * INVESTOR VIEW:
+ * - Metrics: ROI, Rental Yield, Price Growth YoY, Risk Level, Developer Rating, Units Left
+ * - Map Layers: ROI Heatmap, Rental Index, Price Heatmap, Risk Zones, Growth Heatmap, Demand Zones
+ * - Filters: ROI Range, Rental Yield Range, Developer Rating, Units Left, Project Status
+ * - Focus: Investment performance, returns, and market analysis
+ * 
+ * LIFESTYLE VIEW:
+ * - Metrics: Metro Distance, School Distance, Hospital Distance, Walkability Score, Mall Distance, Beach Distance
+ * - Map Layers: Walkability Score, Amenities Density, Lifestyle Zones, Infrastructure
+ * - Filters: Walkability Score, Metro Distance, School Distance, Amenities Count
+ * - Focus: Quality of life, convenience, and community features
+ * 
+ * The toggle switches between these views, updating the map overlays, filters, and property detail panels accordingly.
+ */
+
 // Enhanced property data for Dubai locations with comprehensive metrics
 const dubaiProperties = [
   {
@@ -346,6 +366,256 @@ const dubaiProperties = [
       schools: { count: 6, avgDistance: 1.2 },
       hospitals: { count: 3, avgDistance: 2.5 }
     }
+   },
+   {
+     id: 7,
+     name: "Dubai Hills Estate",
+     coordinates: [55.2450, 25.1680],
+     location: "Dubai Hills Estate",
+     type: "Villa",
+     unitTypes: ["3BR", "4BR", "5BR", "6BR"],
+     priceRange: "AED 4.2M - 8.5M",
+     priceMin: 4200000,
+     priceMax: 8500000,
+     unitsLeft: 34,
+     roi: 7.2,
+     rentalYield: 6.1,
+     priceGrowthYoY: 14.2,
+     constructionStatus: 100,
+     completionDate: "Ready",
+     developerRating: 4.8,
+     developer: "Emaar Properties",
+     projectStatus: "Ready to Move",
+     riskLevel: "Low",
+     metroDistance: 2.1,
+     schoolDistance: 0.8,
+     hospitalDistance: 1.5,
+     mallDistance: 0.3,
+     beachDistance: 6.8,
+     walkabilityScore: 85,
+     communityFeatures: ["Golf Course", "Parks", "Schools", "Shopping Center"],
+     nearbyAmenities: ["Dubai Hills Mall", "Golf Course", "International Schools", "Hospitals"],
+     governmentImpact: "Dubai Hills Mall expansion 2025",
+     images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800"],
+     floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
+     aerialView: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+     paymentPlan: "Cash or Mortgage Available",
+     fees: "4% DLD + 2% Agent",
+     pricePerSqft: 1800,
+     infraImpact: {
+       metro: { status: "planned", completion: "2027", impact: "High" },
+       schools: { count: 4, avgDistance: 0.8 },
+       hospitals: { count: 2, avgDistance: 1.5 }
+     },
+     recommended: true,
+     recommendationReason: "Premium location, Golf course views, Excellent amenities"
+   },
+   {
+     id: 8,
+     name: "Bluewaters Island Residences",
+     coordinates: [55.1350, 25.0780],
+     location: "Bluewaters Island",
+     type: "Apartment",
+     unitTypes: ["1BR", "2BR", "3BR", "Penthouse"],
+     priceRange: "AED 3.5M - 12.8M",
+     priceMin: 3500000,
+     priceMax: 12800000,
+     unitsLeft: 28,
+     roi: 6.8,
+     rentalYield: 5.9,
+     priceGrowthYoY: 16.8,
+     constructionStatus: 100,
+     completionDate: "Ready",
+     developerRating: 4.7,
+     developer: "Meraas",
+     projectStatus: "Ready to Move",
+     riskLevel: "Low",
+     metroDistance: 1.8,
+     schoolDistance: 2.5,
+     hospitalDistance: 2.8,
+     mallDistance: 0.1,
+     beachDistance: 0.2,
+     walkabilityScore: 92,
+     communityFeatures: ["Ain Dubai Views", "Beach Access", "Restaurants", "Retail"],
+     nearbyAmenities: ["Ain Dubai", "Beach", "Restaurants", "Shopping"],
+     governmentImpact: "Tourism hub expansion ongoing",
+     images: ["https://images.unsplash.com/photo-1696743297474-d674b8e3d82a?w=800"],
+     floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
+     aerialView: "https://images.unsplash.com/photo-1518715214357-e04c7c7b4e98?w=800",
+     paymentPlan: "Cash or Mortgage Available",
+     fees: "4% DLD + 2% Agent",
+     pricePerSqft: 2200,
+     infraImpact: {
+       metro: { status: "existing", completion: "completed", impact: "Medium" },
+       schools: { count: 3, avgDistance: 2.5 },
+       hospitals: { count: 2, avgDistance: 2.8 }
+     }
+   },
+   {
+     id: 9,
+     name: "Meydan Heights",
+     coordinates: [55.2850, 25.2150],
+     location: "Meydan",
+     type: "Apartment",
+     unitTypes: ["2BR", "3BR", "4BR"],
+     priceRange: "AED 1.8M - 4.2M",
+     priceMin: 1800000,
+     priceMax: 4200000,
+     unitsLeft: 89,
+     roi: 9.1,
+     rentalYield: 7.8,
+     priceGrowthYoY: 11.5,
+     constructionStatus: 75,
+     completionDate: "Q3 2025",
+     developerRating: 4.4,
+     developer: "Meydan Group",
+     projectStatus: "Under Construction",
+     riskLevel: "Medium",
+     metroDistance: 1.5,
+     schoolDistance: 1.8,
+     hospitalDistance: 2.2,
+     mallDistance: 1.2,
+     beachDistance: 7.5,
+     walkabilityScore: 78,
+     communityFeatures: ["Racing Views", "Parks", "Gym", "Pool"],
+     nearbyAmenities: ["Meydan Racecourse", "Meydan Mall", "Schools", "Hospitals"],
+     governmentImpact: "Meydan expansion project 2026",
+     images: ["https://images.unsplash.com/photo-1609764465693-a2dc6c6f7dbd?w=800"],
+     floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
+     aerialView: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800",
+     paymentPlan: "25% During Construction, 75% on Completion",
+     fees: "4% DLD + 2% Agent",
+     pricePerSqft: 1400,
+     infraImpact: {
+       metro: { status: "planned", completion: "2028", impact: "Medium" },
+       schools: { count: 3, avgDistance: 1.8 },
+       hospitals: { count: 2, avgDistance: 2.2 }
+     }
+   },
+   {
+     id: 10,
+     name: "Silicon Oasis Tech Hub",
+     coordinates: [55.3850, 25.1250],
+     location: "Dubai Silicon Oasis",
+     type: "Apartment",
+     unitTypes: ["Studio", "1BR", "2BR", "3BR"],
+     priceRange: "AED 650K - 2.1M",
+     priceMin: 650000,
+     priceMax: 2100000,
+     unitsLeft: 234,
+     roi: 12.5,
+     rentalYield: 10.2,
+     priceGrowthYoY: 8.9,
+     constructionStatus: 100,
+     completionDate: "Ready",
+     developerRating: 4.1,
+     developer: "DSO Development",
+     projectStatus: "Ready to Move",
+     riskLevel: "Medium",
+     metroDistance: 4.2,
+     schoolDistance: 1.5,
+     hospitalDistance: 2.8,
+     mallDistance: 1.8,
+     beachDistance: 12.5,
+     walkabilityScore: 75,
+     communityFeatures: ["Tech Hub", "Co-working Spaces", "Gym", "Retail"],
+     nearbyAmenities: ["Tech Companies", "Universities", "Shopping Centers", "Restaurants"],
+     governmentImpact: "Tech hub expansion 2025-2027",
+     images: ["https://images.unsplash.com/photo-1460317442991-0ec209397118?w=800"],
+     floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
+     aerialView: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800",
+     paymentPlan: "Flexible Payment Options",
+     fees: "4% DLD + 2% Agent",
+     pricePerSqft: 850,
+     infraImpact: {
+       metro: { status: "planned", completion: "2029", impact: "High" },
+       schools: { count: 5, avgDistance: 1.5 },
+       hospitals: { count: 3, avgDistance: 2.8 }
+     }
+   },
+   {
+     id: 11,
+     name: "Dubai Creek Harbour",
+     coordinates: [55.3200, 25.1950],
+     location: "Dubai Creek Harbour",
+     type: "Apartment",
+     unitTypes: ["1BR", "2BR", "3BR", "Penthouse"],
+     priceRange: "AED 2.8M - 8.5M",
+     priceMin: 2800000,
+     priceMax: 8500000,
+     unitsLeft: 67,
+     roi: 8.2,
+     rentalYield: 7.1,
+     priceGrowthYoY: 13.5,
+     constructionStatus: 60,
+     completionDate: "Q4 2025",
+     developerRating: 4.9,
+     developer: "Emaar Properties",
+     projectStatus: "Under Construction",
+     riskLevel: "Low",
+     metroDistance: 2.8,
+     schoolDistance: 2.1,
+     hospitalDistance: 3.2,
+     mallDistance: 0.5,
+     beachDistance: 5.8,
+     walkabilityScore: 88,
+     communityFeatures: ["Creek Views", "Marina", "Parks", "Shopping"],
+     nearbyAmenities: ["Dubai Creek Tower", "Marina", "Shopping Centers", "Restaurants"],
+     governmentImpact: "Dubai Creek Tower completion 2026",
+     images: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"],
+     floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
+     aerialView: "https://images.unsplash.com/photo-1512453979798-5ff17c3515e1?w=800",
+     paymentPlan: "20% Down, 80% on Completion",
+     fees: "4% DLD + 2% Agent",
+     pricePerSqft: 1900,
+     infraImpact: {
+       metro: { status: "planned", completion: "2027", impact: "High" },
+       schools: { count: 4, avgDistance: 2.1 },
+       hospitals: { count: 3, avgDistance: 3.2 }
+     },
+     recommended: true,
+     recommendationReason: "Future tallest building location, Prime creek views, High growth potential"
+   },
+   {
+     id: 12,
+     name: "Al Furjan Gardens",
+     coordinates: [55.1650, 25.0950],
+     location: "Al Furjan",
+     type: "Townhouse",
+     unitTypes: ["3BR", "4BR", "5BR"],
+     priceRange: "AED 1.2M - 2.8M",
+     priceMin: 1200000,
+     priceMax: 2800000,
+     unitsLeft: 45,
+     roi: 10.8,
+     rentalYield: 8.9,
+     priceGrowthYoY: 9.2,
+     constructionStatus: 100,
+     completionDate: "Ready",
+     developerRating: 4.3,
+     developer: "Nakheel",
+     projectStatus: "Ready to Move",
+     riskLevel: "Medium",
+     metroDistance: 1.8,
+     schoolDistance: 1.2,
+     hospitalDistance: 2.5,
+     mallDistance: 1.5,
+     beachDistance: 4.2,
+     walkabilityScore: 80,
+     communityFeatures: ["Gardens", "Parks", "Community Center", "Retail"],
+     nearbyAmenities: ["Ibn Battuta Mall", "Beach", "Schools", "Hospitals"],
+     governmentImpact: "Community infrastructure upgrade 2025",
+     images: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800"],
+     floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
+     aerialView: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+     paymentPlan: "Cash or Mortgage Available",
+     fees: "4% DLD + 2% Agent",
+     pricePerSqft: 1100,
+     infraImpact: {
+       metro: { status: "existing", completion: "completed", impact: "Medium" },
+       schools: { count: 4, avgDistance: 1.2 },
+       hospitals: { count: 2, avgDistance: 2.5 }
+     }
   }
 ];
 
@@ -355,12 +625,98 @@ const infrastructureData = [
   { type: 'metro', coordinates: [55.1403, 25.0657], name: 'Marina Metro', status: 'operational' },
   { type: 'metro', coordinates: [55.2608, 25.1869], name: 'Business Bay Metro', status: 'operational' },
   { type: 'metro', coordinates: [55.2115, 25.0566], name: 'JVC Metro', status: 'planned-2026' },
+   { type: 'metro', coordinates: [55.2450, 25.1680], name: 'Dubai Hills Metro', status: 'planned-2027' },
+   { type: 'metro', coordinates: [55.1350, 25.0780], name: 'Bluewaters Metro', status: 'operational' },
+   { type: 'metro', coordinates: [55.2850, 25.2150], name: 'Meydan Metro', status: 'planned-2028' },
+   { type: 'metro', coordinates: [55.3850, 25.1250], name: 'Silicon Oasis Metro', status: 'planned-2029' },
+   { type: 'metro', coordinates: [55.3200, 25.1950], name: 'Creek Harbour Metro', status: 'planned-2027' },
+   { type: 'metro', coordinates: [55.1650, 25.0950], name: 'Al Furjan Metro', status: 'operational' },
   { type: 'school', coordinates: [55.2650, 25.1890], name: 'Dubai International School', rating: 4.8 },
   { type: 'school', coordinates: [55.1450, 25.0680], name: 'Marina International School', rating: 4.6 },
+   { type: 'school', coordinates: [55.2450, 25.1680], name: 'Dubai Hills School', rating: 4.9 },
+   { type: 'school', coordinates: [55.3850, 25.1250], name: 'Silicon Oasis University', rating: 4.7 },
+   { type: 'school', coordinates: [55.3200, 25.1950], name: 'Creek Harbour Academy', rating: 4.8 },
   { type: 'hospital', coordinates: [55.2720, 25.1950], name: 'Dubai Hospital', rating: 4.7 },
   { type: 'hospital', coordinates: [55.1380, 25.0640], name: 'Marina Medical Center', rating: 4.5 },
+   { type: 'hospital', coordinates: [55.2450, 25.1680], name: 'Dubai Hills Medical Center', rating: 4.6 },
+   { type: 'hospital', coordinates: [55.3850, 25.1250], name: 'Silicon Oasis Hospital', rating: 4.4 },
+   { type: 'hospital', coordinates: [55.3200, 25.1950], name: 'Creek Harbour Medical', rating: 4.8 },
   { type: 'mall', coordinates: [55.2796, 25.1972], name: 'Dubai Mall', size: 'mega' },
-  { type: 'mall', coordinates: [55.1420, 25.0670], name: 'Marina Mall', size: 'large' }
+   { type: 'mall', coordinates: [55.1420, 25.0670], name: 'Marina Mall', size: 'large' },
+   { type: 'mall', coordinates: [55.2450, 25.1680], name: 'Dubai Hills Mall', size: 'large' },
+   { type: 'mall', coordinates: [55.1350, 25.0780], name: 'Bluewaters Mall', size: 'medium' },
+   { type: 'mall', coordinates: [55.2850, 25.2150], name: 'Meydan Mall', size: 'medium' },
+   { type: 'mall', coordinates: [55.3850, 25.1250], name: 'Silicon Oasis Mall', size: 'large' },
+   { type: 'mall', coordinates: [55.3200, 25.1950], name: 'Creek Harbour Mall', size: 'mega' },
+   { type: 'mall', coordinates: [55.1650, 25.0950], name: 'Ibn Battuta Mall', size: 'mega' }
+ ];
+
+ // Metro line data for Dubai
+ const metroLines = [
+   {
+     name: 'Red Line',
+     color: '#22C55E', // Green color
+     coordinates: [
+       [55.2744, 25.1972], // Downtown Dubai
+       [55.2608, 25.1869], // Business Bay
+       [55.2450, 25.1680], // Dubai Hills Estate
+       [55.2285, 25.0535], // Al Barari
+       [55.2115, 25.0566], // JVC
+       [55.1403, 25.0657], // Dubai Marina
+       [55.1390, 25.1124]  // Palm Jumeirah
+     ],
+     status: 'operational'
+   },
+   {
+     name: 'Green Line',
+     color: '#22C55E', // Green color
+     coordinates: [
+       [55.2744, 25.1972], // Downtown Dubai
+       [55.2650, 25.1890], // Dubai International School
+       [55.2720, 25.1950], // Dubai Hospital
+       [55.2796, 25.1972], // Dubai Mall
+       [55.1450, 25.0680], // Marina International School
+       [55.1380, 25.0640], // Marina Medical Center
+       [55.1420, 25.0670], // Marina Mall
+       [55.1350, 25.0780]  // Bluewaters Island
+     ],
+     status: 'operational'
+   },
+   {
+     name: 'Blue Line (Planned)',
+     color: '#22C55E', // Green color
+     coordinates: [
+       [55.2115, 25.0566], // JVC
+       [55.2285, 25.0535], // Al Barari
+       [55.2450, 25.1680], // Dubai Hills Estate
+       [55.2608, 25.1869], // Business Bay
+       [55.2744, 25.1972]  // Downtown Dubai
+     ],
+     status: 'planned-2026'
+   },
+   {
+     name: 'Purple Line (Planned)',
+     color: '#22C55E', // Green color
+     coordinates: [
+       [55.3200, 25.1950], // Dubai Creek Harbour
+       [55.2850, 25.2150], // Meydan
+       [55.2744, 25.1972], // Downtown Dubai
+       [55.2450, 25.1680], // Dubai Hills Estate
+       [55.1650, 25.0950]  // Al Furjan
+     ],
+     status: 'planned-2027'
+   },
+   {
+     name: 'Orange Line (Planned)',
+     color: '#22C55E', // Green color
+     coordinates: [
+       [55.3850, 25.1250], // Silicon Oasis
+       [55.3200, 25.1950], // Dubai Creek Harbour
+       [55.2850, 25.2150], // Meydan
+       [55.2744, 25.1972]  // Downtown Dubai
+     ],
+     status: 'planned-2029'
+   }
 ];
 
 interface MapViewProps {
@@ -404,7 +760,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
   const [clusteringEnabled, setClusteringEnabled] = useState(true);
   const [selectedProperties, setSelectedProperties] = useState<any[]>([]);
   
-  // Filter states
+  // Filter states - different defaults for investor vs lifestyle
   const [filters, setFilters] = useState<PropertyFilters>({
     propertyTypes: ['Apartment', 'Villa'],
     priceRange: [500000, 20000000],
@@ -423,7 +779,14 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
     { id: 'price', name: 'Price Heatmap', description: 'Price per square foot', active: false, color: '#F59E0B', type: 'heatmap' },
     { id: 'risk', name: 'Risk Zones', description: 'Investment risk assessment', active: false, color: '#EF4444', type: 'overlay' },
     { id: 'infrastructure', name: 'Infrastructure', description: 'Metro, schools, hospitals', active: true, color: '#8B5CF6', type: 'infrastructure' },
-    { id: 'growth', name: 'Price Growth', description: 'Year-over-year price growth', active: false, color: '#EC4899', type: 'heatmap' }
+    { id: 'metro', name: 'Metro Lines', description: 'Dubai Metro network', active: true, color: '#22C55E', type: 'infrastructure' },
+    { id: 'growth', name: 'Price Growth', description: 'Year-over-year price growth', active: false, color: '#EC4899', type: 'heatmap' },
+    { id: 'yield', name: 'Rental Yield', description: 'Best rental yield areas', active: false, color: '#8B5CF6', type: 'heatmap' },
+    { id: 'demand', name: 'Demand Zones', description: 'High demand areas', active: false, color: '#06B6D4', type: 'overlay' },
+    // Lifestyle-specific layers
+    { id: 'walkability', name: 'Walkability Score', description: 'Pedestrian-friendly areas', active: false, color: '#10B981', type: 'heatmap' },
+    { id: 'amenities', name: 'Amenities Density', description: 'Nearby facilities and services', active: false, color: '#8B5CF6', type: 'heatmap' },
+    { id: 'lifestyle', name: 'Lifestyle Zones', description: 'Quality of life indicators', active: false, color: '#06B6D4', type: 'overlay' }
   ]);
 
   // Initialize Mapbox map
@@ -458,12 +821,89 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
         style: 'mapbox://styles/mapbox/light-v11',
         center: [55.2708, 25.2048], // Dubai center
         zoom: 11,
-        pitch: 0,
+         pitch: 45, // 3D perspective
         bearing: 0
       });
 
       map.current.on('load', () => {
         setMapLoaded(true);
+         
+         // Add metro lines to the map
+         metroLines.forEach((line, index) => {
+           // Add metro line source
+           map.current.addSource(`metro-line-${index}`, {
+             type: 'geojson',
+             data: {
+               type: 'Feature',
+               properties: {
+                 name: line.name,
+                 status: line.status,
+                 color: line.color
+               },
+               geometry: {
+                 type: 'LineString',
+                 coordinates: line.coordinates
+               }
+             }
+           });
+
+           // Add metro line layer
+           map.current.addLayer({
+             id: `metro-line-${index}`,
+             type: 'line',
+             source: `metro-line-${index}`,
+             layout: {
+               'line-join': 'round',
+               'line-cap': 'round'
+             },
+             paint: {
+               'line-color': line.color,
+               'line-width': 4,
+               'line-opacity': line.status === 'operational' ? 0.8 : 0.4
+             }
+           });
+
+           // Add metro line border for better visibility
+           map.current.addLayer({
+             id: `metro-line-border-${index}`,
+             type: 'line',
+             source: `metro-line-${index}`,
+             layout: {
+               'line-join': 'round',
+               'line-cap': 'round'
+             },
+             paint: {
+               'line-color': '#ffffff',
+               'line-width': 6,
+               'line-opacity': line.status === 'operational' ? 0.3 : 0.1
+             }
+           }, `metro-line-${index}`);
+
+           // Add metro stations along the line
+           line.coordinates.forEach((coord, stationIndex) => {
+             const el = document.createElement('div');
+             el.className = 'metro-station';
+             
+             const isOperational = line.status === 'operational';
+             const stationColor = isOperational ? '#22C55E' : '#F59E0B';
+             
+             el.innerHTML = `
+               <div class="w-4 h-4 rounded-full flex items-center justify-center text-white shadow-md border-2 border-white" 
+                    style="background-color: ${stationColor};">
+                 <span class="text-xs">🚇</span>
+               </div>
+             `;
+
+             const marker = new mapboxgl.Marker(el)
+               .setLngLat(coord)
+               .addTo(map.current);
+             
+             infrastructureMarkers.current.push(marker);
+           });
+         });
+
+         // Add heatmap and overlay sources
+         addMapOverlays();
       });
 
       // Add navigation controls
@@ -539,7 +979,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
     return properties;
   }, [filters, searchQuery, showRecommendedOnly]);
 
-  // Add property markers to map with clustering and recommendations
+     // Add property markers to map with clustering and recommendations
   const addPropertyMarkers = useCallback(() => {
     if (!map.current || !mapLoaded) return;
 
@@ -548,19 +988,19 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
     markers.current = [];
 
     filteredProperties.forEach(property => {
-      // Create marker element with recommendation highlighting
+       // Create marker element with recommendation highlighting
       const el = document.createElement('div');
       el.className = 'property-marker';
-      
-      const baseColor = property.type === 'Villa' ? 'bg-purple-500' : 
-                       property.type === 'Apartment' ? 'bg-blue-500' : 'bg-green-500';
-      
-      const recommendationClass = property.recommended ? 'ring-4 ring-yellow-400 ring-opacity-75' : '';
-      
+       
+       const baseColor = property.type === 'Villa' ? 'bg-purple-500' : 
+                        property.type === 'Apartment' ? 'bg-blue-500' : 'bg-green-500';
+       
+       const recommendationClass = property.recommended ? 'ring-4 ring-yellow-400 ring-opacity-75' : '';
+       
       el.innerHTML = `
-        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg cursor-pointer transition-all duration-200 hover:scale-110 ${baseColor} ${recommendationClass}">
+         <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg cursor-pointer transition-all duration-200 hover:scale-110 ${baseColor} ${recommendationClass}">
           <span class="text-xs">${property.type === 'Villa' ? '🏠' : '🏢'}</span>
-          ${property.recommended ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></div>' : ''}
+           ${property.recommended ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></div>' : ''}
         </div>
       `;
 
@@ -579,6 +1019,68 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
       markers.current.push(marker);
     });
   }, [mapLoaded, filteredProperties]);
+
+   // Add property labels that show on zoom in
+   const addPropertyLabels = useCallback(() => {
+     if (!map.current || !mapLoaded) return;
+
+     // Remove existing label sources and layers
+     if (map.current.getSource('property-labels')) {
+       map.current.removeLayer('property-labels');
+       map.current.removeSource('property-labels');
+     }
+
+     // Add property labels source
+     map.current.addSource('property-labels', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: filteredProperties.map(property => ({
+           type: 'Feature',
+           properties: {
+             name: property.name,
+             type: property.type,
+             recommended: property.recommended
+           },
+           geometry: {
+             type: 'Point',
+             coordinates: property.coordinates
+           }
+         }))
+       }
+     });
+
+     // Add property labels layer
+     map.current.addLayer({
+       id: 'property-labels',
+       type: 'symbol',
+       source: 'property-labels',
+       layout: {
+         'text-field': ['get', 'name'],
+         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+         'text-size': 12,
+         'text-anchor': 'top',
+         'text-offset': [0, 1.5],
+         'text-allow-overlap': false,
+         'text-ignore-placement': false,
+         'symbol-placement': 'point'
+       },
+       paint: {
+         'text-color': [
+           'case',
+           ['get', 'recommended'], '#F59E0B', // Yellow for recommended
+           ['get', 'type'],
+           'Villa', '#8B5CF6', // Purple for villas
+           'Apartment', '#3B82F6', // Blue for apartments
+           '#10B981' // Green for others
+         ],
+         'text-halo-color': '#ffffff',
+         'text-halo-width': 2,
+         'text-halo-blur': 1
+       },
+       minzoom: 13 // Only show labels when zoomed in
+     });
+   }, [mapLoaded, filteredProperties]);
 
   // Add infrastructure layer
   const addInfrastructureLayer = useCallback(() => {
@@ -634,16 +1136,18 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
   useEffect(() => {
     if (mapLoaded) {
       addPropertyMarkers();
+       addPropertyLabels();
       addInfrastructureLayer();
     }
-  }, [mapLoaded, addPropertyMarkers, addInfrastructureLayer]);
+   }, [mapLoaded, addPropertyMarkers, addPropertyLabels, addInfrastructureLayer]);
 
   // Update map markers when filters change
   useEffect(() => {
     if (map.current && mapLoaded) {
       addPropertyMarkers();
+       addPropertyLabels();
     }
-  }, [filteredProperties, addPropertyMarkers]);
+   }, [filteredProperties, addPropertyMarkers, addPropertyLabels]);
 
   const handlePropertyClick = useCallback((property: any) => {
     // Add to selected properties if not already selected
@@ -659,21 +1163,464 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
     setSelectedProperty(property);
     setShowPropertyPanel(true);
     
-    // Fly to property location
+         // Fly to property location with 3D perspective
     if (map.current) {
       map.current.flyTo({
         center: property.coordinates,
         zoom: 15,
+         pitch: 45, // Maintain 3D perspective
         duration: 1000
       });
     }
+  }, []);
+
+     // Add map overlays (heatmaps and zones)
+   const addMapOverlays = useCallback(() => {
+     if (!map.current) return;
+
+     // ROI Heatmap
+     map.current.addSource('roi-heatmap', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: dubaiProperties.map(property => ({
+           type: 'Feature',
+           properties: {
+             roi: property.roi,
+             intensity: property.roi / 15 // Normalize to 0-1
+           },
+           geometry: {
+             type: 'Point',
+             coordinates: property.coordinates
+           }
+         }))
+       }
+     });
+
+     map.current.addLayer({
+       id: 'roi-heatmap-layer',
+       type: 'heatmap',
+       source: 'roi-heatmap',
+       paint: {
+         'heatmap-weight': ['get', 'intensity'],
+         'heatmap-intensity': 1,
+         'heatmap-color': [
+           'interpolate',
+           ['linear'],
+           ['heatmap-density'],
+           0, 'rgba(16, 185, 129, 0)',
+           0.2, 'rgba(16, 185, 129, 0.3)',
+           0.4, 'rgba(16, 185, 129, 0.6)',
+           0.6, 'rgba(16, 185, 129, 0.8)',
+           1, 'rgba(16, 185, 129, 1)'
+         ],
+         'heatmap-radius': 30,
+         'heatmap-opacity': 0.8
+       }
+     });
+
+     // Rental Yield Heatmap
+     map.current.addSource('rental-heatmap', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: dubaiProperties.map(property => ({
+           type: 'Feature',
+           properties: {
+             rentalYield: property.rentalYield,
+             intensity: property.rentalYield / 12 // Normalize to 0-1
+           },
+           geometry: {
+             type: 'Point',
+             coordinates: property.coordinates
+           }
+         }))
+       }
+     });
+
+     map.current.addLayer({
+       id: 'rental-heatmap-layer',
+       type: 'heatmap',
+       source: 'rental-heatmap',
+       paint: {
+         'heatmap-weight': ['get', 'intensity'],
+         'heatmap-intensity': 1,
+         'heatmap-color': [
+           'interpolate',
+           ['linear'],
+           ['heatmap-density'],
+           0, 'rgba(59, 130, 246, 0)',
+           0.2, 'rgba(59, 130, 246, 0.3)',
+           0.4, 'rgba(59, 130, 246, 0.6)',
+           0.6, 'rgba(59, 130, 246, 0.8)',
+           1, 'rgba(59, 130, 246, 1)'
+         ],
+         'heatmap-radius': 30,
+         'heatmap-opacity': 0.8
+       }
+     });
+
+     // Price Heatmap
+     map.current.addSource('price-heatmap', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: dubaiProperties.map(property => ({
+           type: 'Feature',
+           properties: {
+             pricePerSqft: property.pricePerSqft,
+             intensity: property.pricePerSqft / 2500 // Normalize to 0-1
+           },
+           geometry: {
+             type: 'Point',
+             coordinates: property.coordinates
+           }
+         }))
+       }
+     });
+
+     map.current.addLayer({
+       id: 'price-heatmap-layer',
+       type: 'heatmap',
+       source: 'price-heatmap',
+       paint: {
+         'heatmap-weight': ['get', 'intensity'],
+         'heatmap-intensity': 1,
+         'heatmap-color': [
+           'interpolate',
+           ['linear'],
+           ['heatmap-density'],
+           0, 'rgba(245, 158, 11, 0)',
+           0.2, 'rgba(245, 158, 11, 0.3)',
+           0.4, 'rgba(245, 158, 11, 0.6)',
+           0.6, 'rgba(245, 158, 11, 0.8)',
+           1, 'rgba(245, 158, 11, 1)'
+         ],
+         'heatmap-radius': 30,
+         'heatmap-opacity': 0.8
+       }
+     });
+
+     // Price Growth Heatmap
+     map.current.addSource('growth-heatmap', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: dubaiProperties.map(property => ({
+           type: 'Feature',
+           properties: {
+             priceGrowth: property.priceGrowthYoY,
+             intensity: property.priceGrowthYoY / 20 // Normalize to 0-1
+           },
+           geometry: {
+             type: 'Point',
+             coordinates: property.coordinates
+           }
+         }))
+       }
+     });
+
+     map.current.addLayer({
+       id: 'growth-heatmap-layer',
+       type: 'heatmap',
+       source: 'growth-heatmap',
+       paint: {
+         'heatmap-weight': ['get', 'intensity'],
+         'heatmap-intensity': 1,
+         'heatmap-color': [
+           'interpolate',
+           ['linear'],
+           ['heatmap-density'],
+           0, 'rgba(236, 72, 153, 0)',
+           0.2, 'rgba(236, 72, 153, 0.3)',
+           0.4, 'rgba(236, 72, 153, 0.6)',
+           0.6, 'rgba(236, 72, 153, 0.8)',
+           1, 'rgba(236, 72, 153, 1)'
+         ],
+         'heatmap-radius': 30,
+         'heatmap-opacity': 0.8
+       }
+     });
+
+     // Risk Zones (polygon overlay)
+     map.current.addSource('risk-zones', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: [
+           {
+             type: 'Feature',
+             properties: { risk: 'low', color: '#10B981' },
+             geometry: {
+               type: 'Polygon',
+               coordinates: [[
+                 [55.2, 25.1], [55.3, 25.1], [55.3, 25.2], [55.2, 25.2], [55.2, 25.1]
+               ]]
+             }
+           },
+           {
+             type: 'Feature',
+             properties: { risk: 'medium', color: '#F59E0B' },
+             geometry: {
+               type: 'Polygon',
+               coordinates: [[
+                 [55.1, 25.0], [55.2, 25.0], [55.2, 25.1], [55.1, 25.1], [55.1, 25.0]
+               ]]
+             }
+           },
+           {
+             type: 'Feature',
+             properties: { risk: 'high', color: '#EF4444' },
+             geometry: {
+               type: 'Polygon',
+               coordinates: [[
+                 [55.0, 25.0], [55.1, 25.0], [55.1, 25.1], [55.0, 25.1], [55.0, 25.0]
+               ]]
+             }
+           }
+         ]
+       }
+     });
+
+     map.current.addLayer({
+       id: 'risk-zones-layer',
+       type: 'fill',
+       source: 'risk-zones',
+       paint: {
+         'fill-color': ['get', 'color'],
+         'fill-opacity': 0.3
+       }
+     });
+
+     // Demand Zones
+     map.current.addSource('demand-zones', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: [
+           {
+             type: 'Feature',
+             properties: { demand: 'high', color: '#06B6D4' },
+             geometry: {
+               type: 'Polygon',
+               coordinates: [[
+                 [55.25, 25.18], [55.28, 25.18], [55.28, 25.21], [55.25, 25.21], [55.25, 25.18]
+               ]]
+             }
+           }
+         ]
+       }
+     });
+
+     map.current.addLayer({
+       id: 'demand-zones-layer',
+       type: 'fill',
+       source: 'demand-zones',
+       paint: {
+         'fill-color': ['get', 'color'],
+         'fill-opacity': 0.4
+       }
+     });
+
+     // Lifestyle-specific overlays
+     // Walkability Heatmap
+     map.current.addSource('walkability-heatmap', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: dubaiProperties.map(property => ({
+           type: 'Feature',
+           properties: {
+             walkabilityScore: property.walkabilityScore,
+             intensity: property.walkabilityScore / 100 // Normalize to 0-1
+           },
+           geometry: {
+             type: 'Point',
+             coordinates: property.coordinates
+           }
+         }))
+       }
+     });
+
+     map.current.addLayer({
+       id: 'walkability-heatmap-layer',
+       type: 'heatmap',
+       source: 'walkability-heatmap',
+       paint: {
+         'heatmap-weight': ['get', 'intensity'],
+         'heatmap-intensity': 1,
+         'heatmap-color': [
+           'interpolate',
+           ['linear'],
+           ['heatmap-density'],
+           0, 'rgba(16, 185, 129, 0)',
+           0.2, 'rgba(16, 185, 129, 0.3)',
+           0.4, 'rgba(16, 185, 129, 0.6)',
+           0.6, 'rgba(16, 185, 129, 0.8)',
+           1, 'rgba(16, 185, 129, 1)'
+         ],
+         'heatmap-radius': 25,
+         'heatmap-opacity': 0.7
+       }
+     });
+
+     // Amenities Density Heatmap
+     map.current.addSource('amenities-heatmap', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: dubaiProperties.map(property => ({
+           type: 'Feature',
+           properties: {
+             amenitiesCount: property.nearbyAmenities.length,
+             intensity: Math.min(property.nearbyAmenities.length / 8, 1) // Normalize to 0-1
+           },
+           geometry: {
+             type: 'Point',
+             coordinates: property.coordinates
+           }
+         }))
+       }
+     });
+
+     map.current.addLayer({
+       id: 'amenities-heatmap-layer',
+       type: 'heatmap',
+       source: 'amenities-heatmap',
+       paint: {
+         'heatmap-weight': ['get', 'intensity'],
+         'heatmap-intensity': 1,
+         'heatmap-color': [
+           'interpolate',
+           ['linear'],
+           ['heatmap-density'],
+           0, 'rgba(139, 92, 246, 0)',
+           0.2, 'rgba(139, 92, 246, 0.3)',
+           0.4, 'rgba(139, 92, 246, 0.6)',
+           0.6, 'rgba(139, 92, 246, 0.8)',
+           1, 'rgba(139, 92, 246, 1)'
+         ],
+         'heatmap-radius': 20,
+         'heatmap-opacity': 0.6
+       }
+     });
+
+     // Lifestyle Zones
+     map.current.addSource('lifestyle-zones', {
+       type: 'geojson',
+       data: {
+         type: 'FeatureCollection',
+         features: [
+           {
+             type: 'Feature',
+             properties: { lifestyle: 'premium', color: '#10B981' },
+             geometry: {
+               type: 'Polygon',
+               coordinates: [[
+                 [55.27, 25.19], [55.28, 25.19], [55.28, 25.20], [55.27, 25.20], [55.27, 25.19]
+               ]]
+             }
+           },
+           {
+             type: 'Feature',
+             properties: { lifestyle: 'family', color: '#3B82F6' },
+             geometry: {
+               type: 'Polygon',
+               coordinates: [[
+                 [55.24, 25.16], [55.25, 25.16], [55.25, 25.17], [55.24, 25.17], [55.24, 25.16]
+               ]]
+             }
+           },
+           {
+             type: 'Feature',
+             properties: { lifestyle: 'urban', color: '#8B5CF6' },
+             geometry: {
+               type: 'Polygon',
+               coordinates: [[
+                 [55.14, 25.06], [55.15, 25.06], [55.15, 25.07], [55.14, 25.07], [55.14, 25.06]
+               ]]
+             }
+           }
+         ]
+       }
+     });
+
+     map.current.addLayer({
+       id: 'lifestyle-zones-layer',
+       type: 'fill',
+       source: 'lifestyle-zones',
+       paint: {
+         'fill-color': ['get', 'color'],
+         'fill-opacity': 0.3
+       }
+     });
+
+     // Initially hide all overlay layers
+     map.current.setLayoutProperty('roi-heatmap-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('rental-heatmap-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('price-heatmap-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('growth-heatmap-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('risk-zones-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('demand-zones-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('walkability-heatmap-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('amenities-heatmap-layer', 'visibility', 'none');
+     map.current.setLayoutProperty('lifestyle-zones-layer', 'visibility', 'none');
   }, []);
 
   const toggleLayer = useCallback((layerId: string) => {
     setMapLayers(prev => prev.map(layer => 
       layer.id === layerId ? { ...layer, active: !layer.active } : layer
     ));
-  }, []);
+
+     // Handle metro line visibility
+     if (layerId === 'metro' && map.current) {
+       const isVisible = mapLayers.find(layer => layer.id === 'metro')?.active;
+       
+       metroLines.forEach((line, index) => {
+         const lineLayer = map.current.getLayer(`metro-line-${index}`);
+         const borderLayer = map.current.getLayer(`metro-line-border-${index}`);
+         
+         if (lineLayer && borderLayer) {
+           if (isVisible) {
+             // Hide metro lines
+             map.current.setLayoutProperty(`metro-line-${index}`, 'visibility', 'none');
+             map.current.setLayoutProperty(`metro-line-border-${index}`, 'visibility', 'none');
+           } else {
+             // Show metro lines
+             map.current.setLayoutProperty(`metro-line-${index}`, 'visibility', 'visible');
+             map.current.setLayoutProperty(`metro-line-border-${index}`, 'visibility', 'visible');
+           }
+         }
+       });
+     }
+
+           // Handle other overlay layers
+      if (map.current) {
+        const layerVisibilityMap: { [key: string]: string } = {
+          'roi': 'roi-heatmap-layer',
+          'rental': 'rental-heatmap-layer',
+          'price': 'price-heatmap-layer',
+          'growth': 'growth-heatmap-layer',
+          'risk': 'risk-zones-layer',
+          'demand': 'demand-zones-layer',
+          'walkability': 'walkability-heatmap-layer',
+          'amenities': 'amenities-heatmap-layer',
+          'lifestyle': 'lifestyle-zones-layer'
+        };
+
+        const mapLayerId = layerVisibilityMap[layerId];
+        if (mapLayerId) {
+          const currentLayer = mapLayers.find(layer => layer.id === layerId);
+          const isVisible = currentLayer?.active;
+          
+          if (isVisible) {
+            map.current.setLayoutProperty(mapLayerId, 'visibility', 'none');
+          } else {
+            map.current.setLayoutProperty(mapLayerId, 'visibility', 'visible');
+          }
+        }
+      }
+   }, [mapLayers]);
 
   const resetFilters = useCallback(() => {
     setFilters({
@@ -755,6 +1702,60 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
 
   const recommendedRegions = getRecommendedRegions();
 
+  // Handle view mode change
+  const handleViewModeChange = useCallback((newViewMode: 'investor' | 'lifestyle') => {
+    setViewMode(newViewMode);
+    
+    // Update map layers based on view mode
+    setMapLayers(prev => prev.map(layer => {
+      if (newViewMode === 'investor') {
+        // Show investor-focused layers
+        return {
+          ...layer,
+          active: ['roi', 'infrastructure', 'metro'].includes(layer.id)
+        };
+      } else {
+        // Show lifestyle-focused layers
+        return {
+          ...layer,
+          active: ['walkability', 'amenities', 'infrastructure', 'metro'].includes(layer.id)
+        };
+      }
+    }));
+
+    // Update map layer visibility
+    if (map.current) {
+      const investorLayers = ['roi-heatmap-layer', 'rental-heatmap-layer', 'price-heatmap-layer', 'growth-heatmap-layer', 'risk-zones-layer', 'demand-zones-layer'];
+      const lifestyleLayers = ['walkability-heatmap-layer', 'amenities-heatmap-layer', 'lifestyle-zones-layer'];
+      
+      if (newViewMode === 'investor') {
+        // Show investor layers, hide lifestyle layers
+        investorLayers.forEach(layerId => {
+          if (map.current.getLayer(layerId)) {
+            map.current.setLayoutProperty(layerId, 'visibility', 'visible');
+          }
+        });
+        lifestyleLayers.forEach(layerId => {
+          if (map.current.getLayer(layerId)) {
+            map.current.setLayoutProperty(layerId, 'visibility', 'none');
+          }
+        });
+      } else {
+        // Show lifestyle layers, hide investor layers
+        lifestyleLayers.forEach(layerId => {
+          if (map.current.getLayer(layerId)) {
+            map.current.setLayoutProperty(layerId, 'visibility', 'visible');
+          }
+        });
+        investorLayers.forEach(layerId => {
+          if (map.current.getLayer(layerId)) {
+            map.current.setLayoutProperty(layerId, 'visibility', 'none');
+          }
+        });
+      }
+    }
+  }, []);
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -790,26 +1791,43 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* View Mode Toggle */}
+          {/* Enhanced View Mode Toggle */}
           <div className="hidden md:flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
             <Button
               size="sm"
               variant={viewMode === 'investor' ? 'default' : 'ghost'}
-              onClick={() => setViewMode('investor')}
+              onClick={() => handleViewModeChange('investor')}
               className="px-3 py-1"
             >
               <TrendingUp className="h-4 w-4 mr-1" />
-              Investor
+              Investor View
             </Button>
             <Button
               size="sm"
               variant={viewMode === 'lifestyle' ? 'default' : 'ghost'}
-              onClick={() => setViewMode('lifestyle')}
+              onClick={() => handleViewModeChange('lifestyle')}
               className="px-3 py-1"
             >
               <Home className="h-4 w-4 mr-1" />
-              Lifestyle
+              Lifestyle View
             </Button>
+          </div>
+          
+          {/* View Mode Indicator */}
+          <div className="hidden lg:flex items-center space-x-2">
+            <Badge variant="outline" className={viewMode === 'investor' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-green-50 text-green-700 border-green-200'}>
+              {viewMode === 'investor' ? (
+                <>
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Investment Metrics
+                </>
+              ) : (
+                <>
+                  <Home className="h-3 w-3 mr-1" />
+                  Lifestyle Metrics
+                </>
+              )}
+            </Badge>
           </div>
 
           {/* Recommendation Toggle */}
@@ -837,11 +1855,197 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                 <Filter className="h-4 w-4" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80">
-              <SheetHeader>
+            <SheetContent side="left" className="w-80 p-0">
+              <SheetHeader className="p-4 border-b flex-shrink-0">
                 <SheetTitle>Filters & Layers</SheetTitle>
               </SheetHeader>
-              {/* Mobile filter content */}
+              <ScrollArea className="flex-1 h-full">
+                <div className="p-4 space-y-6 pb-8">
+                  {/* Mobile filter content - same as desktop */}
+                  {/* Map Layers */}
+                  <Collapsible defaultOpen>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                      <div className="flex items-center space-x-2">
+                        <Layers className="h-4 w-4" />
+                        <span className="font-medium">Map Layers</span>
+                      </div>
+                      <ChevronDown className="h-4 w-4" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-2 space-y-2">
+                      {mapLayers
+                        .filter(layer => {
+                          if (viewMode === 'investor') {
+                            return ['roi', 'rental', 'price', 'risk', 'growth', 'infrastructure', 'metro', 'yield', 'demand'].includes(layer.id);
+                          } else {
+                            return ['walkability', 'amenities', 'lifestyle', 'infrastructure', 'metro'].includes(layer.id);
+                          }
+                        })
+                        .map(layer => (
+                        <div key={layer.id} className="flex items-center justify-between p-2 border rounded">
+                          <div className="flex items-center space-x-3">
+                            <Switch
+                              checked={layer.active}
+                              onCheckedChange={() => toggleLayer(layer.id)}
+                            />
+                            <div>
+                              <div className="font-medium text-sm">{layer.name}</div>
+                              <div className="text-xs text-gray-500">{layer.description}</div>
+                            </div>
+                          </div>
+                          <div 
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: layer.color }}
+                          />
+                        </div>
+                      ))}
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  <Separator />
+
+                  {/* View Mode Specific Filters */}
+                  <div>
+                    <div className="flex items-center space-x-2 mb-3">
+                      <label className="font-medium">
+                        {viewMode === 'investor' ? 'Investment Filters' : 'Lifestyle Filters'}
+                      </label>
+                      <Badge variant="outline" className="text-xs">
+                        {viewMode === 'investor' ? 'ROI & Yield' : 'Amenities & Walkability'}
+                      </Badge>
+                    </div>
+                    
+                    {viewMode === 'investor' ? (
+                      <div className="space-y-4">
+                        {/* ROI Range */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">
+                            ROI Range: {filters.roiRange[0]}% - {filters.roiRange[1]}%
+                          </label>
+                          <Slider
+                            value={filters.roiRange}
+                            onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, roiRange: value as [number, number] }))}
+                            max={15}
+                            min={3}
+                            step={0.5}
+                            className="mt-2"
+                          />
+                        </div>
+
+                        {/* Rental Yield Range */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">
+                            Rental Yield: {filters.rentalYieldRange[0]}% - {filters.rentalYieldRange[1]}%
+                          </label>
+                          <Slider
+                            value={filters.rentalYieldRange}
+                            onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, rentalYieldRange: value as [number, number] }))}
+                            max={12}
+                            min={3}
+                            step={0.5}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {/* Walkability Score Filter */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">
+                            Min Walkability Score: 70+
+                          </label>
+                          <div className="text-xs text-gray-500 mb-2">
+                            Properties with high walkability scores
+                          </div>
+                        </div>
+
+                        {/* Metro Distance Filter */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">
+                            Max Metro Distance: 2km
+                          </label>
+                          <div className="text-xs text-gray-500 mb-2">
+                            Properties within walking distance to metro
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Separator />
+
+                  {/* Recommendation Filter */}
+                  <div>
+                    <label className="font-medium mb-3 block">Recommendations</label>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={showRecommendedOnly}
+                          onCheckedChange={setShowRecommendedOnly}
+                        />
+                        <label className="text-sm">Show Recommended Only</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={clusteringEnabled}
+                          onCheckedChange={setClusteringEnabled}
+                        />
+                        <label className="text-sm">Enable Clustering</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Property Type Filter */}
+                  <div>
+                    <label className="font-medium mb-3 block">Property Type</label>
+                    <div className="space-y-2">
+                      {['Apartment', 'Villa', 'Townhouse'].map(type => (
+                        <div key={type} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`mobile-${type}`}
+                            checked={filters.propertyTypes.includes(type)}
+                            onCheckedChange={(checked: boolean) => {
+                              if (checked) {
+                                setFilters(prev => ({
+                                  ...prev,
+                                  propertyTypes: [...prev.propertyTypes, type]
+                                }));
+                              } else {
+                                setFilters(prev => ({
+                                  ...prev,
+                                  propertyTypes: prev.propertyTypes.filter(t => t !== type)
+                                }));
+                              }
+                            }}
+                          />
+                          <label htmlFor={`mobile-${type}`} className="text-sm">{type}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Price Range */}
+                  <div>
+                    <label className="font-medium mb-3 block">
+                      Price Range: AED {(filters.priceRange[0] / 1000000).toFixed(1)}M - AED {(filters.priceRange[1] / 1000000).toFixed(1)}M
+                    </label>
+                    <Slider
+                      value={filters.priceRange}
+                      onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, priceRange: value as [number, number] }))}
+                      max={20000000}
+                      min={500000}
+                      step={250000}
+                      className="mt-2"
+                    />
+                  </div>
+
+                  {/* Reset Filters */}
+                  <Button variant="outline" onClick={resetFilters} className="w-full">
+                    Reset All Filters
+                  </Button>
+                </div>
+              </ScrollArea>
             </SheetContent>
           </Sheet>
 
@@ -855,7 +2059,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
       <div className="flex-1 flex overflow-hidden">
         {/* Filters Sidebar - Desktop */}
         <div className={`hidden md:flex flex-col bg-white border-r transition-all duration-300 ${showFilters ? 'w-80' : 'w-0'} overflow-hidden`}>
-          <div className="p-4 border-b">
+          <div className="p-4 border-b flex-shrink-0">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold">Filters & Layers</h3>
               <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)}>
@@ -875,8 +2079,8 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
             </div>
           </div>
 
-          <ScrollArea className="flex-1">
-            <div className="p-4 space-y-6">
+          <ScrollArea className="flex-1 h-full">
+            <div className="p-4 space-y-6 pb-8">
               {/* Map Layers */}
               <Collapsible defaultOpen>
                 <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
@@ -888,10 +2092,13 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-2 space-y-2">
                   {mapLayers
-                    .filter(layer => viewMode === 'investor' ? 
-                      ['roi', 'rental', 'price', 'risk', 'growth', 'infrastructure'].includes(layer.id) :
-                      ['infrastructure'].includes(layer.id)
-                    )
+                    .filter(layer => {
+                      if (viewMode === 'investor') {
+                        return ['roi', 'rental', 'price', 'risk', 'growth', 'infrastructure', 'metro', 'yield', 'demand'].includes(layer.id);
+                      } else {
+                        return ['walkability', 'amenities', 'lifestyle', 'infrastructure', 'metro'].includes(layer.id);
+                      }
+                    })
                     .map(layer => (
                     <div key={layer.id} className="flex items-center justify-between p-2 border rounded">
                       <div className="flex items-center space-x-3">
@@ -938,6 +2145,126 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
 
               <Separator />
 
+              {/* View Mode Specific Filters */}
+              <div>
+                <div className="flex items-center space-x-2 mb-3">
+                  <label className="font-medium">
+                    {viewMode === 'investor' ? 'Investment Filters' : 'Lifestyle Filters'}
+                  </label>
+                  <Badge variant="outline" className="text-xs">
+                    {viewMode === 'investor' ? 'ROI & Yield' : 'Amenities & Walkability'}
+                  </Badge>
+                </div>
+                
+                {viewMode === 'investor' ? (
+                  <div className="space-y-4">
+                    {/* ROI Range */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        ROI Range: {filters.roiRange[0]}% - {filters.roiRange[1]}%
+                      </label>
+                      <Slider
+                        value={filters.roiRange}
+                        onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, roiRange: value as [number, number] }))}
+                        max={15}
+                        min={3}
+                        step={0.5}
+                        className="mt-2"
+                      />
+                    </div>
+
+                    {/* Rental Yield Range */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Rental Yield: {filters.rentalYieldRange[0]}% - {filters.rentalYieldRange[1]}%
+                      </label>
+                      <Slider
+                        value={filters.rentalYieldRange}
+                        onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, rentalYieldRange: value as [number, number] }))}
+                        max={12}
+                        min={3}
+                        step={0.5}
+                        className="mt-2"
+                      />
+                    </div>
+
+                    {/* Developer Rating */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Min Developer Rating: {filters.developerRating}+ ⭐
+                      </label>
+                      <Slider
+                        value={[filters.developerRating]}
+                        onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, developerRating: value[0] }))}
+                        max={5}
+                        min={3}
+                        step={0.1}
+                        className="mt-2"
+                      />
+                    </div>
+
+                    {/* Units Left Filter */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Units Left: {filters.unitsLeft[0]} - {filters.unitsLeft[1]}
+                      </label>
+                      <Slider
+                        value={filters.unitsLeft}
+                        onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, unitsLeft: value as [number, number] }))}
+                        max={200}
+                        min={1}
+                        step={1}
+                        className="mt-2"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Walkability Score Filter */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Min Walkability Score: 70+
+                      </label>
+                      <div className="text-xs text-gray-500 mb-2">
+                        Properties with high walkability scores
+                      </div>
+                    </div>
+
+                    {/* Metro Distance Filter */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Max Metro Distance: 2km
+                      </label>
+                      <div className="text-xs text-gray-500 mb-2">
+                        Properties within walking distance to metro
+                      </div>
+                    </div>
+
+                    {/* School Distance Filter */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Max School Distance: 3km
+                      </label>
+                      <div className="text-xs text-gray-500 mb-2">
+                        Family-friendly locations
+                      </div>
+                    </div>
+
+                    {/* Amenities Filter */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Min Amenities: 5+
+                      </label>
+                      <div className="text-xs text-gray-500 mb-2">
+                        Areas with good facilities
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Separator />
+
               {/* Property Type Filter */}
               <div>
                 <label className="font-medium mb-3 block">Property Type</label>
@@ -978,66 +2305,6 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                   max={20000000}
                   min={500000}
                   step={250000}
-                  className="mt-2"
-                />
-              </div>
-
-              {/* ROI Range */}
-              <div>
-                <label className="font-medium mb-3 block">
-                  ROI Range: {filters.roiRange[0]}% - {filters.roiRange[1]}%
-                </label>
-                <Slider
-                  value={filters.roiRange}
-                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, roiRange: value as [number, number] }))}
-                  max={15}
-                  min={3}
-                  step={0.5}
-                  className="mt-2"
-                />
-              </div>
-
-              {/* Rental Yield Range */}
-              <div>
-                <label className="font-medium mb-3 block">
-                  Rental Yield: {filters.rentalYieldRange[0]}% - {filters.rentalYieldRange[1]}%
-                </label>
-                <Slider
-                  value={filters.rentalYieldRange}
-                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, rentalYieldRange: value as [number, number] }))}
-                  max={12}
-                  min={3}
-                  step={0.5}
-                  className="mt-2"
-                />
-              </div>
-
-              {/* Developer Rating */}
-              <div>
-                <label className="font-medium mb-3 block">
-                  Min Developer Rating: {filters.developerRating}+ ⭐
-                </label>
-                <Slider
-                  value={[filters.developerRating]}
-                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, developerRating: value[0] }))}
-                  max={5}
-                  min={3}
-                  step={0.1}
-                  className="mt-2"
-                />
-              </div>
-
-              {/* Units Left Filter */}
-              <div>
-                <label className="font-medium mb-3 block">
-                  Units Left: {filters.unitsLeft[0]} - {filters.unitsLeft[1]}
-                </label>
-                <Slider
-                  value={filters.unitsLeft}
-                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, unitsLeft: value as [number, number] }))}
-                  max={200}
-                  min={1}
-                  step={1}
                   className="mt-2"
                 />
               </div>
@@ -1197,19 +2464,155 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                         </div>
                       </div>
 
-                      {/* Recommendation Reason */}
-                      {property.recommended && property.recommendationReason && (
-                        <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                          <div className="text-sm font-medium text-yellow-800 mb-1">Why Recommended:</div>
-                          <div className="text-xs text-yellow-700">{property.recommendationReason}</div>
-                        </div>
-                      )}
+                                             {/* Recommendation Reason */}
+                       {property.recommended && property.recommendationReason && (
+                         <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                           <div className="text-sm font-medium text-yellow-800 mb-1">Why Recommended:</div>
+                           <div className="text-xs text-yellow-700">{property.recommendationReason}</div>
+                         </div>
+                       )}
+
+                       {/* Metro Completion Tag */}
+                       {property.infraImpact?.metro?.completion === "2027" && (
+                         <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                           <div className="flex items-center space-x-2 mb-1">
+                             <Train className="h-4 w-4 text-green-600" />
+                             <div className="text-sm font-medium text-green-800">Metro 2027</div>
+                           </div>
+                           <div className="text-xs text-green-700">
+                             Metro completion expected by 2027 - value boost likely
+                           </div>
+                         </div>
+                       )}
                     </CardContent>
                   </Card>
                 );
               })()}
             </div>
           )}
+
+                                {/* Map Legend */}
+            <div className="absolute bottom-4 left-4 z-30">
+              <Card className="p-4 max-w-xs">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-sm">Map Legend</h4>
+                    <Badge variant="outline" className="text-xs">
+                      {viewMode === 'investor' ? 'Investment View' : 'Lifestyle View'}
+                    </Badge>
+                  </div>
+                  
+                  {/* Heatmap Legend */}
+                  {mapLayers.filter(layer => layer.active && layer.type === 'heatmap').length > 0 && (
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-gray-600">
+                        {viewMode === 'investor' ? 'Investment Heatmaps' : 'Lifestyle Heatmaps'}
+                      </div>
+                      {mapLayers
+                        .filter(layer => layer.active && layer.type === 'heatmap')
+                        .map(layer => (
+                          <div key={layer.id} className="flex items-center space-x-2">
+                            <div 
+                              className="w-4 h-4 rounded"
+                              style={{ backgroundColor: layer.color }}
+                            />
+                            <span className="text-xs">{layer.name}</span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+
+                  {/* Overlay Legend */}
+                  {mapLayers.filter(layer => layer.active && layer.type === 'overlay').length > 0 && (
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-gray-600">
+                        {viewMode === 'investor' ? 'Investment Zones' : 'Lifestyle Zones'}
+                      </div>
+                      {mapLayers
+                        .filter(layer => layer.active && layer.type === 'overlay')
+                        .map(layer => (
+                          <div key={layer.id} className="flex items-center space-x-2">
+                            <div 
+                              className="w-4 h-4 rounded"
+                              style={{ backgroundColor: layer.color }}
+                            />
+                            <span className="text-xs">{layer.name}</span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+
+                  {/* Infrastructure Legend */}
+                  {mapLayers.filter(layer => layer.active && layer.type === 'infrastructure').length > 0 && (
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-gray-600">Infrastructure</div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span className="text-xs">Metro Stations</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <span className="text-xs">Schools</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span className="text-xs">Hospitals</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                        <span className="text-xs">Shopping Malls</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Property Types */}
+                  <div className="space-y-2">
+                    <div className="text-xs font-medium text-gray-600">Properties</div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      <span className="text-xs">Apartments</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                      <span className="text-xs">Villas</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <span className="text-xs">Townhouses</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 rounded-full bg-yellow-500 ring-2 ring-yellow-400"></div>
+                      <span className="text-xs">Recommended</span>
+                    </div>
+                  </div>
+
+                  {/* View Mode Specific Info */}
+                  {viewMode === 'investor' && (
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-gray-600">Investment Focus</div>
+                      <div className="text-xs text-gray-500">
+                        • ROI and rental yield heatmaps<br/>
+                        • Risk assessment zones<br/>
+                        • Price growth indicators<br/>
+                        • Demand analysis
+                      </div>
+                    </div>
+                  )}
+
+                  {viewMode === 'lifestyle' && (
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-gray-600">Lifestyle Focus</div>
+                      <div className="text-xs text-gray-500">
+                        • Walkability scores<br/>
+                        • Amenities density<br/>
+                        • Quality of life zones<br/>
+                        • Community features
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
 
           {/* No Results Message */}
           {filteredProperties.length === 0 && (
@@ -1233,7 +2636,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
         {/* Property Detail Panel */}
         {showPropertyPanel && selectedProperty && (
           <div className="w-96 bg-white border-l flex flex-col overflow-hidden">
-            <div className="p-4 border-b">
+             <div className="p-4 border-b flex-shrink-0">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold">Property Details</h3>
                 <Button variant="ghost" size="sm" onClick={() => setShowPropertyPanel(false)}>
@@ -1242,8 +2645,8 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
               </div>
             </div>
 
-            <ScrollArea className="flex-1">
-              <div className="p-4 space-y-6">
+             <ScrollArea className="flex-1 h-full">
+               <div className="p-4 space-y-6 pb-8">
                 {/* Property Images */}
                 <div className="space-y-3">
                   <ImageWithFallback
@@ -1292,37 +2695,91 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                   </Card>
                 )}
 
+                 {/* Metro Completion Tag */}
+                 {selectedProperty.infraImpact?.metro?.completion === "2027" && (
+                   <Card className="border-l-4 border-l-green-500">
+                     <CardContent className="p-4">
+                       <div className="flex items-start space-x-2">
+                         <Train className="h-4 w-4 text-green-500 mt-0.5" />
+                         <div>
+                           <div className="font-medium text-sm text-green-700">Metro Expansion</div>
+                           <div className="text-sm text-gray-600">
+                             Metro line completion expected by 2027 - likely to boost property values
+                           </div>
+                           <Badge variant="outline" className="mt-2 bg-green-50 text-green-700 border-green-200">
+                             <Calendar className="h-3 w-3 mr-1" />
+                             Completion: 2027
+                           </Badge>
+                         </div>
+                       </div>
+                     </CardContent>
+                   </Card>
+                 )}
+
                 {/* Investment Metrics */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">
-                      {viewMode === 'investor' ? 'Investment Metrics' : 'Lifestyle Metrics'}
+                    <CardTitle className="text-lg flex items-center">
+                      {viewMode === 'investor' ? (
+                        <>
+                          <TrendingUp className="h-5 w-5 mr-2" />
+                          Investment Metrics
+                        </>
+                      ) : (
+                        <>
+                          <Home className="h-5 w-5 mr-2" />
+                          Lifestyle Metrics
+                        </>
+                      )}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {viewMode === 'investor' ? (
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="text-2xl font-bold text-green-600">{selectedProperty.roi}%</div>
-                        <div className="text-sm text-gray-600">ROI</div>
-                        <div className="text-2xl font-bold text-purple-600">{selectedProperty.rentalYield}%</div>
-                        <div className="text-sm text-gray-600">Rental Yield</div>
-                        <div className="text-2xl font-bold text-blue-600">{selectedProperty.priceGrowthYoY}%</div>
-                        <div className="text-sm text-gray-600">Price Growth</div>
-                        <Badge className={getRiskColor(selectedProperty.riskLevel)}>
-                          {selectedProperty.riskLevel}
-                        </Badge>
-                        <div className="text-sm text-gray-600 mt-1">Risk Level</div>
+                        <div className="text-center p-3 bg-green-50 rounded-lg">
+                          <div className="text-2xl font-bold text-green-600">{selectedProperty.roi}%</div>
+                          <div className="text-sm text-gray-600">ROI</div>
+                        </div>
+                        <div className="text-center p-3 bg-purple-50 rounded-lg">
+                          <div className="text-2xl font-bold text-purple-600">{selectedProperty.rentalYield}%</div>
+                          <div className="text-sm text-gray-600">Rental Yield</div>
+                        </div>
+                        <div className="text-center p-3 bg-blue-50 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-600">{selectedProperty.priceGrowthYoY}%</div>
+                          <div className="text-sm text-gray-600">Price Growth YoY</div>
+                        </div>
+                        <div className="text-center p-3 bg-gray-50 rounded-lg">
+                          <Badge className={getRiskColor(selectedProperty.riskLevel)}>
+                            {selectedProperty.riskLevel} Risk
+                          </Badge>
+                        </div>
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="text-lg font-bold text-blue-600">{selectedProperty.metroDistance}km</div>
-                        <div className="text-sm text-gray-600">To Metro</div>
-                        <div className="text-lg font-bold text-green-600">{selectedProperty.schoolDistance}km</div>
-                        <div className="text-sm text-gray-600">To Schools</div>
-                        <div className="text-lg font-bold text-red-600">{selectedProperty.hospitalDistance}km</div>
-                        <div className="text-sm text-gray-600">To Hospital</div>
-                        <div className="text-lg font-bold text-purple-600">{selectedProperty.walkabilityScore}</div>
-                        <div className="text-sm text-gray-600">Walk Score</div>
+                        <div className="text-center p-3 bg-blue-50 rounded-lg">
+                          <div className="text-lg font-bold text-blue-600">{selectedProperty.metroDistance}km</div>
+                          <div className="text-sm text-gray-600">To Metro</div>
+                        </div>
+                        <div className="text-center p-3 bg-green-50 rounded-lg">
+                          <div className="text-lg font-bold text-green-600">{selectedProperty.schoolDistance}km</div>
+                          <div className="text-sm text-gray-600">To Schools</div>
+                        </div>
+                        <div className="text-center p-3 bg-red-50 rounded-lg">
+                          <div className="text-lg font-bold text-red-600">{selectedProperty.hospitalDistance}km</div>
+                          <div className="text-sm text-gray-600">To Hospital</div>
+                        </div>
+                        <div className="text-center p-3 bg-purple-50 rounded-lg">
+                          <div className="text-lg font-bold text-purple-600">{selectedProperty.walkabilityScore}</div>
+                          <div className="text-sm text-gray-600">Walk Score</div>
+                        </div>
+                        <div className="text-center p-3 bg-orange-50 rounded-lg">
+                          <div className="text-lg font-bold text-orange-600">{selectedProperty.mallDistance}km</div>
+                          <div className="text-sm text-gray-600">To Mall</div>
+                        </div>
+                        <div className="text-center p-3 bg-cyan-50 rounded-lg">
+                          <div className="text-lg font-bold text-cyan-600">{selectedProperty.beachDistance}km</div>
+                          <div className="text-sm text-gray-600">To Beach</div>
+                        </div>
                       </div>
                     )}
                   </CardContent>
