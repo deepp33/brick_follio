@@ -1,0 +1,12 @@
+[
+  {
+    "investor": "64f123abc456def7890aaa11",
+    "targetId": "64f222bbb333ccc444ddd55",
+    "targetModel": "Project"
+  },
+  {
+    "investor": "64f123abc456def7890aaa11",
+    "targetId": "64f444ddd555eee666fff77",
+    "targetModel": "User"
+  }
+]
