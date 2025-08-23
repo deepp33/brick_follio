@@ -5,4 +5,5 @@ export { default as PropertyListingPage } from './PropertyListing';
 export { default as DeveloperListingPage } from './DeveloperListing';
 export { default as DeveloperProfilePage } from './DeveloperProfile';
 export { default as MarketAnalyticsPage } from './MarketAnalytics';
+export { default as ContactPage } from './Contact';
 export { default as NotFound } from './NotFound';

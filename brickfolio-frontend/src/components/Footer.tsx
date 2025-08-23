@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 export function Footer() {
@@ -39,24 +40,24 @@ export function Footer() {
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white transition-colors">
+                    <Link to="/properties" className="text-base text-gray-300 hover:text-white transition-colors">
                       Properties
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white transition-colors">
+                    <Link to="/developers" className="text-base text-gray-300 hover:text-white transition-colors">
                       Developers
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white transition-colors">
+                    <Link to="/market-analytics" className="text-base text-gray-300 hover:text-white transition-colors">
                       Market Insights
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white transition-colors">
+                    <Link to="/" className="text-base text-gray-300 hover:text-white transition-colors">
                       Investment Calculator
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -110,9 +111,9 @@ export function Footer() {
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white transition-colors">
+                    <Link to="/contact" className="text-base text-gray-300 hover:text-white transition-colors">
                       Contact
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>

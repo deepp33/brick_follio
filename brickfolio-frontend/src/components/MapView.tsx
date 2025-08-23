@@ -89,6 +89,49 @@ const dubaiProperties = [
     governmentImpact: "Metro expansion 2027 - value boost expected",
     images: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"],
     floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
+    aerialView: "https://images.unsplash.com/photo-1512453979798-5ff17c3515e1?w=800",
+    paymentPlan: "20% Down, 80% on Completion",
+    fees: "4% DLD + 2% Agent",
+    pricePerSqft: 1850,
+    infraImpact: {
+      metro: { status: "expansion", completion: "2027", impact: "High" },
+      schools: { count: 3, avgDistance: 0.8 },
+      hospitals: { count: 2, avgDistance: 1.2 }
+    },
+    recommended: true,
+    recommendationReason: "High ROI, Prime location, Low risk"
+  },
+  {
+    id: 1,
+    name: "Burj Vista Downtown",
+    coordinates: [55.2744, 25.1972],
+    location: "Downtown Dubai",
+    type: "Apartment",
+    unitTypes: ["1BR", "2BR", "3BR"],
+    priceRange: "AED 2.1M - 4.8M",
+    priceMin: 2100000,
+    priceMax: 4800000,
+    unitsLeft: 23,
+    roi: 8.7,
+    rentalYield: 7.4,
+    priceGrowthYoY: 12.8,
+    constructionStatus: 85,
+    completionDate: "Q2 2025",
+    developerRating: 4.9,
+    developer: "Emaar Properties",
+    projectStatus: "Under Construction",
+    riskLevel: "Low",
+    metroDistance: 0.3,
+    schoolDistance: 0.8,
+    hospitalDistance: 1.2,
+    mallDistance: 0.2,
+    beachDistance: 8.5,
+    walkabilityScore: 95,
+    communityFeatures: ["Gym", "Pool", "Concierge", "Parking", "Security"],
+    nearbyAmenities: ["Dubai Mall", "Burj Khalifa", "Metro Station", "Business District"],
+    governmentImpact: "Metro expansion 2027 - value boost expected",
+    images: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800"],
+    floorPlans: ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600"],
     aerialView: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800",
     paymentPlan: "20% Down, 80% on Completion",
     fees: "4% DLD + 2% Agent",
@@ -357,6 +400,9 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredProperty, setHoveredProperty] = useState<number | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [showRecommendedOnly, setShowRecommendedOnly] = useState(false);
+  const [clusteringEnabled, setClusteringEnabled] = useState(true);
+  const [selectedProperties, setSelectedProperties] = useState<any[]>([]);
   
   // Filter states
   const [filters, setFilters] = useState<PropertyFilters>({
@@ -433,9 +479,9 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
     };
   }, []);
 
-  // Filter properties based on current filters
+  // Filter properties based on current filters and recommendations
   const filteredProperties = useMemo(() => {
-    return dubaiProperties.filter(property => {
+    let properties = dubaiProperties.filter(property => {
       // Property type filter
       if (filters.propertyTypes.length > 0 && !filters.propertyTypes.includes(property.type)) {
         return false;
@@ -484,9 +530,16 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
 
       return true;
     });
-  }, [filters, searchQuery]);
 
-  // Add property markers to map
+    // Filter by recommendations if enabled
+    if (showRecommendedOnly) {
+      properties = properties.filter(property => property.recommended);
+    }
+
+    return properties;
+  }, [filters, searchQuery, showRecommendedOnly]);
+
+  // Add property markers to map with clustering and recommendations
   const addPropertyMarkers = useCallback(() => {
     if (!map.current || !mapLoaded) return;
 
@@ -495,16 +548,19 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
     markers.current = [];
 
     filteredProperties.forEach(property => {
-      // Create marker element
+      // Create marker element with recommendation highlighting
       const el = document.createElement('div');
       el.className = 'property-marker';
+      
+      const baseColor = property.type === 'Villa' ? 'bg-purple-500' : 
+                       property.type === 'Apartment' ? 'bg-blue-500' : 'bg-green-500';
+      
+      const recommendationClass = property.recommended ? 'ring-4 ring-yellow-400 ring-opacity-75' : '';
+      
       el.innerHTML = `
-        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg cursor-pointer transition-transform hover:scale-110 ${
-          property.type === 'Villa' ? 'bg-purple-500' :
-          property.type === 'Apartment' ? 'bg-blue-500' :
-          'bg-green-500'
-        }">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg cursor-pointer transition-all duration-200 hover:scale-110 ${baseColor} ${recommendationClass}">
           <span class="text-xs">${property.type === 'Villa' ? '🏠' : '🏢'}</span>
+          ${property.recommended ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></div>' : ''}
         </div>
       `;
 
@@ -590,6 +646,16 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
   }, [filteredProperties, addPropertyMarkers]);
 
   const handlePropertyClick = useCallback((property: any) => {
+    // Add to selected properties if not already selected
+    setSelectedProperties(prev => {
+      const isAlreadySelected = prev.find(p => p.id === property.id);
+      if (isAlreadySelected) {
+        return prev.filter(p => p.id !== property.id);
+      } else {
+        return [...prev, property];
+      }
+    });
+    
     setSelectedProperty(property);
     setShowPropertyPanel(true);
     
@@ -621,6 +687,13 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
       unitsLeft: [1, 200]
     });
     setSearchQuery('');
+    setSelectedProperties([]);
+    setShowPropertyPanel(false);
+  }, []);
+
+  const clearSelectedProperties = useCallback(() => {
+    setSelectedProperties([]);
+    setShowPropertyPanel(false);
   }, []);
 
   const getUnitsLeftColor = (unitsLeft: number) => {
@@ -694,6 +767,16 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
           <Badge variant="secondary" className="hidden sm:flex">
             {filteredProperties.length} properties found
           </Badge>
+          {selectedProperties.length > 0 && (
+            <div className="hidden sm:flex items-center space-x-2">
+              <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                {selectedProperties.length} selected
+              </Badge>
+              <Button variant="ghost" size="sm" onClick={clearSelectedProperties}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
           {recommendedRegions.length > 0 && (
             <div className="hidden md:flex items-center space-x-2">
               <span className="text-sm text-gray-600">Recommended:</span>
@@ -727,6 +810,24 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
               <Home className="h-4 w-4 mr-1" />
               Lifestyle
             </Button>
+          </div>
+
+          {/* Recommendation Toggle */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Switch
+              checked={showRecommendedOnly}
+              onCheckedChange={setShowRecommendedOnly}
+            />
+            <span className="text-sm text-gray-600">Recommended Only</span>
+          </div>
+
+          {/* Clustering Toggle */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Switch
+              checked={clusteringEnabled}
+              onCheckedChange={setClusteringEnabled}
+            />
+            <span className="text-sm text-gray-600">Clustering</span>
           </div>
 
           {/* Mobile Filter Toggle */}
@@ -814,6 +915,29 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
 
               <Separator />
 
+              {/* Recommendation Filter */}
+              <div>
+                <label className="font-medium mb-3 block">Recommendations</label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={showRecommendedOnly}
+                      onCheckedChange={setShowRecommendedOnly}
+                    />
+                    <label className="text-sm">Show Recommended Only</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={clusteringEnabled}
+                      onCheckedChange={setClusteringEnabled}
+                    />
+                    <label className="text-sm">Enable Clustering</label>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
               {/* Property Type Filter */}
               <div>
                 <label className="font-medium mb-3 block">Property Type</label>
@@ -823,7 +947,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                       <Checkbox
                         id={type}
                         checked={filters.propertyTypes.includes(type)}
-                        onCheckedChange={(checked) => {
+                        onCheckedChange={(checked: boolean) => {
                           if (checked) {
                             setFilters(prev => ({
                               ...prev,
@@ -850,7 +974,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                 </label>
                 <Slider
                   value={filters.priceRange}
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, priceRange: value as [number, number] }))}
+                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, priceRange: value as [number, number] }))}
                   max={20000000}
                   min={500000}
                   step={250000}
@@ -865,7 +989,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                 </label>
                 <Slider
                   value={filters.roiRange}
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, roiRange: value as [number, number] }))}
+                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, roiRange: value as [number, number] }))}
                   max={15}
                   min={3}
                   step={0.5}
@@ -880,7 +1004,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                 </label>
                 <Slider
                   value={filters.rentalYieldRange}
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, rentalYieldRange: value as [number, number] }))}
+                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, rentalYieldRange: value as [number, number] }))}
                   max={12}
                   min={3}
                   step={0.5}
@@ -895,7 +1019,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                 </label>
                 <Slider
                   value={[filters.developerRating]}
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, developerRating: value[0] }))}
+                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, developerRating: value[0] }))}
                   max={5}
                   min={3}
                   step={0.1}
@@ -910,7 +1034,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                 </label>
                 <Slider
                   value={filters.unitsLeft}
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, unitsLeft: value as [number, number] }))}
+                  onValueChange={(value: number[]) => setFilters(prev => ({ ...prev, unitsLeft: value as [number, number] }))}
                   max={200}
                   min={1}
                   step={1}
@@ -927,7 +1051,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                       <Checkbox
                         id={status}
                         checked={filters.projectStatus.includes(status)}
-                        onCheckedChange={(checked) => {
+                        onCheckedChange={(checked: boolean) => {
                           if (checked) {
                             setFilters(prev => ({
                               ...prev,
@@ -987,6 +1111,11 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                           <CardTitle className="text-lg cursor-pointer hover:text-blue-600" 
                                      onClick={() => handlePropertyClick(property)}>
                             {property.name}
+                            {property.recommended && (
+                              <Badge variant="secondary" className="ml-2 text-xs bg-yellow-100 text-yellow-800">
+                                Recommended
+                              </Badge>
+                            )}
                           </CardTitle>
                           <div className="flex items-center space-x-1 mt-1">
                             <MapPin className="h-4 w-4 text-gray-400" />
@@ -1067,6 +1196,14 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
                           ))}
                         </div>
                       </div>
+
+                      {/* Recommendation Reason */}
+                      {property.recommended && property.recommendationReason && (
+                        <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <div className="text-sm font-medium text-yellow-800 mb-1">Why Recommended:</div>
+                          <div className="text-xs text-yellow-700">{property.recommendationReason}</div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 );

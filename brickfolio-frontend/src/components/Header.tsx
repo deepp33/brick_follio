@@ -64,12 +64,12 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
             <Link to="/market-analytics" className="text-gray-700 hover:text-blue-600 transition-colors">
               Market Insights
             </Link>
-            <a href="#resources" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">
               Resources
-            </a>
-            <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">
+            </Link>
+            <Link to="/contact" className="text-gray-700 hover:text-blue-600 transition-colors">
               Contact
-            </a>
+            </Link>
           </nav>
 
           {/* Search and Actions */}
