@@ -10,7 +10,7 @@ export default function DeveloperListingPage() {
   };
 
   const openDeveloperProfile = (developer: any) => {
-    navigate(`/developer/${developer.id}`, { state: { developer } });
+    navigate(`/developer/${developer._id}`, { state: { developer } });
   };
 
   return (

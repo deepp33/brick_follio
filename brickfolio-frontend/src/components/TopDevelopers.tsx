@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { getDevelopers } from '../features/users/usersSlice';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -12,88 +15,20 @@ import {
   Eye
 } from 'lucide-react';
 
-const topDevelopers = [
-  {
-    id: 1,
-    name: "Emaar Properties",
-    logo: "E",
-    rating: 4.9,
-    totalProjects: 45,
-    projects: 45,
-    deliveryRate: 98,
-    onTimeDeliveryRate: 98,
-    credentials: ["RERA Verified", "Award Winner"],
-    recentProject: "Dubai Hills Estate",
-    recentProjects: ["Dubai Hills Estate", "Creek Harbour"],
-    bgColor: "bg-blue-600",
-    location: "Downtown Dubai",
-    establishedYear: 1997,
-    completedProjects: 42,
-    totalUnitsDelivered: 25800,
-    specialization: ["Luxury Residential", "Mixed-Use", "Commercial"],
-    performanceScore: 95
-  },
-  {
-    id: 2,
-    name: "DAMAC Properties",
-    logo: "D",
-    rating: 4.7,
-    totalProjects: 38,
-    projects: 38,
-    deliveryRate: 95,
-    onTimeDeliveryRate: 95,
-    credentials: ["RERA Verified", "ISO Certified"],
-    recentProject: "Marina Heights",
-    recentProjects: ["Marina Heights", "Damac Hills"],
-    bgColor: "bg-green-600",
-    location: "Business Bay",
-    establishedYear: 2002,
-    completedProjects: 35,
-    totalUnitsDelivered: 18500,
-    specialization: ["Luxury Residential", "Hotels & Resorts"],
-    performanceScore: 92
-  },
-  {
-    id: 3,
-    name: "Sobha Realty",
-    logo: "S",
-    rating: 4.8,
-    totalProjects: 28,
-    projects: 28,
-    deliveryRate: 97,
-    onTimeDeliveryRate: 97,
-    credentials: ["RERA Verified", "Quality Excellence"],
-    recentProject: "Business Bay Tower",
-    recentProjects: ["Business Bay Tower", "Sobha Hartland"],
-    bgColor: "bg-purple-600",
-    location: "Motor City",
-    establishedYear: 2003,
-    completedProjects: 25,
-    totalUnitsDelivered: 12200,
-    specialization: ["Premium Residential", "Villas"],
-    performanceScore: 96
-  },
-  {
-    id: 4,
-    name: "Nakheel",
-    logo: "N",
-    rating: 4.6,
-    totalProjects: 32,
-    projects: 32,
-    deliveryRate: 93,
-    onTimeDeliveryRate: 93,
-    credentials: ["RERA Verified", "Innovation Award"],
-    recentProject: "Palm Jumeirah Villas",
-    recentProjects: ["Palm Jumeirah Villas", "The World Islands"],
-    bgColor: "bg-orange-600",
-    location: "Dubai Marina",
-    establishedYear: 2000,
-    completedProjects: 28,
-    totalUnitsDelivered: 15700,
-    specialization: ["Master Development", "Waterfront Projects"],
-    performanceScore: 90
-  }
-];
+// Helper function to get background color based on developer name
+const getDeveloperBgColor = (name: string) => {
+  const colors = [
+    'bg-blue-600', 'bg-green-600', 'bg-purple-600', 'bg-orange-600',
+    'bg-red-600', 'bg-indigo-600', 'bg-pink-600', 'bg-teal-600'
+  ];
+  const index = name.charCodeAt(0) % colors.length;
+  return colors[index];
+};
+
+// Helper function to get logo from name
+const getDeveloperLogo = (name: string) => {
+  return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+};
 
 interface TopDevelopersProps {
   onDeveloperClick?: (developer: any) => void;
@@ -115,6 +50,52 @@ const getPerformanceLabel = (score: number) => {
 };
 
 export function TopDevelopers({ onDeveloperClick, onViewAllClick }: TopDevelopersProps) {
+  const dispatch = useAppDispatch();
+  const { developers, loading, error } = useAppSelector((state) => state.users);
+
+  useEffect(() => {
+    dispatch(getDevelopers());
+  }, [dispatch]);
+
+  // Get top 4 developers sorted by rating
+  const topDevelopers = [...developers]
+    .sort((a, b) => (b.developerProfile?.rating || 0) - (a.developerProfile?.rating || 0))
+    .slice(0, 4);
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+              Top Rated Developers
+            </h2>
+            <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+              Loading developers...
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+              Top Rated Developers
+            </h2>
+            <p className="mt-3 max-w-2xl mx-auto text-xl text-red-500 sm:mt-4">
+              Error loading developers: {error}
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,24 +110,24 @@ export function TopDevelopers({ onDeveloperClick, onViewAllClick }: TopDeveloper
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {topDevelopers.map((developer) => (
-            <Card key={developer.id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
+            <Card key={developer._id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-12 h-12 ${developer.bgColor} rounded-full flex items-center justify-center`}>
-                      <span className="text-white font-bold">{developer.logo}</span>
+                    <div className={`w-12 h-12 ${getDeveloperBgColor(developer.name)} rounded-full flex items-center justify-center`}>
+                      <span className="text-white font-bold">{getDeveloperLogo(developer.name)}</span>
                     </div>
                     <div>
                       <CardTitle className="text-lg">{developer.name}</CardTitle>
                       <div className="flex items-center space-x-1 mt-1">
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                        <span className="text-sm font-medium">{developer.rating}</span>
-                        <span className="text-sm text-gray-500">({developer.totalProjects} projects)</span>
+                        <span className="text-sm font-medium">{developer.developerProfile?.rating || 0}</span>
+                        <span className="text-sm text-gray-500">({developer.developerProfile?.totalProjects || 0} projects)</span>
                       </div>
                     </div>
                   </div>
-                  <Badge className={getPerformanceColor(developer.performanceScore)}>
-                    {getPerformanceLabel(developer.performanceScore)}
+                  <Badge className={getPerformanceColor(developer.developerProfile?.successRate || 0)}>
+                    {getPerformanceLabel(developer.developerProfile?.successRate || 0)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -154,40 +135,40 @@ export function TopDevelopers({ onDeveloperClick, onViewAllClick }: TopDeveloper
               <CardContent className="space-y-4">
                 <div className="flex items-center text-sm text-gray-600">
                   <MapPin className="h-4 w-4 mr-2" />
-                  {developer.location}
-                  <span className="ml-2 text-xs">Est. {developer.establishedYear}</span>
+                  {developer.developerProfile?.location || developer.city || 'Dubai'}
+                  <span className="ml-2 text-xs">Est. {new Date(developer.createdAt).getFullYear()}</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="font-semibold text-blue-600">{developer.completedProjects}</div>
+                    <div className="font-semibold text-blue-600">{developer.developerProfile?.projectsCompletedCount || 0}</div>
                     <div className="text-gray-600">Completed</div>
                   </div>
                   <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="font-semibold text-green-600">{developer.totalUnitsDelivered.toLocaleString()}</div>
-                    <div className="text-gray-600">Units</div>
+                    <div className="font-semibold text-green-600">{developer.developerProfile?.activeProjects || 0}</div>
+                    <div className="text-gray-600">Active</div>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span>On-Time Delivery</span>
-                    <span className="font-medium">{developer.onTimeDeliveryRate}%</span>
+                    <span className="font-medium">{developer.developerProfile?.deliveryTrackRecord?.onTime || 0}%</span>
                   </div>
-                  <Progress value={developer.onTimeDeliveryRate} className="h-2" />
+                  <Progress value={developer.developerProfile?.deliveryTrackRecord?.onTime || 0} className="h-2" />
                 </div>
 
                 <div className="space-y-1">
                   <div className="text-sm font-medium text-gray-700">Specializations:</div>
                   <div className="flex flex-wrap gap-1">
-                    {developer.specialization.slice(0, 2).map((spec, index) => (
+                    {developer.developerProfile?.specializations?.slice(0, 2).map((spec, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {spec}
                       </Badge>
-                    ))}
-                    {developer.specialization.length > 2 && (
+                    )) || []}
+                    {developer.developerProfile?.specializations && developer.developerProfile.specializations.length > 2 && (
                       <Badge variant="secondary" className="text-xs">
-                        +{developer.specialization.length - 2} more
+                        +{developer.developerProfile.specializations.length - 2} more
                       </Badge>
                     )}
                   </div>
@@ -196,18 +177,22 @@ export function TopDevelopers({ onDeveloperClick, onViewAllClick }: TopDeveloper
                 <div className="space-y-1">
                   <div className="text-sm font-medium text-gray-700">Credentials:</div>
                   <div className="flex flex-wrap gap-1">
-                    {developer.credentials.slice(0, 2).map((credential, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {credential === "RERA Verified" && <Shield className="h-3 w-3 mr-1" />}
-                        {credential === "Award Winner" && <Award className="h-3 w-3 mr-1" />}
-                        {credential}
+                    {developer.developerProfile?.reraCertified && (
+                      <Badge variant="outline" className="text-xs">
+                        <Shield className="h-3 w-3 mr-1" />
+                        RERA Verified
                       </Badge>
-                    ))}
+                    )}
+                    {developer.developerProfile?.certifications?.map((cert, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {cert}
+                      </Badge>
+                    )) || []}
                   </div>
                 </div>
 
                 <div className="text-xs text-gray-500">
-                  Recent: {developer.recentProjects.slice(0, 2).join(', ')}
+                  Avg ROI: {developer.developerProfile?.avgROI || 0}%
                 </div>
               </CardContent>
 

@@ -1,0 +1,453 @@
+Got it! I'll skip the "Real Estate Open Data Free" section from the Dubai Land Department (DLD) APIs and focus on documenting the remaining BrickFolio APIs from the provided Postman collection (`BrickFolio Collection APIs.postman_collection.json`). Below is the documentation for the **Users**, **Projects**, **Market & Analytics**, **News**, **Wishlist**, and **Market** endpoints. Each endpoint includes the HTTP method, URL, parameters, description, and example request. The base URL is represented as `{{BRICK_FOLIO_URL}}` (replace with your actual base URL, e.g., `https://api.brickfolio.com`). Authentication is assumed to be none unless specified, but you may need to add headers (e.g., JWT tokens) if required by your implementation.
+
+# BrickFolio API Documentation
+
+## Table of Contents
+1. [Users](#1-users)
+2. [Projects](#2-projects)
+4. [News](#4-news)
+5. [Wishlist](#5-wishlist)
+6. [Market](#6-market)
+
+---
+
+## 1. Users
+
+Endpoints for managing user accounts, including creation, retrieval, updates, and recommendations.
+
+### Create User
+- **Method**: POST
+- **URL**: `{{BRICK_FOLIO_URL}}/users`
+- **Parameters** (Body - JSON):
+  - `name`: string, required (e.g., "Ravi Kumar").
+  - `email`: string, required (e.g., "ravi@example.com").
+  - `password`: string, required (e.g., "secure123").
+  - `role`: string, required (e.g., "Investor", "Developer").
+  - `phone`: string, optional (e.g., "+97150000000").
+  - `country`: string, optional (e.g., "India").
+  - `city`: string, optional (e.g., "Mumbai").
+  - `onboarding`: object, optional:
+    - `step1_residence`: string (e.g., "International Investor").
+    - `step2_priorInvestment`: string (e.g., "No").
+    - `step3_investmentGoal`: string (e.g., "Long-term capital growth").
+    - `step4_budget`: object (e.g., `{ "min": 500000, "max": 2000000, "currency": "AED" }`).
+    - `step5_offPlan`: string (e.g., "Yes").
+    - `step6_preferredLocation`: array of strings (e.g., ["Dubai Marina", "Downtown Dubai"]).
+    - `step7_propertyTypes`: array of strings (e.g., ["1-Bedroom", "2-Bedroom", "Villas", "Penthouses"]).
+    - `step8_roiTarget`: number (e.g., 8).
+    - `step9_rentalYieldTarget`: number (e.g., 6).
+    - `step10_riskAppetite`: string (e.g., "moderate").
+    - `step11_investmentHorizon`: string (e.g., "long-term").
+- **Description**: Creates a new user with optional onboarding details for investment preferences.
+- **Example Request**:
+  ```bash
+  curl -X POST {{BRICK_FOLIO_URL}}/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Ravi Kumar",
+    "email": "ravi@example.com",
+    "password": "secure123",
+    "role": "Investor",
+    "phone": "+97150000000",
+    "country": "India",
+    "city": "Mumbai",
+    "onboarding": {
+      "step1_residence": "International Investor",
+      "step2_priorInvestment": "No",
+      "step3_investmentGoal": "Long-term capital growth",
+      "step4_budget": { "min": 500000, "max": 2000000, "currency": "AED" },
+      "step5_offPlan": "Yes",
+      "step6_preferredLocation": ["Dubai Marina", "Downtown Dubai"],
+      "step7_propertyTypes": ["1-Bedroom", "2-Bedroom", "Villas", "Penthouses"],
+      "step8_roiTarget": 8,
+      "step9_rentalYieldTarget": 6,
+      "step10_riskAppetite": "moderate",
+      "step11_investmentHorizon": "long-term"
+    }
+  }'
+  ```
+
+### Get Users
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/users`
+- **Parameters** (Query):
+  - `role`: string, optional (e.g., "Developer").
+- **Description**: Retrieves a list of users, optionally filtered by role.
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/users?role=Developer"
+  ```
+
+### Get User by ID
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/users/{userId}`
+- **Parameters** (Path):
+  - `userId`: string, required (e.g., "68a9d61ee93081b67ed3aba6").
+- **Description**: Retrieves details of a specific user by their ID.
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/users/68a9d61ee93081b67ed3aba6"
+  ```
+
+### Update User by ID
+- **Method**: PUT
+- **URL**: `{{BRICK_FOLIO_URL}}/users/{userId}`
+- **Parameters** (Path):
+  - `userId`: string, required (e.g., "68a9d61ee93081b67ed3aba6").
+- **Parameters** (Body - JSON):
+  - `_id`: string, required (matches userId).
+  - `name`: string, optional.
+  - `email`: string, optional.
+  - `password`: string, optional.
+  - `role`: string, optional.
+  - `phone`: string, optional.
+  - `country`: string, optional.
+  - `city`: string, optional.
+  - `createdAt`: string, optional (ISO date, e.g., "2025-08-23T14:54:22.415Z").
+  - `updatedAt`: string, optional.
+  - `__v`: number, optional (version, e.g., 0).
+  - `onboarding`: object, optional (same fields as Create User).
+- **Description**: Updates an existing user’s details.
+- **Example Request**:
+  ```bash
+  curl -X PUT {{BRICK_FOLIO_URL}}/users/68a9d61ee93081b67ed3aba6 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "_id": "68a9d61ee93081b67ed3aba6",
+    "name": "Ravi Kumar",
+    "email": "ravi@example.com",
+    "password": "secure123",
+    "role": "Investor",
+    "phone": "+97150000001",
+    "country": "India",
+    "city": "Mumbai",
+    "createdAt": "2025-08-23T14:54:22.415Z",
+    "updatedAt": "2025-08-23T14:54:22.415Z",
+    "__v": 0,
+    "onboarding": {
+      "step4_budget": {
+        "min": 500000,
+        "max": 2000000,
+        "currency": "AED"
+      },
+      "_id": "68a9d61ee93081b67ed3aba8",
+      "userId": "68a9d61ee93081b67ed3aba6",
+      "step1_residence": "International Investor",
+      "step2_priorInvestment": "No",
+      "step3_investmentGoal": "Long-term capital growth",
+      "step5_offPlan": "No",
+      "step6_preferredLocation": ["Dubai Marina", "Downtown Dubai"],
+      "step7_propertyTypes": ["1-Bedroom", "2-Bedroom", "Villas", "Penthouses"],
+      "step8_roiTarget": 8,
+      "step9_rentalYieldTarget": 6,
+      "step10_riskAppetite": "moderate",
+      "step11_investmentHorizon": "long-term",
+      "createdAt": "2025-08-23T14:54:22.455Z",
+      "updatedAt": "2025-08-23T14:54:22.455Z",
+      "__v": 0
+    }
+  }'
+  ```
+
+### Get Recommendations for User
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/calculate/{userId}`
+- **Parameters** (Path):
+  - `userId`: string, required (e.g., "68a9d61ee93081b67ed3aba6").
+- **Description**: Fetches personalized property recommendations based on user preferences.
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/calculate/68a9d61ee93081b67ed3aba6"
+  ```
+
+### Bulk Create Developers
+- **Method**: POST
+- **URL**: `{{BRICK_FOLIO_URL}}/users/bulk`
+- **Parameters** (Body - JSON):
+  - `users`: array of objects, required. Each object includes:
+    - `name`: string, required (e.g., "Nakheel Properties").
+    - `email`: string, required.
+    - `password`: string, required.
+    - `role`: string, required (e.g., "Developer").
+    - `phone`: string, optional.
+    - `country`: string, optional.
+    - `city`: string, optional.
+    - `developerProfile`: object, optional:
+      - `companyName`: string.
+      - `rating`: number (e.g., 4.6).
+      - `certifications`: array of strings (e.g., ["RERA", "ISO 9001"]).
+      - `reraCertified`: boolean.
+      - `projects`: array of strings.
+      - `specializations`: array of strings.
+      - `projectsCompletedCount`: number.
+      - `description`: string.
+      - `location`: string.
+      - `successRate`: number.
+      - `deliveryTrackRecord`: object (e.g., `{ "onTime": 92, "qualityScore": 95, "customerSatisfaction": 4.6 }`).
+      - `activeProjects`: number.
+      - `avgROI`: number.
+      - `employeeCount`: number.
+      - `totalProjects`: number.
+      - `compliance`: object (e.g., `{ "reraLicense": "RERA-54321", "complianceScore": 95, "lastAudit": "2025-03-10T00:00:00.000Z" }`).
+      - `legalStanding`: object (e.g., `{ "clientLegal": "Clear", "escrow": "Active", "insurance": "Valid" }`).
+- **Description**: Creates multiple developer accounts in bulk.
+- **Example Request**:
+  ```bash
+  curl -X POST {{BRICK_FOLIO_URL}}/users/bulk \
+  -H "Content-Type: application/json" \
+  -d '{
+    "users": [
+      {
+        "name": "Nakheel Properties",
+        "email": "info@nakheel.com",
+        "password": "securePass123",
+        "role": "Developer",
+        "phone": "+97143903333",
+        "country": "UAE",
+        "city": "Dubai",
+        "developerProfile": {
+          "companyName": "Nakheel Properties",
+          "rating": 4.6,
+          "certifications": ["RERA", "ISO 9001", "Green Building"],
+          "reraCertified": true,
+          "projects": [],
+          "specializations": ["Waterfront Developments", "Master-planned Communities", "Luxury Villas"],
+          "projectsCompletedCount": 100,
+          "description": "Nakheel is renowned for waterfront projects like Palm Jumeirah.",
+          "location": "Palm Jumeirah, Dubai Islands, Jumeirah Beach Residence",
+          "successRate": 94,
+          "deliveryTrackRecord": { "onTime": 92, "qualityScore": 95, "customerSatisfaction": 4.6 },
+          "activeProjects": 20,
+          "avgROI": 8.0,
+          "employeeCount": 1500,
+          "totalProjects": 150,
+          "compliance": { "reraLicense": "RERA-54321", "complianceScore": 95, "lastAudit": "2025-03-10T00:00:00.000Z" },
+          "legalStanding": { "clientLegal": "Clear", "escrow": "Active", "insurance": "Valid" }
+        }
+      }
+      // Add more developer objects as needed
+    ]
+  }'
+  ```
+
+## 2. Projects
+
+Endpoints for managing real estate projects.
+
+### Bulk Create Projects
+- **Method**: POST
+- **URL**: `{{BRICK_FOLIO_URL}}/projects/bulk`
+- **Parameters** (Body - JSON):
+  - `projects`: array of objects, required. Each object includes:
+    - `projectName`: string, required (e.g., "The Highbury").
+    - `location`: string, required (e.g., "Dubai").
+    - `category`: array of strings, required (e.g., ["Luxury", "Residential"]).
+    - `roi`: number, required (e.g., 8.2).
+    - `rentalYield`: number, required (e.g., 6.7).
+    - `rating`: number, required (e.g., 4.7).
+    - `completion`: object, required (e.g., `{ "quarter": "Q3", "year": 2026 }`).
+    - `price`: object, required (e.g., `{ "currency": "AED", "value": 2000000, "formatted": "AED 2M" }`).
+    - `developer`: string, required (e.g., "68a9c8b5aff20d04ff2d33b9").
+    - `description`: string, required.
+    - `amenities`: array of strings, required (e.g., ["Pool", "Gym", "Spa"]).
+    - `constructionProgress`: number, required (e.g., 60).
+    - `priceRange`: object, required (e.g., `{ "min": 1900000, "max": 2100000, "currency": "AED" }`).
+    - `handoverDate`: string, required (ISO date, e.g., "2026-09-30T00:00:00.000Z").
+    - `paymentPlan`: array of strings, required (e.g., ["Cash", "Installments"]).
+    - `unitsAvailable`: string, required (e.g., "30/120").
+    - `images`: array of strings, required (e.g., ["https://example.com/images/highbury1.jpg"]).
+    - `thumbnail`: string, required (e.g., "https://example.com/images/highbury_thumb.jpg").
+- **Description**: Creates multiple real estate projects in bulk.
+- **Example Request**:
+  ```bash
+  curl -X POST {{BRICK_FOLIO_URL}}/projects/bulk \
+  -H "Content-Type: application/json" \
+  -d '{
+    "projects": [
+      {
+        "projectName": "The Highbury",
+        "location": "Dubai",
+        "category": ["Luxury", "Residential"],
+        "roi": 8.2,
+        "rentalYield": 6.7,
+        "rating": 4.7,
+        "completion": { "quarter": "Q3", "year": 2026 },
+        "price": { "currency": "AED", "value": 2000000, "formatted": "AED 2M" },
+        "developer": "68a9c8b5aff20d04ff2d33b9",
+        "description": "Luxury residences in the heart of Dubai.",
+        "amenities": ["Pool", "Gym", "Spa", "Clubhouse"],
+        "constructionProgress": 60,
+        "priceRange": { "min": 1900000, "max": 2100000, "currency": "AED" },
+        "handoverDate": "2026-09-30T00:00:00.000Z",
+        "paymentPlan": ["Cash", "Installments"],
+        "unitsAvailable": "30/120",
+        "images": ["https://example.com/images/highbury1.jpg", "https://example.com/images/highbury2.jpg"],
+        "thumbnail": "https://example.com/images/highbury_thumb.jpg"
+      }
+      // Add more project objects as needed
+    ]
+  }'
+  ```
+
+
+## 4. News
+
+Endpoints for managing real estate news articles.
+
+### Create News
+- **Method**: POST
+- **URL**: `{{BRICK_FOLIO_URL}}/news`
+- **Parameters** (Body - JSON, array of objects):
+  - `title`: string, required (e.g., "Dubai Real Estate Transactions Soar to AED 431 Billion in H1 2025").
+  - `category`: string, required (e.g., "Market Trends").
+  - `description`: string, required.
+  - `images`: array of strings, required (e.g., ["https://www.mediaoffice.ae/images/dubai-land-department-transactions-2025.jpg"]).
+  - `author`: string, required (e.g., "Dubai Land Department").
+  - `tags`: array of strings, required (e.g., ["Dubai", "Real Estate"]).
+  - `isFeatured`: boolean, required (e.g., true).
+- **Description**: Creates multiple news articles in bulk.
+- **Example Request**:
+  ```bash
+  curl -X POST {{BRICK_FOLIO_URL}}/news \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "title": "Dubai Real Estate Transactions Soar to AED 431 Billion in H1 2025",
+      "category": "Market Trends",
+      "description": "Dubai's real estate sector recorded a staggering AED 431 billion in transactions during the first half of 2025, a 25% increase from H1 2024.",
+      "images": [
+        "https://www.mediaoffice.ae/-/media/images/dubai-land-department-transactions-2025.jpg",
+        "https://www.dubailand.gov.ae/images/real-estate-growth-2025.jpg"
+      ],
+      "author": "Dubai Land Department",
+      "tags": ["Dubai", "Real Estate", "Market Trends", "Investment"],
+      "isFeatured": true
+    }
+    // Add more news objects as needed
+  ]'
+  ```
+
+### Get News
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/news`
+- **Parameters**: None.
+- **Description**: Retrieves a list of news articles.
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/news"
+  ```
+
+## 5. Wishlist
+
+Endpoints for managing user wishlists.
+
+### Get Wishlist by User ID
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/wishlist/{userId}`
+- **Parameters** (Path):
+  - `userId`: string, required (e.g., "68a9d61ee93081b67ed3aba6").
+- **Description**: Retrieves wishlist items for a specific user.
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/wishlist/68a9d61ee93081b67ed3aba6"
+  ```
+
+### Create Wishlist Item
+- **Method**: POST
+- **URL**: `{{BRICK_FOLIO_URL}}/wishlist`
+- **Parameters** (Body - JSON):
+  - `investor`: string, required (user ID, e.g., "68a9d61ee93081b67ed3aba6").
+  - `targetId`: string, required (e.g., project ID "68a9cd1a2be0579e4e97a4d3").
+  - `targetModel`: string, required (e.g., "Project").
+- **Description**: Adds a project to a user’s wishlist.
+- **Example Request**:
+  ```bash
+  curl -X POST {{BRICK_FOLIO_URL}}/wishlist \
+  -H "Content-Type: application/json" \
+  -d '{
+    "investor": "68a9d61ee93081b67ed3aba6",
+    "targetId": "68a9cd1a2be0579e4e97a4d3",
+    "targetModel": "Project"
+  }'
+  ```
+
+### Delete Wishlist Item
+- **Method**: DELETE
+- **URL**: `{{BRICK_FOLIO_URL}}/wishlist/{wishlistId}`
+- **Parameters** (Path):
+  - `wishlistId`: string, required (e.g., "68a9de845db5c80b0ee862fe").
+- **Description**: Removes an item from a user’s wishlist.
+- **Example Request**:
+  ```bash
+  curl -X DELETE "{{BRICK_FOLIO_URL}}/wishlist/68a9de845db5c80b0ee862fe"
+  ```
+
+## 6. Market
+
+Endpoints for retrieving market analytics and trends.
+
+### Get Market Details
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/market`
+- **Parameters**: None.
+- **Description**: Retrieves detailed market data (specifics depend on implementation).
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/market"
+  ```
+
+### Get Market Overview
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/market-overview`
+- **Parameters**: None.
+- **Description**: Retrieves a high-level market overview.
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/market-overview"
+  ```
+
+### Get Market Trends
+- **Method**: POST
+- **URL**: `{{BRICK_FOLIO_URL}}/market/trends`
+- **Parameters** (Body - JSON):
+  - `timeHorizon`: string, required (e.g., "Current Week").
+  - `regions`: array of strings, required (e.g., ["Dubai Marina", "Downtown Dubai", "Business Bay"]).
+  - `propertyTypes`: array of strings, required (e.g., ["Gym", "Pool", "Spa"]).
+  - `roiRange`: object, required (e.g., `{ "min": 7.5, "max": 9.2 }`).
+  - `rentalYieldRange`: object, required (e.g., `{ "min": 6.0, "max": 7.5 }`).
+  - `priceGrowthRange`: object, required (e.g., `{ "min": 0, "max": 30 }`).
+- **Description**: Fetches market trends based on specified filters.
+- **Example Request**:
+  ```bash
+  curl -X POST {{BRICK_FOLIO_URL}}/market/trends \
+  -H "Content-Type: application/json" \
+  -d '{
+    "timeHorizon": "Current Week",
+    "regions": ["Dubai Marina", "Downtown Dubai", "Business Bay"],
+    "propertyTypes": ["Gym", "Pool", "Spa"],
+    "roiRange": { "min": 7.5, "max": 9.2 },
+    "rentalYieldRange": { "min": 6.0, "max": 7.5 },
+    "priceGrowthRange": { "min": 0, "max": 30 }
+  }'
+  ```
+
+### Get Market Filters
+- **Method**: GET
+- **URL**: `{{BRICK_FOLIO_URL}}/market/filters`
+- **Parameters**: None.
+- **Description**: Retrieves available filters for market data (e.g., regions, property types).
+- **Example Request**:
+  ```bash
+  curl -X GET "{{BRICK_FOLIO_URL}}/market/filters"
+  ```
+
+---
+
+## Notes
+- **Base URL**: Replace `http://localhost:5000/api` with your actual API base URL.
+- **Error Handling**: Ensure proper error handling for invalid parameters, missing fields, or server errors (e.g., 400, 404, 500).
+- **Pagination**: Some endpoints may support pagination via `P_TAKE` and `P_SKIP` (though only explicit in DLD APIs). Check response metadata for pagination details.
+- **Responses**: The collection does not include response schemas. Expect JSON responses with relevant data (e.g., user objects, project lists). Test endpoints to confirm response formats.
+- **Date Format**: Use ISO 8601 for dates (e.g., "2025-08-23T14:54:22.415Z") or `MM/DD/YYYY` as shown in examples.
+
+If you need further clarification, specific response formats, or additional details, let me know!
