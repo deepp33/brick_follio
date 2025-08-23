@@ -1,4 +1,5 @@
 import { Search, User, Menu, LogOut, Map } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback } from './ui/avatar';
@@ -19,6 +20,8 @@ interface HeaderProps {
 }
 
 export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAuthenticated }: HeaderProps) {
+  const navigate = useNavigate();
+
   return (
     <header className="bg-white border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,20 +29,20 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="flex items-center space-x-2">
+              <Link to="/" className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">DI</span>
                 </div>
                 <span className="text-xl font-semibold text-gray-900">DubaiInvest Pro</span>
-              </div>
+              </Link>
             </div>
           </div>
 
           {/* Navigation */}
           <nav className="hidden md:flex space-x-8">
-            <a href="#" className="text-gray-900 hover:text-blue-600 transition-colors">
+            <Link to="/" className="text-gray-900 hover:text-blue-600 transition-colors">
               Home
-            </a>
+            </Link>
             {isAuthenticated && (
               <button 
                 onClick={onMapViewClick}
@@ -49,18 +52,18 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
                 Map View
               </button>
             )}
-            <a href="#properties" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <Link to="/properties" className="text-gray-700 hover:text-blue-600 transition-colors">
               Properties
-            </a>
+            </Link>
             <button 
               onClick={onDevelopersClick}
               className="text-gray-700 hover:text-blue-600 transition-colors"
             >
               Developers
             </button>
-            <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <Link to="/market-analytics" className="text-gray-700 hover:text-blue-600 transition-colors">
               Market Insights
-            </a>
+            </Link>
             <a href="#resources" className="text-gray-700 hover:text-blue-600 transition-colors">
               Resources
             </a>
