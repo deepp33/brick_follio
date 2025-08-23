@@ -257,15 +257,9 @@ router.get("/overview", async (req, res) => {
 
 router.post("/trends", async (req, res) => {
   try {
-    const {
-      timeHorizon,
-      regions = [],
-      propertyTypes = [],
-      roiRange,
-      rentalYieldRange,
-      priceGrowthRange,
-    } = req.body;
+    const { timeHorizon, regions = [], propertyTypes = [], roiRange, rentalYieldRange } = req.body;
 
+    // Build query
     const query = {};
     if (regions.length) query.location = { $in: regions };
     if (propertyTypes.length) query.amenities = { $in: propertyTypes };
@@ -276,91 +270,67 @@ router.post("/trends", async (req, res) => {
     if (rentalYieldRange?.min) query.rentalYield.$gte = rentalYieldRange.min;
     if (rentalYieldRange?.max) query.rentalYield.$lte = rentalYieldRange.max;
 
-    // Filter by updatedAt based on timeHorizon
+    // Last 6 months calculation
     const now = new Date();
-    let pastDate = new Date();
     const monthNames = [];
-    if (timeHorizon === "Current Week") {
-      pastDate.setDate(now.getDate() - 7);
-      monthNames.push(now.toLocaleString("default", { month: "short" }));
-    } else if (timeHorizon === "Last 6 Month") {
-      pastDate.setMonth(now.getMonth() - 5);
-      pastDate.setDate(1);
-      for (let i = 0; i < 6; i++) {
-        const month = new Date(
-          pastDate.getFullYear(),
-          pastDate.getMonth() + i,
-          1
-        );
-        monthNames.push(month.toLocaleString("default", { month: "short" }));
-      }
-    } else if (timeHorizon === "Last 1 Year") {
-      pastDate.setFullYear(now.getFullYear() - 1);
-      for (let i = 0; i < 12; i++) {
-        const month = new Date(
-          pastDate.getFullYear(),
-          pastDate.getMonth() + i,
-          1
-        );
-        monthNames.push(month.toLocaleString("default", { month: "short" }));
-      }
+    const pastDate = new Date();
+    pastDate.setMonth(now.getMonth() - 5);
+    pastDate.setDate(1);
+    for (let i = 0; i < 6; i++) {
+      const month = new Date(pastDate.getFullYear(), pastDate.getMonth() + i, 1);
+      monthNames.push(month.toLocaleString("default", { month: "short" }));
     }
     query.updatedAt = { $gte: pastDate, $lte: now };
 
     const projects = await Project.find(query);
 
-    if (!projects.length) {
-      return res.status(200).json({
-        success: true,
-        message: "No projects match the filters",
-        trends: {},
-      });
-    }
-
-    // Area metrics
-    const areaMap = {};
-    projects.forEach((p) => {
-      if (!areaMap[p.location])
-        areaMap[p.location] = { roiSum: 0, rentalSum: 0, count: 0 };
-      areaMap[p.location].roiSum += p.roi || 0;
-      areaMap[p.location].rentalSum += p.rentalYield || 0;
-      areaMap[p.location].count += 1;
+    // --- ROI Trends by Area (monthly) ---
+    const roiMap = {};
+    projects.forEach(p => {
+      const month = p.updatedAt.toLocaleString("default", { month: "short" });
+      if (!roiMap[p.location]) roiMap[p.location] = {};
+      if (!roiMap[p.location][month]) roiMap[p.location][month] = { sum: 0, count: 0 };
+      roiMap[p.location][month].sum += p.roi || 0;
+      roiMap[p.location][month].count += 1;
     });
 
-    const roiTrendsByArea = Object.keys(areaMap).map((loc) => {
-      const { roiSum, count } = areaMap[loc];
-      return { location: loc, roi: (roiSum / count).toFixed(1) };
+    const locations = [...new Set(projects.map(p => p.location))];
+    const roiTrendsByArea = { options: [], months: monthNames };
+    locations.forEach(loc => {
+      const roiValues = monthNames.map(m => (roiMap[loc] && roiMap[loc][m] ? (roiMap[loc][m].sum / roiMap[loc][m].count).toFixed(1) : "0.0"));
+      roiTrendsByArea.options.push({ location: loc, roi: roiValues });
     });
 
-    const rentalYieldByArea = Object.keys(areaMap).map((loc) => {
-      const { rentalSum, count } = areaMap[loc];
-      return {
+    // --- Rental Yield by Area (single value) ---
+    const rentalMap = {};
+    projects.forEach(p => {
+      if (!rentalMap[p.location]) rentalMap[p.location] = { sum: 0, count: 0 };
+      rentalMap[p.location].sum += p.rentalYield || 0;
+      rentalMap[p.location].count += 1;
+    });
+
+    const rentalYieldByArea = [];
+    Object.keys(rentalMap).forEach(loc => {
+      const { sum, count } = rentalMap[loc];
+      rentalYieldByArea.push({
         location: loc,
-        rentalYield: (rentalSum / count).toFixed(1),
-        properties: count,
-      };
-    });
-
-    // Transaction Volumes by month & property type (amenities)
-    const allAmenities = propertyTypes.length
-      ? propertyTypes
-      : [...new Set(projects.flatMap((p) => p.amenities || []))];
-
-    const transactionVolumes = { options: allAmenities, Month: {} };
-    monthNames.forEach((month) => {
-      transactionVolumes.Month[month] = {};
-      allAmenities.forEach((amenity) => {
-        transactionVolumes.Month[month][amenity] = 0;
+        rentalYield: (sum / count).toFixed(1),
+        properties: count
       });
     });
 
-    projects.forEach((p) => {
+    // --- Transaction Volumes by Amenity ---
+    const allAmenities = propertyTypes.length ? propertyTypes : [...new Set(projects.flatMap(p => p.amenities || []))];
+    const transactionVolumes = { options: allAmenities, Month: {} };
+    monthNames.forEach(m => {
+      transactionVolumes.Month[m] = {};
+      allAmenities.forEach(a => { transactionVolumes.Month[m][a] = 0; });
+    });
+    projects.forEach(p => {
       const month = p.updatedAt.toLocaleString("default", { month: "short" });
       if (transactionVolumes.Month[month]) {
-        (p.amenities || []).forEach((amenity) => {
-          if (transactionVolumes.Month[month][amenity] !== undefined) {
-            transactionVolumes.Month[month][amenity] += 1;
-          }
+        (p.amenities || []).forEach(a => {
+          if (transactionVolumes.Month[month][a] !== undefined) transactionVolumes.Month[month][a] += 1;
         });
       }
     });
@@ -369,12 +339,13 @@ router.post("/trends", async (req, res) => {
       success: true,
       trends: {
         roiTrendsByArea,
-        rentalYieldByArea,
-        transactionVolumes,
-      },
+        rentalYieldByArea, // old format preserved
+        transactionVolumes
+      }
     });
+
   } catch (err) {
-    console.error("Error in market-trends:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 });

@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Project created successfully"
+      message: "Project created successfully",
     });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -63,7 +63,7 @@ router.get("/", async (req, res) => {
     const projects = await Project.find(filter)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 });
 
     const total = await Project.countDocuments(filter);
 
@@ -83,11 +83,10 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id)
-      .populate({
-        path: "developer",
-        select: "name email phone country city developerProfile", // select fields you want
-      });
+    const project = await Project.findById(req.params.id).populate({
+      path: "developer",
+      select: "name email phone country city developerProfile", // select fields you want
+    });
 
     if (!project) {
       return res
@@ -139,9 +138,82 @@ router.post("/bulk", async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: `${createdProjects.length} projects created successfully`
+      message: `${createdProjects.length} projects created successfully`,
     });
   } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+router.put("/bulk-update-images", async (req, res) => {
+  try {
+    const updates = req.body;
+
+    if (!Array.isArray(updates) || updates.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Payload must be a non-empty array",
+      });
+    }
+
+    const updatedProjects = [];
+
+    for (const item of updates) {
+      const { _id, images } = item;
+
+      if (!_id || !Array.isArray(images)) continue;
+
+      const project = await Project.findById(_id);
+      if (!project) continue;
+
+      // Replace existing images array
+      project.images = images;
+      await project.save();
+
+      updatedProjects.push(project);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Projects images updated successfully",
+    });
+  } catch (err) {
+    console.error("Error updating project images:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+router.put("/bulk-update-developer", async (req, res) => {
+  try {
+    const updates = req.body;
+
+    if (!Array.isArray(updates) || updates.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Payload must be a non-empty array",
+      });
+    }
+
+    for (const item of updates) {
+      const { _id, developer } = item;
+
+      if (!_id || !developer) continue;
+
+      const project = await Project.findById(_id);
+      if (!project) continue;
+
+      // Update developer
+      project.developer = developer;
+
+      await project.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Projects updated successfully"
+    });
+  } catch (err) {
+    console.error("Error updating project developer:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 });
