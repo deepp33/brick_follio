@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "News created successfully"
+      message: "News created successfully",
     });
   } catch (err) {
     res.status(500).json({
@@ -114,6 +114,44 @@ router.get("/:id", async (req, res) => {
       success: false,
       message: err.message,
     });
+  }
+});
+
+router.put("/bulk-update-images", async (req, res) => {
+  try {
+    const updates = req.body;
+
+    if (!Array.isArray(updates) || updates.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Payload must be a non-empty array",
+      });
+    }
+
+    const updatedNews = [];
+
+    for (const item of updates) {
+      const { _id, images } = item;
+
+      if (!_id || !Array.isArray(images)) continue;
+
+      const news = await News.findById(_id);
+      if (!news) continue;
+
+      // Replace existing images array
+      news.images = images;
+      await news.save();
+
+      updatedNews.push(news);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "News images updated successfully",
+    });
+  } catch (err) {
+    console.error("Error updating news images:", err);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
