@@ -10,6 +10,7 @@ import calculateRoutes from "./routes/calculateRoute.js";
 import newsRoutes from "./routes/newsRoute.js";
 import wishlistRoutes from "./routes/wishlistRoute.js";
 import marketRoutes from "./routes/marketRoutes.js";
+import authRoutes from "./routes/authRoute.js";
 dotenv.config();
 
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/calculate", calculateRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/market", marketRoutes);
+app.use("/api/auth", authRoutes);
 app.get("/test", async (req, res) => {
   try {
     res.json({ success: true });
