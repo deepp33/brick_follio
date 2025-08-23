@@ -1,19 +1,19 @@
 import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
 import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
-import { MarketAnalytics } from '../components/MarketAnalytics';
+import { OnboardingForm } from '../components/OnboardingForm';
 
-export default function MarketAnalyticsPage() {
+export default function Onboarding() {
   // Use page-specific auth redirect with configuration
-  const marketAnalyticsConfig = getPageConfig('MARKET_ANALYTICS');
+  const onboardingConfig = getPageConfig('ONBOARDING');
   usePageAuthRedirect({
-    ...marketAnalyticsConfig,
-    pageName: 'Market Analytics Page'
+    ...onboardingConfig,
+    pageName: 'Onboarding Page'
   });
 
   return (
     <Layout>
-      <MarketAnalytics />
+      <OnboardingForm />
     </Layout>
   );
 }

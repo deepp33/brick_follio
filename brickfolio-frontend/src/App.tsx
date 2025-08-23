@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthRedirectBanner } from './components/AuthRedirectBanner';
+import { useAuthRedirect } from './hooks/useAuthRedirect';
 import {
   Home,
   OnboardingFlowPage,
@@ -12,8 +14,23 @@ import {
 } from './pages';
 
 export default function App() {
+  // Initialize auth redirect hook
+  useAuthRedirect({
+    redirectDelay: 30000, // 30 seconds
+    redirectPath: '/onboarding',
+    enabled: true
+  });
+
   return (
     <Router>
+      {/* Auth Redirect Banner - shows countdown for non-authenticated users */}
+      <AuthRedirectBanner 
+        redirectDelay={30000}
+        redirectPath="/onboarding"
+        enabled={true}
+        showCountdown={true}
+      />
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/onboarding" element={<OnboardingFlowPage />} />
