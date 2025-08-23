@@ -1,7 +1,7 @@
 import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
 import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
-import { OnboardingForm } from '../components/OnboardingForm';
+import { OnboardingFlow } from '../components/OnboardingFlow';
 
 export default function Onboarding() {
   // Use page-specific auth redirect with configuration
@@ -13,7 +13,7 @@ export default function Onboarding() {
 
   return (
     <Layout>
-      <OnboardingForm />
+      <OnboardingFlow />
     </Layout>
   );
 }

@@ -6,7 +6,7 @@ import { getPageConfig } from '../config/authRedirect';
 import { Layout } from '../components/Layout';
 import { DeveloperProfile as DeveloperProfileComponent } from '../components/DeveloperProfile';
 import { PageLoader } from '../components/ui/loader';
-import { getDeveloperProfile } from '../features/users/usersSlice';
+import { getDevelopers } from '../features/users/usersSlice';
 
 export default function DeveloperProfile() {
   const { id } = useParams<{ id: string }>();
@@ -19,18 +19,14 @@ export default function DeveloperProfile() {
     pageName: 'Developer Profile Page'
   });
 
-  // Access developers from the users slice
-  const { developers, selectedDeveloper, loading, error } = useAppSelector((state) => state.users);
-  
-  // Try to find developer in the developers array first, then use selectedDeveloper
-  const developer = developers.find(dev => dev._id === id) || selectedDeveloper;
+  const { developers, loading, error } = useAppSelector((state) => state.users);
 
-  // Fetch developer profile if not found in current state
+  // Fetch developers when component mounts
   useEffect(() => {
-    if (id && !developer) {
-      dispatch(getDeveloperProfile(id));
-    }
-  }, [id, developer, dispatch]);
+    dispatch(getDevelopers());
+  }, []);
+
+  const developer = developers.find(dev => dev._id === id);
 
   if (loading) {
     return (
@@ -80,7 +76,10 @@ export default function DeveloperProfile() {
 
   return (
     <Layout>
-      <DeveloperProfileComponent developer={developer} />
+      <DeveloperProfileComponent 
+        developerId={id!} 
+        onClose={() => window.history.back()} 
+      />
     </Layout>
   );
 }

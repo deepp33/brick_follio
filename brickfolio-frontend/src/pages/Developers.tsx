@@ -17,15 +17,14 @@ export default function Developers() {
     pageName: 'Developers Page'
   });
 
-  // Access developers from the users slice
   const { developers, loading, error } = useAppSelector((state) => state.users);
 
-  // Fetch developers if not already loaded
+  // Fetch developers when component mounts
   useEffect(() => {
     if (developers.length === 0) {
       dispatch(getDevelopers());
     }
-  }, [developers.length, dispatch]);
+  }, [dispatch, developers.length]);
 
   if (loading) {
     return (
@@ -56,7 +55,13 @@ export default function Developers() {
 
   return (
     <Layout>
-      <DeveloperListing developers={developers} />
+      <DeveloperListing 
+        onClose={() => window.history.back()} 
+        onDeveloperClick={(developer) => {
+          // Navigate to developer profile
+          window.location.href = `/developer/${developer._id}`;
+        }} 
+      />
     </Layout>
   );
 }

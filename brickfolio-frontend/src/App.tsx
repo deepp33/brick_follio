@@ -24,12 +24,12 @@ export default function App() {
   return (
     <Router>
       {/* Auth Redirect Banner - shows countdown for non-authenticated users */}
-      <AuthRedirectBanner 
+      {/* <AuthRedirectBanner 
         redirectDelay={30000}
         redirectPath="/onboarding"
         enabled={true}
         showCountdown={true}
-      />
+      /> */}
       
       <Routes>
         <Route path="/" element={<Home />} />
