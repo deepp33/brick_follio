@@ -166,36 +166,7 @@ export default function Home() {
       />
       {/* Onboarding Redirect Countdown */}
 
-      {false && (
-      {/* {showOnboardingRedirect && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4 text-center">
-            <div className="text-2xl font-bold text-blue-600 mb-4">
-              Welcome to DubaiInvest Pro!
-            </div>
-            <div className="text-gray-600 mb-4">
-              We noticed you're new here. Let's get you started with a personalized experience.
-            </div>
-            <div className="text-lg font-semibold text-gray-800 mb-6">
-              Redirecting to setup in {onboardingCountdown} seconds...
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={handleOnboardingRedirectSkip}
-                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Skip for now
-              </button>
-              <button
-                onClick={handleOnboardingRedirectNow}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Start Now
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
+    
       
       {/* Questionnaire Countdown */}
       {showCountdown && (

@@ -699,9 +699,9 @@ export function PropertyListing({ onClose }: PropertyListingProps) {
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </Button>
-                          <Button size="sm" variant="outline" className="flex-1">
+                          {/* <Button size="sm" variant="outline" className="flex-1">
                             Contact Developer
-                          </Button>
+                          </Button> */}
                         </div>
                       </CardFooter>
                     </Card>

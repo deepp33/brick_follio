@@ -11,6 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useAppSelector } from '../hooks/redux';
+import { useEffect } from 'react';
 
 interface HeaderProps {
   onSignUpClick: () => void;
@@ -21,7 +23,9 @@ interface HeaderProps {
 
 export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAuthenticated }: HeaderProps) {
   const navigate = useNavigate();
-
+  const user = useAppSelector((state) => state?.auth?.user);
+  const getUserInitials = user?.name?.split(' ').map(n => n[0]?.toUpperCase())?.join('');
+console.log( useAppSelector((state) => state),'currentUser')
   const handleLogout = () => {
     // Remove authToken from localStorage
     localStorage.removeItem('authToken');
@@ -29,7 +33,6 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
     // Refresh the page and redirect to homepage
     window.location.href = '/';
   };
-
   return (
     <header className="bg-white border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,16 +97,16 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback>UI</AvatarFallback>
+                      <AvatarFallback>{ getUserInitials}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">User Account</p>
+                      <p className="text-sm font-medium leading-none capitalize">{user?.name}</p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        user@example.com
+                        {user?.email}
                       </p>
                     </div>
                   </DropdownMenuLabel>

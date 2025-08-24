@@ -492,10 +492,6 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline" size="sm">
-                <Heart className="h-4 w-4 mr-2" />
-                Follow
-              </Button>
             </div>
           </div>
         </div>
@@ -605,10 +601,10 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
                       <MapPin className="h-4 w-4 text-gray-400" />
                       <span className="text-sm">{developer.contactInfo.address}</span>
                     </div>
-                    <Button className="w-full mt-4">
+                    {/* <Button className="w-full mt-4">
                       <Phone className="h-4 w-4 mr-2" />
                       Contact Developer
-                    </Button>
+                    </Button> */}
                   </CardContent>
                 </Card>
 
