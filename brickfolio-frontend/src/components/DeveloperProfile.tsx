@@ -328,12 +328,12 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
   // Check if developer is already in the developers list
   const existingDeveloper = developers.find(dev => dev._id === developerId);
 
-  useEffect(() => {
-    if (developerId && !existingDeveloper) {
-      // Only make API call if developer is not already in the store
-      dispatch(getDeveloperProfile(developerId));
-    }
-  }, [developerId, dispatch, existingDeveloper]);
+  // useEffect(() => {
+  //   if (developerId && !existingDeveloper) {
+  //     // Only make API call if developer is not already in the store
+  //     dispatch(getDeveloperProfile(developerId));
+  //   }
+  // }, [developerId, dispatch, existingDeveloper]);
 
   // Show loading state
   if (loading) {
