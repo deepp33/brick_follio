@@ -328,12 +328,12 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
   // Check if developer is already in the developers list
   const existingDeveloper = developers.find(dev => dev._id === developerId);
 
-  useEffect(() => {
-    if (developerId && !existingDeveloper) {
-      // Only make API call if developer is not already in the store
-      dispatch(getDeveloperProfile(developerId));
-    }
-  }, [developerId, dispatch, existingDeveloper]);
+  // useEffect(() => {
+  //   if (developerId && !existingDeveloper) {
+  //     // Only make API call if developer is not already in the store
+  //     dispatch(getDeveloperProfile(developerId));
+  //   }
+  // }, [developerId, dispatch, existingDeveloper]);
 
   // Show loading state
   if (loading) {
@@ -348,8 +348,8 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
   }
 
   // Use existing developer data if available, otherwise use selectedDeveloper
-  const developerData = existingDeveloper || selectedDeveloper;
-
+  const developerData = selectedDeveloper;
+  console.log(developerData);
   // Show error state
   if (error || !developerData) {
     return (

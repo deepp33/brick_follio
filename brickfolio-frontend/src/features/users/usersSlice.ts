@@ -110,7 +110,7 @@ export const getUsers = createAsyncThunk(
   async (role?: string, { rejectWithValue }) => {
     try {
       const params = role ? { role } : {};
-      const response = await api.get('/users', { params });
+      const response = await api.get('/users?limit=100', { params });
       // Handle the new response structure with nested data array
       const responseData = response.data;
       if (responseData?.data && Array.isArray(responseData.data)) {
@@ -179,7 +179,7 @@ export const getDevelopers = createAsyncThunk(
   'users/getDevelopers',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/users?role=Developer');
+      const response = await api.get('/users?role=Developer&limit=100');
       // Handle the new response structure with nested data array
       const responseData = response.data;
       if (responseData?.data && Array.isArray(responseData.data)) {

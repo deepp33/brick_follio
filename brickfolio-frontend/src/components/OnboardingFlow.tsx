@@ -139,20 +139,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           
           if (result) {
             // Navigate to map with user preferences
-            navigate('/map', { 
-              state: { 
-                userPreferences: {
-                  investmentGoal: formData.step3_investmentGoal,
-                  budget: formData.step4_budget,
-                  preferredLocation: formData.step6_preferredLocation,
-                  propertyTypes: formData.step7_propertyTypes,
-                  roiTarget: formData.step8_roiTarget,
-                  rentalYieldTarget: formData.step9_rentalYieldTarget,
-                  riskAppetite: formData.step10_riskAppetite,
-                  investmentHorizon: formData.step11_investmentHorizon
-                }
-              } 
-            });
+            navigate('/');
           }
         } catch (error) {
           console.error('Login failed:', error);
