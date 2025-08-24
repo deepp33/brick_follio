@@ -26,7 +26,7 @@ export function ProjectsList() {
 
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(category);
-    if (category) {
+    if (category && category !== 'all') {
       dispatch(filterProjectsByCategory(category));
     } else {
       // Reset to original projects
@@ -54,6 +54,8 @@ export function ProjectsList() {
       dispatch(sortProjectsByPrice('asc'));
     } else if (sortType === 'price-desc') {
       dispatch(sortProjectsByPrice('desc'));
+    } else if (sortType === 'default') {
+      dispatch(getProjects());
     }
   };
 
@@ -84,7 +86,7 @@ export function ProjectsList() {
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               <SelectItem value="Luxury">Luxury</SelectItem>
               <SelectItem value="Residential">Residential</SelectItem>
               <SelectItem value="Commercial">Commercial</SelectItem>
@@ -109,7 +111,7 @@ export function ProjectsList() {
               <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Default</SelectItem>
+              <SelectItem value="default">Default</SelectItem>
               <SelectItem value="roi-desc">ROI (High to Low)</SelectItem>
               <SelectItem value="roi-asc">ROI (Low to High)</SelectItem>
               <SelectItem value="price-desc">Price (High to Low)</SelectItem>

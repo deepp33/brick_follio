@@ -165,7 +165,9 @@ export default function Home() {
         showCountdown={true}
       />
       {/* Onboarding Redirect Countdown */}
+
       {false && (
+      {/* {showOnboardingRedirect && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4 text-center">
             <div className="text-2xl font-bold text-blue-600 mb-4">
@@ -193,7 +195,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       
       {/* Questionnaire Countdown */}
       {showCountdown && (
