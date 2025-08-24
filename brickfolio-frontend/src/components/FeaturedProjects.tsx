@@ -144,7 +144,7 @@ export function FeaturedProjects({ onViewAllClick }: FeaturedProjectsProps) {
                   </div>
                 </div>
 
-                <Button className="w-full" onClick={() => window.location.href = `/project/${project._id}`}>
+                <Button className="w-full" onClick={() => window.location.href = `/developer/${project.developer}`}>
                   View Details
                 </Button>
               </CardContent>
