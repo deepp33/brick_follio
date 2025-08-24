@@ -10,6 +10,7 @@ import {
   DeveloperProfilePage,
   MarketAnalyticsPage,
   ContactPage,
+  ProjectsPage,
   NotFound
 } from './pages';
 
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/onboarding" element={<OnboardingFlowPage />} />
         <Route path="/map" element={<MapViewPage />} />
         <Route path="/properties" element={<PropertyListingPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/developers" element={<DeveloperListingPage />} />
         <Route path="/developer/:id" element={<DeveloperProfilePage />} />
         <Route path="/market-analytics" element={<MarketAnalyticsPage />} />

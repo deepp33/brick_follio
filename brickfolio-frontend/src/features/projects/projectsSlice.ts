@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../services/api';
+import { projectsApi } from '../../services/api';
 
 // Types
 export interface Project {
@@ -75,6 +75,18 @@ interface ProjectsState {
   currentProject: Project | null;
   loading: boolean;
   error: string | null;
+  // Pagination
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  // Filters
+  currentFilters: {
+    category?: string;
+    location?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  };
 }
 
 const initialState: ProjectsState = {
@@ -83,25 +95,29 @@ const initialState: ProjectsState = {
   currentProject: null,
   loading: false,
   error: null,
+  total: 0,
+  page: 1,
+  limit: 10,
+  totalPages: 0,
+  currentFilters: {},
 };
 
 // Async thunks
 export const getProjects = createAsyncThunk(
   'projects/getProjects',
-  async (_, { rejectWithValue }) => {
+  async (params?: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    location?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }, { rejectWithValue }) => {
     try {
-      const response = await api.get('/projects');
-      // Handle the new response structure with nested projects array
-      const responseData = response.data;
-      if (responseData?.projects && Array.isArray(responseData.projects)) {
-        return responseData.projects;
-      } else if (Array.isArray(responseData)) {
-        return responseData;
-      } else {
-        return [];
-      }
+      const response = await projectsApi.getProjects(params);
+      return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch projects');
+      return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch projects');
     }
   }
 );
@@ -199,6 +215,14 @@ const projectsSlice = createSlice({
     },
     resetFilters: (state) => {
       state.filteredProjects = state.projects;
+      state.currentFilters = {};
+    },
+    setFilters: (state, action) => {
+      state.currentFilters = { ...state.currentFilters, ...action.payload };
+    },
+    setPagination: (state, action) => {
+      state.page = action.payload.page || state.page;
+      state.limit = action.payload.limit || state.limit;
     },
   },
   extraReducers: (builder) => {
@@ -211,10 +235,25 @@ const projectsSlice = createSlice({
       .addCase(getProjects.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        // Ensure action.payload is always an array
-        const projects = Array.isArray(action.payload) ? action.payload : [];
-        state.projects = projects;
-        state.filteredProjects = projects;
+        
+        // Handle the new API response structure
+        const responseData = action.payload;
+        
+        if (responseData?.projects && Array.isArray(responseData.projects)) {
+          state.projects = responseData.projects;
+          state.filteredProjects = responseData.projects;
+          state.total = responseData.total || 0;
+          state.page = responseData.page || 1;
+          state.limit = responseData.limit || 10;
+          state.totalPages = responseData.totalPages || 0;
+        } else {
+          // Fallback for old format
+          const projects = Array.isArray(responseData) ? responseData : [];
+          state.projects = projects;
+          state.filteredProjects = projects;
+          state.total = projects.length;
+          state.totalPages = 1;
+        }
       })
       .addCase(getProjects.rejected, (state, action) => {
         state.loading = false;
@@ -283,5 +322,5 @@ const projectsSlice = createSlice({
   },
 });
 
-export const { clearError, clearCurrentProject, resetFilters } = projectsSlice.actions;
+export const { clearError, clearCurrentProject, resetFilters, setFilters, setPagination } = projectsSlice.actions;
 export default projectsSlice.reducer;
