@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { getProjects } from '../features/projects/projectsSlice';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -12,12 +13,16 @@ interface FeaturedProjectsProps {
 }
 
 export function FeaturedProjects({ onViewAllClick }: FeaturedProjectsProps) {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { projects, loading, error } = useAppSelector((state) => state.projects);
 
   useEffect(() => {
-    dispatch(getProjects());
-  }, [dispatch]);
+    // Only fetch if no projects are loaded yet
+    if (projects.length === 0) {
+      dispatch(getProjects({ limit: 6 })); // Only get 6 projects for featured section
+    }
+  }, [dispatch, projects.length]);
 
   // Get featured projects (first 6 projects or all if less than 6)
   const featuredProjects = projects.slice(0, 6);
@@ -139,7 +144,7 @@ export function FeaturedProjects({ onViewAllClick }: FeaturedProjectsProps) {
                   </div>
                 </div>
 
-                <Button className="w-full" onClick={() => window.location.href = `/project/${project._id}`}>
+                <Button className="w-full" onClick={() => window.location.href = `/developer/${project.developer}`}>
                   View Details
                 </Button>
               </CardContent>
@@ -148,7 +153,7 @@ export function FeaturedProjects({ onViewAllClick }: FeaturedProjectsProps) {
         </div>
 
         <div className="text-center">
-          <Button variant="outline" size="lg" onClick={onViewAllClick}>
+          <Button variant="outline" size="lg" onClick={() => navigate('/projects')}>
             View All Projects
           </Button>
         </div>

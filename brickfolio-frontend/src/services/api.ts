@@ -35,4 +35,32 @@ api.interceptors.response.use(
   }
 );
 
+// API Functions
+export const projectsApi = {
+  // Get all projects
+  getProjects: (params?: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    location?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }) => {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.category && params.category !== 'all') queryParams.append('category', params.category);
+    if (params?.location) queryParams.append('location', params.location);
+    if (params?.sortBy && params.sortBy !== 'default') queryParams.append('sortBy', params.sortBy);
+    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    
+    const queryString = queryParams.toString();
+    return api.get(`/projects${queryString ? `?${queryString}` : ''}`);
+  },
+  
+  // Get single project by ID
+  getProject: (id: string) => api.get(`/projects/${id}`),
+};
+
 export default api;

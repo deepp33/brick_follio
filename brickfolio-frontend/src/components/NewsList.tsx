@@ -24,7 +24,7 @@ export function NewsList() {
 
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(category);
-    if (category) {
+    if (category && category !== 'all') {
       dispatch(filterNewsByCategory(category));
     } else {
       // Reset to original news
@@ -34,7 +34,7 @@ export function NewsList() {
 
   const handleTagFilter = (tag: string) => {
     setSelectedTag(tag);
-    if (tag) {
+    if (tag && tag !== 'all') {
       dispatch(filterNewsByTag(tag));
     } else {
       // Reset to original news
@@ -79,7 +79,7 @@ export function NewsList() {
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -96,7 +96,7 @@ export function NewsList() {
               <SelectValue placeholder="Select tag" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Tags</SelectItem>
+              <SelectItem value="all">All Tags</SelectItem>
               {uniqueTags.map((tag) => (
                 <SelectItem key={tag} value={tag}>
                   {tag}

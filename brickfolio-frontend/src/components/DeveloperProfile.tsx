@@ -348,8 +348,8 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
   }
 
   // Use existing developer data if available, otherwise use selectedDeveloper
-  const developerData = existingDeveloper || selectedDeveloper;
-
+  const developerData = selectedDeveloper;
+  console.log(developerData);
   // Show error state
   if (error || !developerData) {
     return (
