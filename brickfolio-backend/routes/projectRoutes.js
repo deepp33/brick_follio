@@ -1,6 +1,7 @@
 import express from "express";
 import { Project, User } from "../models/index.js";
 import { authenticateToken } from "../middleware/authenticate.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -196,24 +197,35 @@ router.put("/bulk-update-developer", async (req, res) => {
 
     for (const item of updates) {
       const { _id, developer } = item;
-
       if (!_id || !developer) continue;
 
-      const project = await Project.findById(_id);
+      // Update project developer
+      const project = await Project.findByIdAndUpdate(
+        _id,
+        { developer },
+        { new: true }
+      );
+
       if (!project) continue;
 
-      // Update developer
-      project.developer = developer;
-
-      await project.save();
+      // Update developerProfile.projects
+      await User.findByIdAndUpdate(
+        { _id: developer },
+        {
+          $addToSet: {
+            "developerProfile.projects": new mongoose.Types.ObjectId(project._id),
+          },
+        },
+        { new: true }
+      );
     }
 
     res.status(200).json({
       success: true,
-      message: "Projects updated successfully"
+      message: "Projects and developer profiles updated successfully",
     });
   } catch (err) {
-    console.error("Error updating project developer:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 });
