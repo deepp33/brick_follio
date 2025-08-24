@@ -28,13 +28,13 @@ export function HeroSection({ onGetStartedClick }: HeroSectionProps) {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
-                <div className="mt-3 sm:mt-0 sm:ml-3">
+                {/* <div className="mt-3 sm:mt-0 sm:ml-3">
                   <Link to="/properties">
                   <Button variant="outline" size="lg" className="w-full flex items-center justify-center px-8 py-3">
                     Explore Properties
                   </Button>
                   </Link>
-                </div>
+                </div> */}
               </div>
 
               {/* Trust indicators */}

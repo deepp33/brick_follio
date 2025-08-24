@@ -16,6 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useAppSelector } from '../hooks/redux';
+
 
 interface HeaderProps {
   onSignUpClick: () => void;
@@ -30,11 +32,11 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
   const { user, loading } = useSelector((state: RootState) => state.auth);
 
   // Fetch user data if authenticated but user data is not loaded
-  useEffect(() => {
-    if (isAuthenticated && !user && !loading) {
-      dispatch(getCurrentUser());
-    }
-  }, [isAuthenticated, user, loading, dispatch]);
+  // useEffect(() => {
+  //   if (isAuthenticated && !user && !loading) {
+  //     dispatch(getCurrentUser());
+  //   }
+  // }, [isAuthenticated, user, loading, dispatch]);
 
   const handleLogout = () => {
     // Remove authToken from localStorage
@@ -96,16 +98,7 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
 
           {/* Search and Actions */}
           <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center space-x-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder="Search properties..."
-                  className="pl-10 w-64"
-                />
-              </div>
-            </div>
+          
             
             {isAuthenticated ? (
               <DropdownMenu>

@@ -139,10 +139,10 @@ export default function UserProfile() {
     }
 
     // Fetch current user data if not already loaded
-    if (!user) {
-      dispatch(getCurrentUser());
-    }
-  }, [dispatch, user, navigate]);
+    // if (!user) {
+    //   dispatch(getCurrentUser());
+    // }
+  }, [dispatch, navigate]);
 
   // Initialize edit form when user data is loaded
   useEffect(() => {
