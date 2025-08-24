@@ -29,8 +29,10 @@ export default function PropertyListing() {
 
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(category);
-    if (category) {
+    if (category && category !== 'all') {
       dispatch(filterProjectsByCategory(category));
+    } else {
+      dispatch(getProjects());
     }
   };
 
@@ -47,6 +49,8 @@ export default function PropertyListing() {
       dispatch(sortProjectsByROI('desc'));
     } else if (sortType === 'price') {
       dispatch(sortProjectsByPrice('asc'));
+    } else if (sortType === 'default') {
+      dispatch(getProjects());
     }
   };
 
@@ -92,7 +96,7 @@ export default function PropertyListing() {
                 <SelectValue placeholder="Filter by Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="Residential">Residential</SelectItem>
                 <SelectItem value="Commercial">Commercial</SelectItem>
                 <SelectItem value="Luxury">Luxury</SelectItem>
@@ -111,7 +115,7 @@ export default function PropertyListing() {
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Default</SelectItem>
+                <SelectItem value="default">Default</SelectItem>
                 <SelectItem value="roi">Highest ROI</SelectItem>
                 <SelectItem value="price">Price: Low to High</SelectItem>
               </SelectContent>
@@ -120,9 +124,9 @@ export default function PropertyListing() {
             <Button 
               variant="outline" 
               onClick={() => {
-                setSelectedCategory('');
+                setSelectedCategory('all');
                 setLocationFilter('');
-                setSortBy('');
+                setSortBy('default');
                 dispatch(getProjects());
               }}
             >
