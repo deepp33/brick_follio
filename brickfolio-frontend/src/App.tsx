@@ -11,6 +11,7 @@ import {
   MarketAnalyticsPage,
   ContactPage,
   ProjectsPage,
+  UserProfilePage,
   NotFound
 } from './pages';
 
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/developers" element={<DeveloperListingPage />} />
         <Route path="/developer/:id" element={<DeveloperProfilePage />} />
+        <Route path="/profile" element={<UserProfilePage />} />
         <Route path="/market-analytics" element={<MarketAnalyticsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="*" element={<NotFound />} />

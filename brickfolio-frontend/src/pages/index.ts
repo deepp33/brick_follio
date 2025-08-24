@@ -7,5 +7,6 @@ export { default as DeveloperProfilePage } from './DeveloperProfile';
 export { default as MarketAnalyticsPage } from './MarketAnalytics';
 export { default as ContactPage } from './Contact';
 export { default as ProjectsPage } from './Projects';
+export { default as UserProfilePage } from './UserProfile';
 export { Dashboard } from './Dashboard';
 export { default as NotFound } from './NotFound';

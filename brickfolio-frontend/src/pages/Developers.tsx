@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { usePageAuthRedirect } from '../hooks/usePageAuthRedirect';
 import { getPageConfig } from '../config/authRedirect';
@@ -5,7 +6,6 @@ import { Layout } from '../components/Layout';
 import { DeveloperListing } from '../components/DeveloperListing';
 import { PageLoader } from '../components/ui/loader';
 import { getDevelopers } from '../features/users/usersSlice';
-import { useEffect } from 'react';
 
 export default function Developers() {
   const dispatch = useAppDispatch();
