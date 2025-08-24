@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { register, login, type OnboardingData } from '../features/auth/authSlice';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -9,6 +12,7 @@ import { Slider } from './ui/slider';
 import { Progress } from './ui/progress';
 import { Separator } from './ui/separator';
 import { Badge } from './ui/badge';
+import { PageLoader } from './ui/loader';
 import { 
   User, 
   Mail, 
@@ -23,47 +27,47 @@ import {
   Clock,
   Shield,
   Eye,
-  EyeOff
+  EyeOff,
+  Phone,
+  Globe,
+  Building
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-interface OnboardingData {
-  // Registration data
-  email: string;
-  password: string;
-  fullName: string;
-  
-  // Questionnaire data
-  investmentGoal: string;
-  budget: number[];
-  currency: string;
-  riskAppetite: string;
-  locationPreferences: string[];
-  propertyTypes: string[];
-  investmentHorizon: string;
-  
-  // Additional preferences
-  roiTarget: number[];
-  rentalYield: number[];
-  maxCommute: number[];
-}
-
 interface OnboardingFlowProps {
-  onComplete: (data: OnboardingData) => void;
+  onComplete?: (data: any) => void;
 }
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 12; // 1 registration + 11 onboarding steps
+
+const residenceOptions = [
+  { id: 'UAE_Resident', label: 'UAE Resident', description: 'Living in UAE' },
+  { id: 'International_Investor', label: 'International Investor', description: 'Investing from abroad' },
+  { id: 'GCC_Resident', label: 'GCC Resident', description: 'Living in GCC countries' }
+];
+
+const priorInvestmentOptions = [
+  { id: 'Yes', label: 'Yes', description: 'I have invested in real estate before' },
+  { id: 'No', label: 'No', description: 'This is my first real estate investment' }
+];
 
 const investmentGoals = [
-  { id: 'rental', label: 'Steady Rental Income', description: 'Focus on properties with high rental yields', icon: DollarSign },
-  { id: 'growth', label: 'Long-term Growth', description: 'Capital appreciation over time', icon: TrendingUp },
-  { id: 'personal', label: 'Personal Use', description: 'Buy for personal residence or vacation home', icon: Home }
+  { id: 'rental_income', label: 'Rental Income', description: 'Focus on properties with high rental yields' },
+  { id: 'capital_growth', label: 'Capital Growth', description: 'Long-term capital appreciation' },
+  { id: 'personal_use', label: 'Personal Use', description: 'Buy for personal residence' },
+  { id: 'diversification', label: 'Portfolio Diversification', description: 'Diversify investment portfolio' }
+];
+
+const offPlanOptions = [
+  { id: 'Yes', label: 'Yes', description: 'I am interested in off-plan properties' },
+  { id: 'No', label: 'No', description: 'I prefer ready properties' },
+  { id: 'Both', label: 'Both', description: 'I am open to both options' }
 ];
 
 const riskLevels = [
-  { id: 'low', label: 'Low Risk', description: 'Stable returns with minimal volatility', color: 'bg-green-100 text-green-800' },
-  { id: 'moderate', label: 'Moderate Risk', description: 'Balanced approach with steady growth', color: 'bg-blue-100 text-blue-800' },
-  { id: 'high', label: 'High Risk', description: 'Higher potential returns with more volatility', color: 'bg-orange-100 text-orange-800' }
+  { id: 'low', label: 'Low Risk', description: 'Stable returns with minimal volatility' },
+  { id: 'moderate', label: 'Moderate Risk', description: 'Balanced approach with steady growth' },
+  { id: 'high', label: 'High Risk', description: 'Higher potential returns with more volatility' }
 ];
 
 const dubaiLocations = [
@@ -74,49 +78,127 @@ const dubaiLocations = [
 ];
 
 const propertyTypeOptions = [
-  { id: 'apartment', label: 'Apartments', icon: '🏢' },
-  { id: 'villa', label: 'Villas', icon: '🏘️' },
-  { id: 'townhouse', label: 'Townhouses', icon: '🏡' },
-  { id: 'penthouse', label: 'Penthouses', icon: '🏙️' },
-  { id: 'commercial', label: 'Commercial', icon: '🏢' },
-  { id: 'office', label: 'Office Space', icon: '🏬' },
-  { id: 'retail', label: 'Retail', icon: '🛍️' },
-  { id: 'warehouse', label: 'Warehouse', icon: '🏭' }
+  { id: '1-Bedroom', label: '1-Bedroom Apartments', icon: '🏢' },
+  { id: '2-Bedroom', label: '2-Bedroom Apartments', icon: '🏢' },
+  { id: '3-Bedroom', label: '3-Bedroom Apartments', icon: '🏢' },
+  { id: 'Villas', label: 'Villas', icon: '🏘️' },
+  { id: 'Penthouses', label: 'Penthouses', icon: '🏙️' },
+  { id: 'Townhouses', label: 'Townhouses', icon: '🏡' },
+  { id: 'Commercial', label: 'Commercial Properties', icon: '🏢' }
 ];
 
 const investmentHorizons = [
-  { id: 'short', label: 'Short-term (1-3 years)', description: 'Quick flip or short rental period' },
-  { id: 'medium', label: 'Medium-term (3-7 years)', description: 'Moderate hold for steady returns' },
-  { id: 'long', label: 'Long-term (7+ years)', description: 'Long-term wealth building' }
+  { id: 'short-term', label: 'Short-term (1-3 years)', description: 'Quick flip or short rental period' },
+  { id: 'medium-term', label: 'Medium-term (3-7 years)', description: 'Moderate hold for steady returns' },
+  { id: 'long-term', label: 'Long-term (7+ years)', description: 'Long-term wealth building' }
 ];
 
 export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector((state) => state.auth);
+  
   const [currentStep, setCurrentStep] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-  const [formData, setFormData] = useState<OnboardingData>({
+  const [formData, setFormData] = useState({
+    // Registration data
+    name: '',
     email: '',
     password: '',
-    fullName: '',
-    investmentGoal: '',
-    budget: [500000],
-    currency: 'AED',
-    riskAppetite: '',
-    locationPreferences: [],
-    propertyTypes: [],
-    investmentHorizon: '',
-    roiTarget: [8],
-    rentalYield: [6],
-    maxCommute: [30]
+    phone: '',
+    country: '',
+    city: '',
+    
+    // Onboarding data
+    step1_residence: '',
+    step2_priorInvestment: '',
+    step3_investmentGoal: '',
+    step4_budget: { min: 500000, max: 2000000, currency: 'AED' },
+    step5_offPlan: '',
+    step6_preferredLocation: [] as string[],
+    step7_propertyTypes: [] as string[],
+    step8_roiTarget: 8,
+    step9_rentalYieldTarget: 6,
+    step10_riskAppetite: '',
+    step11_investmentHorizon: ''
   });
 
   const progress = ((currentStep + 1) / TOTAL_STEPS) * 100;
 
-  const handleNext = () => {
-    if (currentStep < TOTAL_STEPS - 1) {
-      setCurrentStep(currentStep + 1);
+  const handleNext = async () => {
+    if (currentStep === 0) {
+      // Registration/Login step
+      if (isLogin) {
+        // Handle login
+        try {
+          const result = await dispatch(login({ 
+            email: formData.email, 
+            password: formData.password 
+          })).unwrap();
+          
+          if (result) {
+            // Navigate to map with user preferences
+            navigate('/');
+          }
+        } catch (error) {
+          console.error('Login failed:', error);
+        }
+      } else {
+        // Move to next step for registration
+        setCurrentStep(currentStep + 1);
+      }
+    } else if (currentStep === TOTAL_STEPS - 1) {
+      // Final step - complete registration with onboarding data
+      try {
+        const onboardingData: OnboardingData = {
+          step1_residence: formData.step1_residence,
+          step2_priorInvestment: formData.step2_priorInvestment,
+          step3_investmentGoal: formData.step3_investmentGoal,
+          step4_budget: formData.step4_budget,
+          step5_offPlan: formData.step5_offPlan,
+          step6_preferredLocation: formData.step6_preferredLocation,
+          step7_propertyTypes: formData.step7_propertyTypes,
+          step8_roiTarget: formData.step8_roiTarget,
+          step9_rentalYieldTarget: formData.step9_rentalYieldTarget,
+          step10_riskAppetite: formData.step10_riskAppetite,
+          step11_investmentHorizon: formData.step11_investmentHorizon
+        };
+
+        const result = await dispatch(register({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: 'Investor',
+          phone: formData.phone,
+          country: formData.country,
+          city: formData.city,
+          onboarding: onboardingData
+        })).unwrap();
+
+        if (result) {
+          // Navigate to map with user preferences
+          navigate('/map', { 
+            state: { 
+              userPreferences: {
+                investmentGoal: formData.step3_investmentGoal,
+                budget: formData.step4_budget,
+                preferredLocation: formData.step6_preferredLocation,
+                propertyTypes: formData.step7_propertyTypes,
+                roiTarget: formData.step8_roiTarget,
+                rentalYieldTarget: formData.step9_rentalYieldTarget,
+                riskAppetite: formData.step10_riskAppetite,
+                investmentHorizon: formData.step11_investmentHorizon
+              }
+            } 
+          });
+        }
+      } catch (error) {
+        console.error('Registration failed:', error);
+      }
     } else {
-      onComplete(formData);
+      // Move to next step
+      setCurrentStep(currentStep + 1);
     }
   };
 
@@ -129,18 +211,18 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   const handleLocationToggle = (location: string) => {
     setFormData(prev => ({
       ...prev,
-      locationPreferences: prev.locationPreferences.includes(location)
-        ? prev.locationPreferences.filter(l => l !== location)
-        : [...prev.locationPreferences, location]
+      step6_preferredLocation: prev.step6_preferredLocation.includes(location)
+        ? prev.step6_preferredLocation.filter(l => l !== location)
+        : [...prev.step6_preferredLocation, location]
     }));
   };
 
   const handlePropertyTypeToggle = (typeId: string) => {
     setFormData(prev => ({
       ...prev,
-      propertyTypes: prev.propertyTypes.includes(typeId)
-        ? prev.propertyTypes.filter(t => t !== typeId)
-        : [...prev.propertyTypes, typeId]
+      step7_propertyTypes: prev.step7_propertyTypes.includes(typeId)
+        ? prev.step7_propertyTypes.filter(t => t !== typeId)
+        : [...prev.step7_propertyTypes, typeId]
     }));
   };
 
@@ -149,6 +231,10 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     console.log(`Logging in with ${provider}`);
     setCurrentStep(1); // Skip to questionnaire
   };
+
+  if (loading) {
+    return <PageLoader text="Processing..." icon="users" />;
+  }
 
   const renderStep = () => {
     switch (currentStep) {
@@ -163,6 +249,12 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 {isLogin ? 'Sign in to access your personalized investment dashboard' : 'Start your real estate investment journey in Dubai'}
               </p>
             </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
 
             <div className="space-y-4">
               {/* Social Login Buttons */}
@@ -185,7 +277,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                   className="w-full"
                 >
                   <ImageWithFallback 
-                    src="https://images.unsplash.com/photo-1611944212129-29977ae1398c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaW5rZWRpbiUyMGxvZ298ZW58MXx8fHwxNzU1OTQyMTg2fDA&ixlib=rb-4.1.0&q=80&w=1080"
+                    src="https://images.unsplash.com/photo-1611944212129-29977ae1398c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaW5rZWRpbiUyMGxvZ298ZW58MXwxfHwxNzU1OTQyMTg2fDA&ixlib=rb-4.1.0&q=80&w=1080"
                     alt="LinkedIn"
                     className="w-5 h-5 mr-2"
                   />
@@ -203,20 +295,67 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
               {/* Email Form */}
               <div className="space-y-4">
                 {!isLogin && (
-                  <div>
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <div className="relative mt-1">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="fullName"
-                        type="text"
-                        placeholder="Enter your full name"
-                        className="pl-10"
-                        value={formData.fullName}
-                        onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                      />
+                  <>
+                    <div>
+                      <Label htmlFor="name">Full Name</Label>
+                      <div className="relative mt-1">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="name"
+                          type="text"
+                          placeholder="Enter your full name"
+                          className="pl-10"
+                          value={formData.name}
+                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        />
+                      </div>
                     </div>
-                  </div>
+
+                    <div>
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <div className="relative mt-1">
+                        <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="phone"
+                          type="tel"
+                          placeholder="+97150000000"
+                          className="pl-10"
+                          value={formData.phone}
+                          onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="country">Country</Label>
+                      <div className="relative mt-1">
+                        <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="country"
+                          type="text"
+                          placeholder="Enter your country"
+                          className="pl-10"
+                          value={formData.country}
+                          onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="city">City</Label>
+                      <div className="relative mt-1">
+                        <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="city"
+                          type="text"
+                          placeholder="Enter your city"
+                          className="pl-10"
+                          value={formData.city}
+                          onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </>
                 )}
 
                 <div>
@@ -266,8 +405,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                   </div>
                 )}
 
-                <Button onClick={handleNext} className="w-full">
-                  {isLogin ? 'Sign In' : 'Create Account'}
+                <Button onClick={handleNext} className="w-full" disabled={loading}>
+                  {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
@@ -285,7 +424,65 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 1: // Investment Goals
+      case 1: // Residence Status
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <Globe className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">What is your residence status?</h2>
+              <p className="text-gray-600 mt-2">This helps us provide relevant investment opportunities</p>
+            </div>
+
+            <RadioGroup 
+              value={formData.step1_residence} 
+              onValueChange={(value: string) => setFormData(prev => ({ ...prev, step1_residence: value }))}
+              className="space-y-3"
+            >
+              {residenceOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <RadioGroupItem value={option.id} id={option.id} />
+                  <div className="flex-1">
+                    <Label htmlFor={option.id} className="text-base font-medium cursor-pointer">
+                      {option.label}
+                    </Label>
+                    <p className="text-sm text-gray-500">{option.description}</p>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        );
+
+      case 2: // Prior Investment Experience
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <Target className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">Do you have prior real estate investment experience?</h2>
+              <p className="text-gray-600 mt-2">This helps us tailor our recommendations</p>
+            </div>
+
+            <RadioGroup 
+              value={formData.step2_priorInvestment} 
+              onValueChange={(value: string) => setFormData(prev => ({ ...prev, step2_priorInvestment: value }))}
+              className="space-y-3"
+            >
+              {priorInvestmentOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <RadioGroupItem value={option.id} id={option.id} />
+                  <div className="flex-1">
+                    <Label htmlFor={option.id} className="text-base font-medium cursor-pointer">
+                      {option.label}
+                    </Label>
+                    <p className="text-sm text-gray-500">{option.description}</p>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        );
+
+      case 3: // Investment Goal
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -295,103 +492,98 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             </div>
 
             <RadioGroup 
-              value={formData.investmentGoal} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, investmentGoal: value }))}
+              value={formData.step3_investmentGoal} 
+              onValueChange={(value: string) => setFormData(prev => ({ ...prev, step3_investmentGoal: value }))}
               className="space-y-3"
             >
-              {investmentGoals.map((goal) => {
-                const IconComponent = goal.icon;
-                return (
-                  <div key={goal.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <RadioGroupItem value={goal.id} id={goal.id} />
-                    <IconComponent className="h-6 w-6 text-blue-600" />
-                    <div className="flex-1">
-                      <Label htmlFor={goal.id} className="cursor-pointer font-medium">
-                        {goal.label}
-                      </Label>
-                      <p className="text-sm text-gray-500">{goal.description}</p>
-                    </div>
+              {investmentGoals.map((goal) => (
+                <div key={goal.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <RadioGroupItem value={goal.id} id={goal.id} />
+                  <div className="flex-1">
+                    <Label htmlFor={goal.id} className="text-base font-medium cursor-pointer">
+                      {goal.label}
+                    </Label>
+                    <p className="text-sm text-gray-500">{goal.description}</p>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </RadioGroup>
           </div>
         );
 
-      case 2: // Investment Budget
+      case 4: // Budget Range
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <DollarSign className="h-12 w-12 mx-auto text-green-600 mb-4" />
-              <h2 className="text-2xl font-bold">What's your investment budget?</h2>
-              <p className="text-gray-600 mt-2">Set your comfortable investment range</p>
+              <DollarSign className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">What's your investment budget range?</h2>
+              <p className="text-gray-600 mt-2">Select your preferred budget range in AED</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">
-                  {formData.currency} {formData.budget[0].toLocaleString()}
-                </div>
-                <p className="text-gray-500">Investment Budget</p>
-              </div>
-
-              <div className="px-4">
-                <Slider
-                  value={formData.budget}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, budget: value }))}
-                  max={10000000}
-                  min={100000}
-                  step={50000}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-2">
-                  <span>AED 100K</span>
-                  <span>AED 10M+</span>
+                <div className="text-2xl font-bold text-blue-600">
+                  AED {formData.step4_budget.min.toLocaleString()} - {formData.step4_budget.max.toLocaleString()}
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
-                {[500000, 1000000, 2000000, 5000000].map((amount) => (
-                  <Button
-                    key={amount}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setFormData(prev => ({ ...prev, budget: [amount] }))}
-                    className={formData.budget[0] === amount ? 'bg-blue-50 border-blue-300' : ''}
-                  >
-                    {(amount / 1000000).toFixed(amount >= 1000000 ? 0 : 1)}M
-                  </Button>
-                ))}
+              <div className="space-y-4">
+                <div>
+                  <Label>Minimum Budget: AED {formData.step4_budget.min.toLocaleString()}</Label>
+                  <Slider
+                    value={[formData.step4_budget.min]}
+                    onValueChange={(value: number[]) => setFormData(prev => ({
+                      ...prev,
+                      step4_budget: { ...prev.step4_budget, min: value[0] }
+                    }))}
+                    max={5000000}
+                    min={100000}
+                    step={50000}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label>Maximum Budget: AED {formData.step4_budget.max.toLocaleString()}</Label>
+                  <Slider
+                    value={[formData.step4_budget.max]}
+                    onValueChange={(value: number[]) => setFormData(prev => ({
+                      ...prev,
+                      step4_budget: { ...prev.step4_budget, max: value[0] }
+                    }))}
+                    max={10000000}
+                    min={formData.step4_budget.min}
+                    step={50000}
+                    className="mt-2"
+                  />
+                </div>
               </div>
             </div>
           </div>
         );
 
-      case 3: // Risk Appetite
+      case 5: // Off-Plan Interest
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <Shield className="h-12 w-12 mx-auto text-purple-600 mb-4" />
-              <h2 className="text-2xl font-bold">What's your risk appetite?</h2>
-              <p className="text-gray-600 mt-2">Choose your comfort level with investment risk</p>
+              <Building className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">Are you interested in off-plan properties?</h2>
+              <p className="text-gray-600 mt-2">Off-plan properties can offer better prices and payment plans</p>
             </div>
 
             <RadioGroup 
-              value={formData.riskAppetite} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, riskAppetite: value }))}
+              value={formData.step5_offPlan} 
+              onValueChange={(value: string) => setFormData(prev => ({ ...prev, step5_offPlan: value }))}
               className="space-y-3"
             >
-              {riskLevels.map((risk) => (
-                <div key={risk.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <RadioGroupItem value={risk.id} id={risk.id} />
+              {offPlanOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <RadioGroupItem value={option.id} id={option.id} />
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor={risk.id} className="cursor-pointer font-medium">
-                        {risk.label}
-                      </Label>
-                      <Badge className={risk.color}>{risk.id.toUpperCase()}</Badge>
-                    </div>
-                    <p className="text-sm text-gray-500">{risk.description}</p>
+                    <Label htmlFor={option.id} className="text-base font-medium cursor-pointer">
+                      {option.label}
+                    </Label>
+                    <p className="text-sm text-gray-500">{option.description}</p>
                   </div>
                 </div>
               ))}
@@ -399,99 +591,203 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 4: // Location Preferences
+      case 6: // Preferred Locations
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <MapPin className="h-12 w-12 mx-auto text-red-600 mb-4" />
-              <h2 className="text-2xl font-bold">Preferred locations in Dubai?</h2>
-              <p className="text-gray-600 mt-2">Select all areas you're interested in (minimum 1)</p>
+              <MapPin className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">Which areas in Dubai interest you?</h2>
+              <p className="text-gray-600 mt-2">Select all that apply (you can choose multiple locations)</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
               {dubaiLocations.map((location) => (
-                <div
-                  key={location}
-                  onClick={() => handleLocationToggle(location)}
-                  className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                    formData.locationPreferences.includes(location)
-                      ? 'bg-blue-50 border-blue-300 text-blue-700'
-                      : 'hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      checked={formData.locationPreferences.includes(location)}
-                      readOnly
-                    />
-                    <span className="text-sm font-medium">{location}</span>
+                <div key={location} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={location}
+                    checked={formData.step6_preferredLocation.includes(location)}
+                    onCheckedChange={() => handleLocationToggle(location)}
+                  />
+                  <Label htmlFor={location} className="text-sm cursor-pointer">
+                    {location}
+                  </Label>
+                </div>
+              ))}
+            </div>
+
+            {formData.step6_preferredLocation.length > 0 && (
+              <div className="mt-4">
+                <Label className="text-sm font-medium">Selected Locations:</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.step6_preferredLocation.map((location) => (
+                    <Badge key={location} variant="secondary">
+                      {location}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 7: // Property Types
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <Home className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">What types of properties interest you?</h2>
+              <p className="text-gray-600 mt-2">Select all that apply</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {propertyTypeOptions.map((type) => (
+                <div key={type.id} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50">
+                  <Checkbox
+                    id={type.id}
+                    checked={formData.step7_propertyTypes.includes(type.id)}
+                    onCheckedChange={() => handlePropertyTypeToggle(type.id)}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor={type.id} className="text-sm font-medium cursor-pointer">
+                      <span className="mr-2">{type.icon}</span>
+                      {type.label}
+                    </Label>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="text-center text-sm text-gray-500">
-              Selected: {formData.locationPreferences.length} location{formData.locationPreferences.length !== 1 ? 's' : ''}
+            {formData.step7_propertyTypes.length > 0 && (
+              <div className="mt-4">
+                <Label className="text-sm font-medium">Selected Property Types:</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.step7_propertyTypes.map((type) => (
+                    <Badge key={type} variant="secondary">
+                      {propertyTypeOptions.find(t => t.id === type)?.label || type}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 8: // ROI Target
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <TrendingUp className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">What's your target ROI (Return on Investment)?</h2>
+              <p className="text-gray-600 mt-2">Select your preferred annual ROI percentage</p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600">
+                  {formData.step8_roiTarget}%
+                </div>
+                <p className="text-sm text-gray-500 mt-1">Annual Return on Investment</p>
+              </div>
+
+              <Slider
+                value={[formData.step8_roiTarget]}
+                onValueChange={(value: number[]) => setFormData(prev => ({ ...prev, step8_roiTarget: value[0] }))}
+                max={20}
+                min={3}
+                step={1}
+                className="mt-4"
+              />
+
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>3% (Conservative)</span>
+                <span>20% (Aggressive)</span>
+              </div>
             </div>
           </div>
         );
 
-      case 5: // Property Types
+      case 9: // Rental Yield Target
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <Home className="h-12 w-12 mx-auto text-orange-600 mb-4" />
-              <h2 className="text-2xl font-bold">What property types interest you?</h2>
-              <p className="text-gray-600 mt-2">Select all that apply (minimum 1)</p>
+              <DollarSign className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">What's your target rental yield?</h2>
+              <p className="text-gray-600 mt-2">Select your preferred annual rental yield percentage</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {propertyTypeOptions.map((type) => (
-                <div
-                  key={type.id}
-                  onClick={() => handlePropertyTypeToggle(type.id)}
-                  className={`p-4 border rounded-lg cursor-pointer transition-colors text-center ${
-                    formData.propertyTypes.includes(type.id)
-                      ? 'bg-blue-50 border-blue-300 text-blue-700'
-                      : 'hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">{type.icon}</div>
-                  <div className="text-sm font-medium">{type.label}</div>
-                  <Checkbox 
-                    checked={formData.propertyTypes.includes(type.id)}
-                    className="mt-2 mx-auto"
-                    readOnly
-                  />
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600">
+                  {formData.step9_rentalYieldTarget}%
+                </div>
+                <p className="text-sm text-gray-500 mt-1">Annual Rental Yield</p>
+              </div>
+
+              <Slider
+                value={[formData.step9_rentalYieldTarget]}
+                onValueChange={(value: number[]) => setFormData(prev => ({ ...prev, step9_rentalYieldTarget: value[0] }))}
+                max={12}
+                min={2}
+                step={0.5}
+                className="mt-4"
+              />
+
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>2% (Low Yield)</span>
+                <span>12% (High Yield)</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 10: // Risk Appetite
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <Shield className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">What's your risk appetite?</h2>
+              <p className="text-gray-600 mt-2">This helps us recommend suitable investment strategies</p>
+            </div>
+
+            <RadioGroup 
+              value={formData.step10_riskAppetite} 
+              onValueChange={(value: string) => setFormData(prev => ({ ...prev, step10_riskAppetite: value }))}
+              className="space-y-3"
+            >
+              {riskLevels.map((level) => (
+                <div key={level.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
+                  <RadioGroupItem value={level.id} id={level.id} />
+                  <div className="flex-1">
+                    <Label htmlFor={level.id} className="text-base font-medium cursor-pointer">
+                      {level.label}
+                    </Label>
+                    <p className="text-sm text-gray-500">{level.description}</p>
+                  </div>
                 </div>
               ))}
-            </div>
-
-            <div className="text-center text-sm text-gray-500">
-              Selected: {formData.propertyTypes.length} property type{formData.propertyTypes.length !== 1 ? 's' : ''}
-            </div>
+            </RadioGroup>
           </div>
         );
 
-      case 6: // Investment Horizon
+      case 11: // Investment Horizon
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <Clock className="h-12 w-12 mx-auto text-indigo-600 mb-4" />
-              <h2 className="text-2xl font-bold">What's your investment timeline?</h2>
+              <Clock className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold">What's your investment horizon?</h2>
               <p className="text-gray-600 mt-2">How long do you plan to hold your investment?</p>
             </div>
 
             <RadioGroup 
-              value={formData.investmentHorizon} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, investmentHorizon: value }))}
+              value={formData.step11_investmentHorizon} 
+              onValueChange={(value: string) => setFormData(prev => ({ ...prev, step11_investmentHorizon: value }))}
               className="space-y-3"
             >
               {investmentHorizons.map((horizon) => (
-                <div key={horizon.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                <div key={horizon.id} className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50">
                   <RadioGroupItem value={horizon.id} id={horizon.id} />
                   <div className="flex-1">
-                    <Label htmlFor={horizon.id} className="cursor-pointer font-medium">
+                    <Label htmlFor={horizon.id} className="text-base font-medium cursor-pointer">
                       {horizon.label}
                     </Label>
                     <p className="text-sm text-gray-500">{horizon.description}</p>
@@ -502,125 +798,26 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           </div>
         );
 
-      case 7: // Final Preferences
-        return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <TrendingUp className="h-12 w-12 mx-auto text-green-600 mb-4" />
-              <h2 className="text-2xl font-bold">Final preferences</h2>
-              <p className="text-gray-600 mt-2">Fine-tune your investment criteria</p>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <Label className="text-base font-medium">Expected ROI Target</Label>
-                <div className="mt-2 text-center">
-                  <span className="text-2xl font-bold text-green-600">{formData.roiTarget[0]}%</span>
-                  <p className="text-sm text-gray-500">Annual Return on Investment</p>
-                </div>
-                <Slider
-                  value={formData.roiTarget}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, roiTarget: value }))}
-                  max={15}
-                  min={3}
-                  step={0.5}
-                  className="mt-4"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-1">
-                  <span>3%</span>
-                  <span>15%</span>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">Minimum Rental Yield</Label>
-                <div className="mt-2 text-center">
-                  <span className="text-2xl font-bold text-blue-600">{formData.rentalYield[0]}%</span>
-                  <p className="text-sm text-gray-500">Annual Rental Yield</p>
-                </div>
-                <Slider
-                  value={formData.rentalYield}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, rentalYield: value }))}
-                  max={12}
-                  min={2}
-                  step={0.5}
-                  className="mt-4"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-1">
-                  <span>2%</span>
-                  <span>12%</span>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">Maximum Commute Time (if applicable)</Label>
-                <div className="mt-2 text-center">
-                  <span className="text-2xl font-bold text-purple-600">{formData.maxCommute[0]} min</span>
-                  <p className="text-sm text-gray-500">To key business districts</p>
-                </div>
-                <Slider
-                  value={formData.maxCommute}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, maxCommute: value }))}
-                  max={60}
-                  min={10}
-                  step={5}
-                  className="mt-4"
-                />
-                <div className="flex justify-between text-sm text-gray-500 mt-1">
-                  <span>10 min</span>
-                  <span>60 min</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
       default:
         return null;
     }
   };
 
-  const canProceed = () => {
-    switch (currentStep) {
-      case 0:
-        return formData.email && formData.password && (isLogin || formData.fullName);
-      case 1:
-        return formData.investmentGoal;
-      case 2:
-        return formData.budget[0] > 0;
-      case 3:
-        return formData.riskAppetite;
-      case 4:
-        return formData.locationPreferences.length > 0;
-      case 5:
-        return formData.propertyTypes.length > 0;
-      case 6:
-        return formData.investmentHorizon;
-      case 7:
-        return true;
-      default:
-        return false;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
-          {currentStep > 0 && (
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-500">Step {currentStep} of {TOTAL_STEPS - 1}</span>
-                <span className="text-sm text-gray-500">{Math.round(progress)}% Complete</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
-          )}
+          <CardTitle className="text-2xl font-bold">DubaiInvest Pro</CardTitle>
+          <div className="mt-4">
+            <Progress value={progress} className="h-2" />
+            <p className="text-sm text-gray-500 mt-2">
+              Step {currentStep + 1} of {TOTAL_STEPS}
+            </p>
+          </div>
         </CardHeader>
-
-        <CardContent className="px-6 pb-6">
+        <CardContent>
           {renderStep()}
-
+          
           <div className="flex justify-between mt-8">
             <Button
               variant="outline"
@@ -631,15 +828,17 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
-
-            <Button
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className="flex items-center"
-            >
-              {currentStep === TOTAL_STEPS - 1 ? 'Complete Setup' : 'Next'}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            
+            {currentStep > 0 && (
+              <Button
+                onClick={handleNext}
+                disabled={loading}
+                className="flex items-center"
+              >
+                {currentStep === TOTAL_STEPS - 1 ? 'Complete Setup' : 'Next'}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

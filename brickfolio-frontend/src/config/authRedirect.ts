@@ -12,19 +12,37 @@ export const AUTH_REDIRECT_CONFIG = {
       enabled: true,
       showWarning: true
     },
+    ONBOARDING: {
+      redirectDelay: 30000,
+      redirectPath: '/onboarding',
+      enabled: false, // Disable redirect on onboarding page
+      showWarning: false
+    },
+    PROJECTS: {
+      redirectDelay: 30000,
+      redirectPath: '/onboarding',
+      enabled: true,
+      showWarning: true
+    },
+    DEVELOPERS: {
+      redirectDelay: 30000,
+      redirectPath: '/onboarding',
+      enabled: true,
+      showWarning: true
+    },
+    NEWS: {
+      redirectDelay: 30000,
+      redirectPath: '/onboarding',
+      enabled: true,
+      showWarning: true
+    },
     MARKET_ANALYTICS: {
       redirectDelay: 45000, // 45 seconds for analytics page
       redirectPath: '/onboarding',
       enabled: true,
       showWarning: true
     },
-    PROPERTY_LISTING: {
-      redirectDelay: 35000, // 35 seconds for property pages
-      redirectPath: '/onboarding',
-      enabled: true,
-      showWarning: true
-    },
-    DEVELOPER_LISTING: {
+    DEVELOPER_PROFILE: {
       redirectDelay: 35000, // 35 seconds for developer pages
       redirectPath: '/onboarding',
       enabled: true,

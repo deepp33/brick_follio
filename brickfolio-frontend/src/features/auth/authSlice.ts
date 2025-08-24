@@ -15,6 +15,24 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface OnboardingData {
+  step1_residence: string;
+  step2_priorInvestment: string;
+  step3_investmentGoal: string;
+  step4_budget: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  step5_offPlan: string;
+  step6_preferredLocation: string[];
+  step7_propertyTypes: string[];
+  step8_roiTarget: number;
+  step9_rentalYieldTarget: number;
+  step10_riskAppetite: string;
+  step11_investmentHorizon: string;
+}
+
 export interface RegisterData {
   name: string;
   email: string;
@@ -23,6 +41,7 @@ export interface RegisterData {
   phone?: string;
   country?: string;
   city?: string;
+  onboarding?: OnboardingData;
 }
 
 interface AuthState {
@@ -31,6 +50,7 @@ interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
+  onboardingComplete: boolean;
 }
 
 const initialState: AuthState = {
@@ -39,6 +59,7 @@ const initialState: AuthState = {
   isAuthenticated: !!localStorage.getItem('authToken'),
   loading: false,
   error: null,
+  onboardingComplete: false,
 };
 
 // Async thunks
@@ -58,7 +79,7 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async (userData: RegisterData) => {
-    const response = await api.post('/auth/register', userData);
+    const response = await api.post('/users', userData);
     const { token, user } = response.data;
     
     // Store token in localStorage
@@ -108,7 +129,11 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      state.onboardingComplete = false;
       localStorage.removeItem('authToken');
+    },
+    setOnboardingComplete: (state, action) => {
+      state.onboardingComplete = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -123,6 +148,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.onboardingComplete = true; // Assume onboarding is complete after login
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -138,6 +164,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.onboardingComplete = true; // Onboarding is complete after registration
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -152,6 +179,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.onboardingComplete = false;
       })
       .addCase(logout.rejected, (state) => {
         state.loading = false;
@@ -159,6 +187,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.onboardingComplete = false;
       })
       // Get Current User
       .addCase(getCurrentUser.pending, (state) => {
@@ -169,6 +198,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.onboardingComplete = true; // Assume onboarding is complete for existing users
       })
       .addCase(getCurrentUser.rejected, (state, action) => {
         state.loading = false;
@@ -176,11 +206,12 @@ const authSlice = createSlice({
         // If getting current user fails, user might not be authenticated
         state.user = null;
         state.isAuthenticated = false;
+        state.onboardingComplete = false;
         localStorage.removeItem('authToken');
       });
   },
 });
 
-export const { clearError, setUser, clearUser } = authSlice.actions;
+export const { clearError, setUser, clearUser, setOnboardingComplete } = authSlice.actions;
 export default authSlice.reducer;
 

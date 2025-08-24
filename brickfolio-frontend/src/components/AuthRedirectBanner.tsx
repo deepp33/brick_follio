@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../hooks/redux';
 import { useAuthRedirect } from '../hooks/useAuthRedirect';
 import { Button } from './ui/button';
@@ -17,6 +18,7 @@ export function AuthRedirectBanner({
   enabled = true,
   showCountdown = true
 }: AuthRedirectBannerProps) {
+  const navigate = useNavigate();
   const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
   const [timeRemaining, setTimeRemaining] = useState(redirectDelay);
   const [isVisible, setIsVisible] = useState(false);
@@ -50,6 +52,8 @@ export function AuthRedirectBanner({
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1000) {
+          // Redirect to onboarding when countdown reaches zero
+          navigate(redirectPath);
           return 0;
         }
         return prev - 1000;
@@ -57,7 +61,7 @@ export function AuthRedirectBanner({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isVisible, showCountdown, isAuthenticated, loading]);
+  }, [isVisible, showCountdown, isAuthenticated, loading, navigate, redirectPath]);
 
   // Reset countdown when user interacts
   useEffect(() => {
@@ -79,7 +83,7 @@ export function AuthRedirectBanner({
   };
 
   const handleGetStarted = () => {
-    window.location.href = redirectPath;
+    navigate(redirectPath);
   };
 
   if (!isVisible || isAuthenticated || loading) {
@@ -87,7 +91,7 @@ export function AuthRedirectBanner({
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+    <div style={{ display: 'none' }} className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-3">
           <div className="flex items-center space-x-3">

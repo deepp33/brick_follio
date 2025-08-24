@@ -1757,8 +1757,8 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Header */}
+    <div className="h-full flex flex-col bg-background">
+      {/* Map Controls Header */}
       <div className="bg-white border-b px-4 py-3 flex items-center justify-between z-50">
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -2056,7 +2056,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Filters Sidebar - Desktop */}
         <div className={`hidden md:flex flex-col bg-white border-r transition-all duration-300 ${showFilters ? 'w-80' : 'w-0'} overflow-hidden`}>
           <div className="p-4 border-b flex-shrink-0">
@@ -2347,7 +2347,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
         </div>
 
         {/* Map Container */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-h-0">
           {!showFilters && (
             <Button
               variant="outline"
@@ -2361,7 +2361,7 @@ export function MapView({ userPreferences, onClose }: MapViewProps) {
           )}
 
           {/* Mapbox Container */}
-          <div ref={mapContainer} className="w-full h-full" />
+          <div ref={mapContainer} className="w-full h-full min-h-0" />
 
           {/* Quick View Card for Hovered Property */}
           {hoveredProperty && (

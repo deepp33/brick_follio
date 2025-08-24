@@ -1,12 +1,12 @@
 import React from 'react';
 import { cn } from './utils';
-import { Loader2, Building, Home, TrendingUp, MapPin, FileText, Users, BarChart3 } from 'lucide-react';
+import { Loader2, Building, Home, TrendingUp, MapPin, FileText, Users, BarChart3, User } from 'lucide-react';
 
 interface LoaderProps {
   variant?: 'default' | 'page' | 'card' | 'button' | 'inline';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   text?: string;
-  icon?: 'default' | 'building' | 'home' | 'trending' | 'map' | 'file' | 'users' | 'chart';
+  icon?: 'default' | 'building' | 'home' | 'trending' | 'map' | 'file' | 'users' | 'chart' | 'user';
   className?: string;
 }
 
@@ -25,7 +25,8 @@ const iconMap = {
   map: MapPin,
   file: FileText,
   users: Users,
-  chart: BarChart3
+  chart: BarChart3,
+  user: User
 };
 
 export function Loader({ 
@@ -35,7 +36,8 @@ export function Loader({
   icon = 'default',
   className 
 }: LoaderProps) {
-  const IconComponent = iconMap[icon];
+  // Ensure we always have a valid icon component
+  const IconComponent = iconMap[icon] || iconMap.default || Loader2;
   const isSpinning = icon === 'default';
 
   const variants = {

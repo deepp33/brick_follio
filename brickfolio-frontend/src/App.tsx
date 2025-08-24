@@ -10,6 +10,8 @@ import {
   DeveloperProfilePage,
   MarketAnalyticsPage,
   ContactPage,
+  ProjectsPage,
+  UserProfilePage,
   NotFound
 } from './pages';
 
@@ -24,20 +26,22 @@ export default function App() {
   return (
     <Router>
       {/* Auth Redirect Banner - shows countdown for non-authenticated users */}
-      <AuthRedirectBanner 
+      {/* <AuthRedirectBanner 
         redirectDelay={30000}
         redirectPath="/onboarding"
         enabled={true}
         showCountdown={true}
-      />
+      /> */}
       
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/onboarding" element={<OnboardingFlowPage />} />
         <Route path="/map" element={<MapViewPage />} />
         <Route path="/properties" element={<PropertyListingPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/developers" element={<DeveloperListingPage />} />
         <Route path="/developer/:id" element={<DeveloperProfilePage />} />
+        <Route path="/profile" element={<UserProfilePage />} />
         <Route path="/market-analytics" element={<MarketAnalyticsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="*" element={<NotFound />} />

@@ -1,5 +1,10 @@
 import { Search, User, Menu, LogOut, Map } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import type { RootState } from '../store';
+import { getCurrentUser } from '../features/auth/authSlice';
+import { useAppDispatch } from '../hooks/redux';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback } from './ui/avatar';
@@ -11,6 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useAppSelector } from '../hooks/redux';
+
 
 interface HeaderProps {
   onSignUpClick: () => void;
@@ -21,6 +28,27 @@ interface HeaderProps {
 
 export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAuthenticated }: HeaderProps) {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user, loading } = useSelector((state: RootState) => state.auth);
+
+  // Fetch user data if authenticated but user data is not loaded
+  // useEffect(() => {
+  //   if (isAuthenticated && !user && !loading) {
+  //     dispatch(getCurrentUser());
+  //   }
+  // }, [isAuthenticated, user, loading, dispatch]);
+
+  const handleLogout = () => {
+    // Remove authToken from localStorage
+    localStorage.removeItem('authToken');
+    
+    // Refresh the page and redirect to homepage
+    window.location.href = '/';
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
 
   return (
     <header className="bg-white border-b border-border sticky top-0 z-50">
@@ -70,32 +98,27 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
 
           {/* Search and Actions */}
           <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center space-x-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder="Search properties..."
-                  className="pl-10 w-64"
-                />
-              </div>
-            </div>
+          
             
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback>UI</AvatarFallback>
+                      <AvatarFallback>
+                        {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">User Account</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user?.name || 'User Account'}
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        user@example.com
+                        {user?.email || 'user@example.com'}
                       </p>
                     </div>
                   </DropdownMenuLabel>
@@ -104,18 +127,15 @@ export function Header({ onSignUpClick, onDevelopersClick, onMapViewClick, isAut
                     <Map className="mr-2 h-4 w-4" />
                     <span>Map View</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span>Dashboard</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span>Preferences</span>
-                  </DropdownMenuItem>
+                                     <DropdownMenuItem onClick={handleProfileClick}>
+                     <User className="mr-2 h-4 w-4" />
+                     <span>Profile</span>
+                   </DropdownMenuItem>
+                   <DropdownMenuItem>
+                     <span>Preferences</span>
+                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>

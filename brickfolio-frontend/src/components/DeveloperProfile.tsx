@@ -27,6 +27,7 @@ import {
   Share2
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ReviewsWithSentiment } from './ReviewsWithSentiment';
 
 interface DeveloperData {
   id: number;
@@ -34,7 +35,7 @@ interface DeveloperData {
   logo: string;
   bgColor: string;
   rating: number;
-  projects: number;
+  totalProjects: number;
   deliveryRate: number;
   credentials: string[];
   recentProject: string;
@@ -75,6 +76,7 @@ interface DeveloperData {
     date: string;
     verified: boolean;
     project: string;
+    sentiment?: 'positive' | 'negative' | 'neutral';
   }>;
 }
 
@@ -90,7 +92,7 @@ const mockDeveloperData: Record<number, DeveloperData> = {
     logo: "E",
     bgColor: "bg-blue-600",
     rating: 4.9,
-    projects: 45,
+    totalProjects: 45,
     deliveryRate: 98,
     credentials: ["RERA Verified", "Award Winner"],
     recentProject: "Dubai Hills Estate",
@@ -320,16 +322,22 @@ const mockDeveloperData: Record<number, DeveloperData> = {
   }
 };
 
+
+
 export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps) {
   const dispatch = useAppDispatch();
-  const { selectedDeveloper, loading, error } = useAppSelector((state) => state.users);
+  const { selectedDeveloper, loading, error, developers } = useAppSelector((state) => state.users);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (developerId) {
-      dispatch(getDeveloperProfile(developerId));
-    }
-  }, [dispatch, developerId]);
+  // Check if developer is already in the developers list
+  const existingDeveloper = developers.find(dev => dev._id === developerId);
+
+  // useEffect(() => {
+  //   if (developerId && !existingDeveloper) {
+  //     // Only make API call if developer is not already in the store
+  //     dispatch(getDeveloperProfile(developerId));
+  //   }
+  // }, [developerId, dispatch, existingDeveloper]);
 
   // Show loading state
   if (loading) {
@@ -343,8 +351,11 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
     );
   }
 
+  // Use existing developer data if available, otherwise use selectedDeveloper
+  const developerData = selectedDeveloper;
+  console.log(developerData);
   // Show error state
-  if (error || !selectedDeveloper) {
+  if (error || !developerData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -370,32 +381,32 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
 
   // Transform API data to match component expectations
   const developer = {
-    id: selectedDeveloper._id,
-    name: selectedDeveloper.name,
-    logo: selectedDeveloper.name.charAt(0).toUpperCase(),
-    bgColor: getDeveloperBgColor(selectedDeveloper.name),
-    rating: selectedDeveloper.developerProfile?.rating || 4.5,
-    projects: selectedDeveloper.developerProfile?.totalProjects || 0,
-    deliveryRate: selectedDeveloper.developerProfile?.deliveryTrackRecord?.onTime || 90,
-    credentials: selectedDeveloper.developerProfile?.certifications || [],
+    id: developerData._id,
+    name: developerData.name,
+    logo: developerData.name.charAt(0).toUpperCase(),
+    bgColor: getDeveloperBgColor(developerData.name),
+    rating: developerData.developerProfile?.rating || 4.5,
+    totalProjects: developerData.developerProfile?.totalProjects || 0,
+    deliveryRate: developerData.developerProfile?.deliveryTrackRecord?.onTime || 90,
+    credentials: developerData.developerProfile?.certifications || [],
     recentProject: "Latest Project", // Would come from projects API
     established: 2000, // Would come from developer profile
-    totalDelivered: selectedDeveloper.developerProfile?.projectsCompletedCount || 0,
+    totalDelivered: developerData.developerProfile?.projectsCompletedCount || 0,
     marketCap: "N/A", // Would come from financial data
-    description: selectedDeveloper.developerProfile?.description || `${selectedDeveloper.name} is a leading real estate developer in Dubai with a strong track record of delivering quality projects.`,
+    description: developerData.developerProfile?.description || `${developerData.name} is a leading real estate developer in Dubai with a strong track record of delivering quality projects.`,
     contactInfo: {
-      phone: selectedDeveloper.phone || "+971 4 XXX XXXX",
-      email: selectedDeveloper.email || "info@example.com",
+      phone: developerData.phone || "+971 4 XXX XXXX",
+      email: developerData.email || "info@example.com",
       website: "www.example.com", // Would come from developer profile
-      address: selectedDeveloper.developerProfile?.location || "Dubai, UAE"
+      address: developerData.developerProfile?.location || "Dubai, UAE"
     },
     legalStatus: {
-      reraLicense: selectedDeveloper.developerProfile?.compliance?.reraLicense || "RERA-DEV-XXX",
+      reraLicense: developerData.developerProfile?.compliance?.reraLicense || "RERA-DEV-XXX",
       disputes: 0, // Would come from legal data
-      lastAudit: selectedDeveloper.developerProfile?.compliance?.lastAudit || "Recent",
-      complianceScore: selectedDeveloper.developerProfile?.compliance?.complianceScore || 90
+      lastAudit: developerData.developerProfile?.compliance?.lastAudit || "Recent",
+      complianceScore: developerData.developerProfile?.compliance?.complianceScore || 90
     },
-    projects: selectedDeveloper.developerProfile?.projects?.map((project: any, index: number) => ({
+    projects: developerData.developerProfile?.projects?.map((project: any, index: number) => ({
       id: project._id || index,
       name: project.projectName,
       location: project.location,
@@ -416,7 +427,116 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
       rentalYield: project.rentalYield || 6.0,
       paymentPlan: project.paymentPlan || []
     })) || [],
-    reviews: [] // Would come from reviews API
+         reviews: [
+       {
+         id: 1,
+         investor: "Ahmed Al-Rashid",
+         rating: 5,
+         comment: "Exceptional build quality and timely delivery. Emaar's reputation is well-deserved. The project exceeded my expectations in every way. Highly recommend!",
+         date: "March 2024",
+         verified: true,
+         project: "Dubai Hills Estate"
+       },
+       {
+         id: 2,
+         investor: "Sarah Johnson",
+         rating: 5,
+         comment: "Professional service throughout the investment process. Great ROI achieved. The team was responsive and transparent at every step.",
+         date: "February 2024",
+         verified: true,
+         project: "Creek Harbour"
+       },
+       {
+         id: 3,
+         investor: "Michael Chen",
+         rating: 4,
+         comment: "Good investment overall. Some minor delays but the final product quality is excellent. Would invest again.",
+         date: "January 2024",
+         verified: true,
+         project: "Marina Heights"
+       },
+       {
+         id: 4,
+         investor: "Priya Sharma",
+         rating: 5,
+         comment: "Outstanding quality and attention to detail. Sobha truly delivers excellence. The amenities are world-class.",
+         date: "December 2023",
+         verified: true,
+         project: "Business Bay Tower"
+       },
+       {
+         id: 5,
+         investor: "Robert Williams",
+         rating: 3,
+         comment: "The location is unique and design is innovative. However, there were some delays in delivery. Overall satisfied but could be better.",
+         date: "November 2023",
+         verified: true,
+         project: "Palm Jumeirah Villas"
+       },
+       {
+         id: 6,
+         investor: "Fatima Al-Zahra",
+         rating: 5,
+         comment: "Amazing experience! The developer delivered exactly as promised. The ROI is fantastic and the property value has increased significantly.",
+         date: "October 2023",
+         verified: true,
+         project: "Downtown Views"
+       },
+       {
+         id: 7,
+         investor: "David Thompson",
+         rating: 2,
+         comment: "Disappointed with the delays and communication issues. The quality is acceptable but not worth the premium price. Terrible experience overall.",
+         date: "September 2023",
+         verified: true,
+         project: "Skyline Residences"
+       },
+       {
+         id: 8,
+         investor: "Aisha Mohammed",
+         rating: 4,
+         comment: "Good investment property. The developer is reliable and the project was delivered on time. Happy with the purchase.",
+         date: "August 2023",
+         verified: true,
+         project: "Garden District"
+       },
+       {
+         id: 9,
+         investor: "John Smith",
+         rating: 1,
+         comment: "Horrible experience! The developer is unreliable and unprofessional. Avoid at all costs. Terrible quality and constant delays.",
+         date: "July 2023",
+         verified: true,
+         project: "Sunset Towers"
+       },
+       {
+         id: 10,
+         investor: "Maria Garcia",
+         rating: 2,
+         comment: "Poor communication and disappointing quality. The project was delayed multiple times and the final product doesn't match expectations.",
+         date: "June 2023",
+         verified: true,
+         project: "Ocean View"
+       },
+       {
+         id: 11,
+         investor: "Alex Johnson",
+         rating: 3,
+         comment: "Average experience. Some issues with delays but overall acceptable quality. Could be better for the price paid.",
+         date: "May 2023",
+         verified: true,
+         project: "City Center"
+       },
+       {
+         id: 12,
+         investor: "Lisa Wang",
+         rating: 1,
+         comment: "Worst investment decision ever! Terrible service, awful quality, and the developer is completely unprofessional. Avoid!",
+         date: "April 2023",
+         verified: true,
+         project: "Metro Heights"
+       }
+     ]
   };
 
   const renderStars = (rating: number) => {
@@ -481,13 +601,28 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: developer.name,
+                      text: `Check out ${developer.name} on Brickfolio!`,
+                      url: window.location.href,
+                    }).catch((err) => {
+                      // User cancelled or error occurred
+                      // Optionally handle error
+                    });
+                  } else {
+                    // Fallback: copy link to clipboard
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("Link copied to clipboard!");
+                  }
+                }}
+              >
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
-              </Button>
-              <Button variant="outline" size="sm">
-                <Heart className="h-4 w-4 mr-2" />
-                Follow
               </Button>
             </div>
           </div>
@@ -598,10 +733,10 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
                       <MapPin className="h-4 w-4 text-gray-400" />
                       <span className="text-sm">{developer.contactInfo.address}</span>
                     </div>
-                    <Button className="w-full mt-4">
+                    {/* <Button className="w-full mt-4">
                       <Phone className="h-4 w-4 mr-2" />
                       Contact Developer
-                    </Button>
+                    </Button> */}
                   </CardContent>
                 </Card>
 
@@ -848,56 +983,7 @@ export function DeveloperProfile({ developerId, onClose }: DeveloperProfileProps
 
           {/* Reviews Tab */}
           <TabsContent value="reviews">
-            <div className="space-y-6">
-              {developer.reviews && developer.reviews.length > 0 ? (
-                <>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    {developer.reviews.map((review) => (
-                      <Card key={review.id}>
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between mb-3">
-                            <div>
-                              <h4 className="font-semibold">{review.investor}</h4>
-                              <p className="text-sm text-gray-600">{review.project}</p>
-                            </div>
-                            {review.verified && (
-                              <Badge className="bg-green-100 text-green-800">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Verified
-                              </Badge>
-                            )}
-                          </div>
-                          
-                          <div className="flex items-center space-x-1 mb-3">
-                            {renderStars(review.rating)}
-                            <span className="ml-2 text-sm text-gray-600">({review.rating}/5)</span>
-                          </div>
-
-                          <p className="text-gray-600 mb-3">"{review.comment}"</p>
-
-                          <div className="flex justify-between items-center text-sm text-gray-500">
-                            <span>{review.date}</span>
-                            <span>Verified Purchase</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  <div className="text-center">
-                    <Button variant="outline">
-                      Load More Reviews
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <Card className="p-12 text-center">
-                  <Star className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Reviews Available</h3>
-                  <p className="text-gray-600">Customer reviews will appear here once available.</p>
-                </Card>
-              )}
-            </div>
+            <ReviewsWithSentiment developer={developer} />
           </TabsContent>
         </Tabs>
       </div>
